@@ -1,0 +1,87 @@
+# META-language blacklist corpus for v0.6 semantic check
+# (replaces v0.5.x regex R5/R6 — cross-LLM audit audit condition #4)
+#
+# These are sentences/fragments observed in real LLM-generated reports
+# that are NOT forensic findings but META commentary about the system
+# or template-leak hypotheticals. Validator embeds each line, computes
+# cosine similarity against LLM-written narrative fields; sim > 0.75
+# triggers reject.
+#
+# Format: one sentence per line. Comments start with #. Empty lines
+# ignored.
+#
+# Sources:
+# - cross-LLM test report (anomaly preamble META leak)
+# - adversarial review BABYSHARK v0.5.2 report (workflow META + hypothetical leak)
+# - adversarial review ZEST v0.5.2 report (template fallback leak)
+# - Anti-patterns from various LLM dry-runs
+
+# --- META commentary about system / workflow ---
+本次用 v0.5.9 parallel workflow 直接从当前 Binance Alpha 列表里拆并落 JSON
+本次用 v0.5 parallel workflow 直接从当前 Binance Alpha 列表选币并落 JSON
+本次用 v0.5.7 workflow 直接拆 JSON
+若最近 24-72 小时没有形成集中派发波段, 报告会自然退化为无 wave 的结构
+若最近 24-72 小时没有形成集中派发波段, 报告会自然降级为无 wave 的结果
+schema 允许这里编为字符说明, 而不是强行卡空表
+schema 允许空表
+v0.5 schema 允许此段为空
+v0.6 pipeline 直接产出该字段
+本报告会自然降级为无 wave 的结果
+本次直接从 Alpha API 拆并落 JSON
+本报告由 Python template engine 生成
+本报告由 jinja2 deterministic 生成
+本次 forensic 用 parallel surf workflow
+v0.5.9 stable workflow 已自动跑
+
+# --- Hypothetical template fallback leak ---
+如果主链不是 BNB Chain, 本报告会会优先调到 ADVISORY
+如果主链不是 BNB Chain, 本报告会优先调到 ADVISORY
+如果主链不是 BNB Chain, 本报告会优先调级到 ADVISORY
+若主链不是 BNB Chain, 本报告会优先调到 ADVISORY
+若主链不是 BNB Chain, 本报告会自动降级到 ADVISORY
+如果是 multi-chain wrapper 场景, 会自动 ADVISORY
+若该 token 已 graduate 到 Spot, 本报告不适用
+如果出现替代链情景, 本报告会按 ADVISORY 处理
+在当前执行框架下, 该字段会按 schema 填空表
+否则按当前异常和流动性读数给出 WAIT 或更低结论
+否则按当前读数给出更低结论
+
+# --- Process commentary ---
+本次未确认到热钱包归属国库地址
+本次未确认独立跨交易所外洗的分销链
+本次未确认到 routing chain 末端
+本次未确认跨交易所内部调度
+本次未确认到独立庄家归集钱包
+本次未独立识别庄家归集钱包
+检测器若未达阈值, 不会硬判为异常
+若没有发现, 本节会留空
+本次没有发现需要列出的多轮派发节奏
+
+# --- Self-reference / system disclaimers ---
+请注意, 本报告由 LLM 生成
+本报告由 AI 自动生成
+本节内容由 LLM 模型填写
+本字段由 LLM 模型生成
+本部分内容会由后续 phase 完善
+本节内容会在 phase 2 中补全
+当前为 phase 1 输出, 后续会扩展
+本字段为 schema-driven 占位
+本字段为 pipeline-driven 输出
+本节内容仅作演示
+
+# --- Empty-finding hedge language ---
+当前阶段异常检测器没有给出必须按多段 wave 的强证据
+当前阶段异常检测器没有给出多段 wave 强证据
+本次未观察到需要拉出多轮的集中派发节奏
+本节因数据不足, 暂留空说明
+本字段因数据稀疏, 自然降级为空
+若未来出现派发行为, 本字段会补充
+若后续观察到新动作, 本节会更新
+
+# --- Schema/pipeline self-description ---
+v0.5 schema 不强制本字段非空
+v0.6 schema 通过 evt_ref 锁定数据字段
+v0.6 pipeline 通过 Rule 11 自动产出本节
+本字段由 forensic_pipeline.py 自动填充
+LLM 仅填 narrative 字段, 不修改 locked 字段
+LLM-writable 字段由 LLM 填写, 数据字段由 pipeline 锁定

@@ -1,0 +1,63 @@
+{
+  "_doc": "Known-good v0.7.9 forensic invariants for ESPORTS. Regression test asserts pipeline still surfaces these addresses + structural counts.",
+  "ca": "0xf39e4b21c84e737df08e2c3b32541d856f508e48",
+  "symbol": "ESPORTS",
+  "_v079_schema": {
+    "single_chain": true,
+    "primary_chain": "binance-smart-chain",
+    "primary_chain_derivation": "vol_max",
+    "data_freshness_warning_set": true
+  },
+  "_decision_summary": {
+    "verdict_enum": "EXIT_IF_HOLDING",
+    "entry_size_cap_usd": 45174,
+    "primary_chain": "binance-smart-chain",
+    "n_blindspots": 1
+  },
+  "m6_min_rows": 36,
+  "expected_m6_addrs": [
+    "0x0c17e6f6c7d1c5458737e66e438ef8cf2a6aba3d",
+    "0x0d5d9d7a0014e9009f4f5e6bb2e4265fd2ffe3cc",
+    "0x127d92a5d8b4194a565b0b4a2b76adc764717919",
+    "0x1552160b3c36492f17cc9c468a082f9e6cc1f1e3",
+    "0x180c6ba3f8fba7200baf2341aa240272a4336d04",
+    "0x198638bdfc70ff5ac006d6cb9b8f0c54592f020b",
+    "0x1ab4973a48dc892cd9971ece8e01dcc7688f8f23",
+    "0x2284e8bb4dffe9599def071fb85ffbed6f69332c",
+    "0x39cf4a13eddb4328b766d58fd673b147180db8a5",
+    "0x420fd7234c8c11144cf577a7ba84c08dfff8cece",
+    "0x49a0c2366936b115d6877438175ee4b97d6dab7c",
+    "0x5bb59bb9371cbec158ed602d5f3cf1ad1c9b4462",
+    "0x5e63d8fe5ebe7641ff49593386b87e264c4ebc73",
+    "0x63b41ee2a8e0673ef3229fc063e508567dd53342",
+    "0x6aba0315493b7e6989041c91181337b662fb1b90",
+    "0x6e7b9fb1fefa0fcc5419d862f4d0e1e95fbbf04d",
+    "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+    "0x7ef905f806d4c6e60441fd63563e3b05bb5c10dd",
+    "0x8089bbe4f1b3150c9828e3eafb3557a06b40d33b",
+    "0x92516aea44285ad3ed5f730f9748d70204543287",
+    "0x93deb693b170d56bdde1b0a5222b14c0f885d976",
+    "0x94111012676a3fe4e0dcdc847015853303909347",
+    "0x99d4b3f50b14bfc67892c472f4053ee3483d87b9",
+    "0xa25e1c8cb534ae097e5bf51a7f0e56aef03da323",
+    "0xa3bc1cfbb4ee5adbd2d425b03bf57fa6718d5d13",
+    "0xaf11b949ddb33cccbc97a61deaadceeb8fb1ab4e",
+    "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+    "0xb5893a55965a4a01c239f852d93ac47942415231",
+    "0xb7f68f5f2fb7f1e4cfe6b513cb1b5fbc08ef1d61",
+    "0xba96521ab220c33ce94a6c46b11a6678a66cfc93",
+    "0xbcc2b85419ab2fcee8042af8e9ee9e1643d4adcb",
+    "0xbe4c06ae3a40efe2e72af4d803bfe58930f2608a",
+    "0xd5b6f0b2b6213625b2636b8bc2882933822bfbb6",
+    "0xedde9d31eccfb48d1d3405f71c81a41029a3a0f1",
+    "0xee2a1068471bf7691ffcefbc08a939957b7554a7",
+    "0xfeb99c03094f9380360aeeed55a45408086ba4f8"
+  ],
+  "cross_sym_whales_min": 2,
+  "expected_cross_sym_addrs": [
+    "0x6cd06aaf06506bc3ff382d83023354e2b80eed22",
+    "0x75f838dbf3be0a79d6e5904ab5c364d5418a5f66"
+  ],
+  "wash_infra_setups_min": 0,
+  "expected_wash_setups": []
+}

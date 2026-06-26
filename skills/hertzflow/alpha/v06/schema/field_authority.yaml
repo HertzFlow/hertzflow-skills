@@ -1,0 +1,335 @@
+# field_authority.yaml — v0.6 schema field authority registry
+#
+# Three tiers determine who can modify each field in report_data.json:
+#
+#   locked:         Pipeline writes once; LLM cannot modify. Validator rejects
+#                   any difference between skeleton and filled JSON for these.
+#
+#   derived_locked: Pipeline computes from `locked` fields after LLM fills
+#                   narrative. LLM cannot directly write. Validator recomputes
+#                   and verifies.
+#
+#   writable:       LLM-only. Pipeline emits "<LLM_NARRATIVE_PLACEHOLDER>" or
+#                   stub; LLM replaces with narrative. Validator checks content
+#                   quality (R1-R12) + semantic META + provenance match.
+#
+# Path syntax: dot-notation with [] for arrays. e.g.
+#   meta.symbol                     -> the symbol scalar
+#   anomaly.waves[].events[].nature -> every nature in every event in every wave
+#   evidence_graph                  -> entire dict (deep-locked)
+#
+# Validator (validate_report_data.py) reads this file at startup. Adding a new
+# field to skeleton REQUIRES adding it to this file or validator rejects.
+
+version: "0.7.0"
+updated: "2026-05-25"
+
+# ============================================================
+# LOCKED — pipeline writes, LLM cannot touch
+# ============================================================
+locked:
+  # Schema metadata
+  - "_schema_version"
+  - "_pipeline_status"
+  - "_field_authority"
+  - "_pipeline_timings"
+  - "_pipeline_total_seconds"
+
+  # Meta block (all from Alpha API + RPC)
+  - "meta.symbol"
+  - "meta.name"
+  - "meta.contract_address"
+  - "meta.chain"
+  - "meta.chain_id"
+  - "meta.alpha_listing_date_utc"
+  - "meta.total_supply"
+  - "meta.circulating_supply"
+  - "meta.circ_ratio"
+  - "meta.alpha_vol_24h_usd"
+  - "meta.token_type_initial"
+  - "meta.single_chain"
+
+  # Tier classification (pipeline determines)
+  - "tier_classification.tier"
+  - "tier_classification.s1_date"
+  - "tier_classification.s2_date"
+  - "tier_classification.s3_date"
+
+  # Evidence graph — entire structure deep-locked
+  - "evidence_graph"
+
+  # Lineage M6 rows (Rule 11 + M6 window outputs)
+  - "lineage.deployer_addr"
+  - "lineage.mint_evt_ref"
+  - "lineage.m6.rows[].m6_ref"
+  - "lineage.m6.rows[].addr_short"
+  - "lineage.m6.rows[].addr_full"
+  - "lineage.m6.rows[].received_from_deployer"
+  - "lineage.m6.rows[].current_balance"
+  - "lineage.m6.rows[].dumped_pct"
+  - "lineage.m6.n_quiet"
+  - "lineage.m6.n_partial_dumper"
+  - "lineage.m6.n_full_dumper"
+  - "lineage.dumper_destinations_summary"
+
+  # Anomaly waves — structure + temporal data locked (LLM only writes nature)
+  - "anomaly.waves[].emoji"
+  - "anomaly.waves[].title"
+  - "anomaly.waves[].ts_range"
+  - "anomaly.waves[].events[].evt_ref"
+  - "anomaly.waves[].events[].ts"
+  - "anomaly.waves[].events[].from_to"
+  - "anomaly.waves[].events[].amount"
+  - "anomaly.waves[]._pipeline_locked_fields"
+
+  # Detector summary counts (pipeline computes from evidence_graph)
+  - "anomaly.detector_summary[].label"
+  - "anomaly.detector_summary[].count"
+  - "anomaly.detector_summary[].emoji"
+
+  # Rhythm structure (mirrors anomaly.waves)
+  - "anomaly.rhythm.waves[].name"
+  - "anomaly.rhythm.waves[].ts_text"
+
+  # Decision action — numeric slots pipeline-computed (action_enum is
+  # derived_locked, NOT locked, because pipeline writes a real value at
+  # skeleton time. Keeping it in locked + requiring R11-not-stub created
+  # a deadlock — cross-LLM audit caught this (regression test).)
+  - "decision_action_block.immediate_action.venue_enum"
+  - "decision_action_block.immediate_action.tranches_n"
+  - "decision_action_block.immediate_action.tranche_max_usd"
+  - "decision_action_block.immediate_action.horizon_hours"
+  - "decision_action_block.immediate_action.slippage_pct_cap"
+  - "decision_action_block.stop_loss.trigger_price_usd"
+  - "decision_action_block.stop_loss.current_price_usd"
+  - "decision_action_block.stop_loss.delta_pct"
+  - "decision_action_block.re_entry_conditions[].condition_type"
+  - "decision_action_block.re_entry_conditions[].threshold"
+  - "decision_action_block.re_entry_conditions[].current_value"
+
+  # Decision anchors — numeric values from sections (LLM writes status_emoji only? no, also locked)
+  - "decision_anchors[].anchor"
+  - "decision_anchors[].value"
+  - "decision_anchors[].status"
+
+  # Monitoring wallets — structure locked (LLM writes alert)
+  - "monitoring_wallets[].n"
+  - "monitoring_wallets[].addr_short"
+  - "monitoring_wallets[].addr_full"
+  - "monitoring_wallets[].role"
+  - "monitoring_wallets[].status_emoji"
+
+  # Holdings distribution — role_rows + progress_bars pipeline-built (Phase B.4)
+  - "holdings_distribution.role_rows[].role"
+  - "holdings_distribution.role_rows[].role_label"
+  - "holdings_distribution.role_rows[].n_wallets"
+  - "holdings_distribution.role_rows[].total_balance"
+  - "holdings_distribution.role_rows[].pct_of_total"
+  - "holdings_distribution.role_rows[].top_addr_short"
+  - "holdings_distribution.role_rows[].top_addr_full"
+  - "holdings_distribution.progress_bars[].role"
+  - "holdings_distribution.progress_bars[].label"
+  - "holdings_distribution.progress_bars[].pct"
+  - "holdings_distribution.progress_bars[].bar"
+  - "holdings_distribution.progress_bars[].bar_absolute"
+  - "holdings_distribution.progress_bars[].value_text"
+
+  # Lineage flowchart — node_NNN refs into evidence_graph, edges with evt_ref
+  - "lineage.flowchart_nodes[].node_ref"
+  - "lineage.flowchart_nodes[].role"
+  - "lineage.flowchart_nodes[].addr_short"
+  - "lineage.flowchart_edges[].from_node_ref"
+  - "lineage.flowchart_edges[].to_node_ref"
+  - "lineage.flowchart_edges[].kind"
+
+  # v0.7 cross_sym whale candidates — every pipeline-emitted field
+  - "cross_sym.whales[].address"
+  - "cross_sym.whales[].this_token_pct"
+  - "cross_sym.whales[].this_token_balance"
+  - "cross_sym.whales[].cross_sym_count"
+  - "cross_sym.whales[].cross_sym_tokens"
+  - "cross_sym.whales[].top_cross_sym_token"
+  - "cross_sym.whales[].arkham_label"
+  - "cross_sym.whales[].pre_launch_insider_count"
+  - "cross_sym.whales[].pre_launch_insider_tokens"
+  - "cross_sym.whales[].behavior_signature"
+
+  # v0.7.26.1 adversarial review CRITICAL fix: behavior_profile is 100% deterministic
+  # Python output (helpers/behavior_classifier.py). LLM must not modify or
+  # drop any field. Lock the entire subtree so validator rejects tampering.
+  - "behavior_profile._schema_version"
+  - "behavior_profile._calibrated_for"
+  - "behavior_profile._calibration_sample_size"
+  - "behavior_profile._calibration_doc"
+  - "behavior_profile.active_labels"
+  - "behavior_profile.primary_behavior"
+  - "behavior_profile.by_label"
+  - "behavior_profile.category_order"
+  - "behavior_profile.category_names_zh"
+  - "behavior_profile.label_names_zh"
+
+  # v0.7.27 monitoring_ranker output (helpers/monitoring_ranker.py). Same
+  # treatment as behavior_profile: 100% deterministic Python, no LLM
+  # involvement, lock to prevent tampering. Summary scalars +
+  # per-wallet deterministic fields (adversarial review v0.7.27.1 audit MED fix:
+  # explicit per-wallet locks; previous comment claimed monitoring_wallets[]
+  # generic lock covered these, but it doesn't — separate path entries
+  # needed).
+  - "monitoring_summary._schema_version"
+  - "monitoring_summary._calibrated_for"
+  - "monitoring_summary.level_counts"
+  - "monitoring_wallets[].monitor_level"
+  - "monitoring_wallets[].monitor_score"
+  - "monitoring_wallets[].monitor_role_enum"
+  - "monitoring_wallets[].monitor_reason"
+  - "monitoring_wallets[].source_behaviors"
+  - "monitoring_wallets[].trigger_summary"
+
+  # v0.7.28 address_role_resolver output (helpers/address_role_resolver.py).
+  # Deterministic walk of all detector outputs, primary_role + all_roles per
+  # address. Used for render-side selective dedupe + machine_readable_json
+  # dump (LLM safety-net for cross-reference reliability). The index is a
+  # dict keyed by addr — `address_role_index` as a whole is locked but
+  # individual keys are dynamic, so we lock the WHOLE dict path.
+  - "address_role_index"
+
+
+# ============================================================
+# DERIVED_LOCKED — pipeline computes from locked fields
+# ============================================================
+derived_locked:
+  # Verdict enum — pipeline picks based on Rule 11 + detector signals
+  # Pipeline MUST write a real value at skeleton time (not a placeholder).
+  - "verdict.enum"
+  - "verdict.cn_label"
+  - "verdict.baseline"
+  - "verdict.downgrade_applied"
+  - "verdict.next_tier_enum"
+  - "verdict.next_tier_cn"
+
+  # decision_action_block enum/numeric derivations (derived_locked = pipeline
+  # writes real value, LLM cannot modify, validator checks invariance same
+  # as locked. Different tier name purely for documentation: distinguishes
+  # 'derived from raw data' (locked) vs 'derived from other locked fields'.)
+  - "decision_action_block.immediate_action.action_enum"
+
+  # v0.7 cross_sym identity classification — deterministic decision tree
+  # applies static rules to behavior_signature. LLM cannot override.
+  - "cross_sym.whales[].identity_classification_enum"
+  - "cross_sym.whales[].confidence_score"
+  - "cross_sym.whales[].evidence_required_fields"
+
+
+# ============================================================
+# WRITABLE — LLM fills narrative only
+# ============================================================
+writable:
+  # Verdict narrative
+  - path: "verdict.one_liner"
+    min_length: 100
+    semantic_meta_check: true
+
+  # Anomaly narrative slots
+  - path: "anomaly.waves[].status_text"
+    min_length: 2
+  - path: "anomaly.waves[].events[].hours_ago_text"
+    min_length: 3
+  - path: "anomaly.waves[].events[].nature"
+    min_length: 10
+    semantic_meta_check: true
+    provenance_check:
+      via: "evt_ref"
+      check_function: "event_matches_narrative"
+  - path: "anomaly.detector_summary[].detail"
+    min_length: 10
+    semantic_meta_check: true
+  - path: "anomaly.rhythm.title"
+    min_length: 10
+  - path: "anomaly.rhythm.waves[].detail"
+    min_length: 10
+  - path: "anomaly.verdict_impact"
+    min_length: 80
+    semantic_meta_check: true
+
+  # Interpretation slots (every section has one)
+  - path: "multi_chain.interpretation"
+    min_length: 30
+  - path: "tge.interpretation"
+    min_length: 30
+  - path: "alloc.interpretation"
+    min_length: 30
+  - path: "cex_trace.interpretation"
+    min_length: 30
+  - path: "liq.interpretation"
+    min_length: 30
+
+  # Holdings + lineage narrative
+  - path: "holdings_distribution.key_takeaways[]"
+    min_length: 20
+    min_count: 3
+  - path: "lineage.m4_notes[]"
+    min_length: 20
+    min_count: 2
+  - path: "lineage.m6.rows[].identity_narrative"
+    min_length: 5
+  - path: "lineage.m6.rows[].status_narrative"
+    min_length: 5
+
+  # Monitoring
+  - path: "monitoring_wallets[].alert"
+    min_length: 15
+  - path: "monitoring_footer"
+    min_length: 30
+
+  # decision_action_block narrative wrappers
+  - path: "decision_action_block.immediate_action.narrative"
+    min_length: 30
+  - path: "decision_action_block.stop_loss.rationale"
+    min_length: 20
+  - path: "decision_action_block.re_entry_conditions[].narrative"
+    min_length: 15
+
+  - path: "liq.interpretation"
+    min_length: 30
+    semantic_meta_check: true
+
+  # v0.7 cross_sym narrative slots — LLM writes WHY classification +
+  # risk read for trader. Validator enforces both:
+  #  - V_CROSS_SYM_NARRATIVE_MUST_CITE_EVIDENCE (cite ≥2 locked fields)
+  #  - V_CROSS_SYM_NARRATIVE_NO_FREELANCE_IDENTITY (no other-enum phrases)
+  - path: "cross_sym.whales[].identity_narrative"
+    min_length: 30
+    semantic_meta_check: true
+  - path: "cross_sym.whales[].risk_assessment_narrative"
+    min_length: 30
+    semantic_meta_check: true
+  - path: "cross_sym.summary_narrative"
+    min_length: 30
+    semantic_meta_check: true
+
+
+# ============================================================
+# DEFERRED — fields explicitly marked phase-N stub
+# Not yet emitted by pipeline; validator does NOT require them in v0.6.0-alpha.1
+# Adding a field here documents the regression risk audit flagged.
+# ============================================================
+deferred:
+  - reason: "Phase 1.3-1.6 section helpers not yet integrated"
+    fields:
+      - "anomaly.waves[]"          # waves from sections OTHER than Rule 11 (anomaly/section_anomaly_72h)
+      - "anomaly.convergence_hubs"
+      - "multi_chain.rows"
+      - "tge.rows"
+      - "alloc.rows"
+      - "cex_trace.rows"
+      - "liq.rows"
+      - "decision_anchors"
+      - "monitoring_wallets"        # adversarial review flagged: silent regression vs v0.5.9
+      # holdings_distribution.role_rows / progress_bars + lineage.flowchart_*
+      # promoted to `locked` in v0.6.0-alpha.7 (Phase B.4 section_f_holders +
+      # section_l_distribution wired)
+
+  - reason: "Phase 6 decision_action_block parameterization"
+    fields:
+      - "decision_action_block.stop_loss.*"
+      - "decision_action_block.re_entry_conditions"

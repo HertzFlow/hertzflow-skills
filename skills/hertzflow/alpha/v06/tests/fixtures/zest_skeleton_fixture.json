@@ -1,0 +1,2158 @@
+{
+  "_schema_version": "0.7.0",
+  "_pipeline_status": "ok",
+  "_field_authority": {
+    "locked": [
+      "meta",
+      "tier_classification",
+      "evidence_graph",
+      "anomaly.waves[].events[].evt_ref",
+      "anomaly.waves[].events[].ts",
+      "anomaly.waves[].events[].amount",
+      "anomaly.waves[].events[].from_to",
+      "lineage.m6.rows"
+    ],
+    "writable": [
+      "verdict.one_liner",
+      "anomaly.waves[].events[].nature",
+      "anomaly.detector_summary[].detail",
+      "anomaly.verdict_impact",
+      "*.interpretation",
+      "holdings_distribution.key_takeaways",
+      "lineage.m4_notes",
+      "monitoring_wallets[].alert",
+      "monitoring_footer"
+    ]
+  },
+  "meta": {
+    "symbol": "ZEST",
+    "name": "Zest Protocol",
+    "contract_address": "0x5506599c722389a60580b5213ea1da60d64754a1",
+    "chain": "BSC",
+    "chain_id": "56",
+    "alpha_listing_date_utc": "2026-05-19",
+    "total_supply": 1000000000,
+    "circulating_supply": 146000000,
+    "circ_ratio": 0.146,
+    "alpha_vol_24h_usd": 32081242.652501397,
+    "token_type_initial": "VC_LIKELY",
+    "single_chain": true
+  },
+  "tier_classification": {
+    "tier": "S1",
+    "s1_date": "2026-05-19",
+    "s2_date": null,
+    "s3_date": null
+  },
+  "evidence_graph": {
+    "evt_001": {
+      "kind": "event",
+      "type": "mint",
+      "ts": 1771483308,
+      "amount": 1000000000,
+      "from_addr": "0x0000000000000000000000000000000000000000",
+      "to_addr": "0x3a6dc528316bbaa2d72a7cb846c80aed995ef390",
+      "tx_hash": null,
+      "usd_value": null,
+      "notes": null
+    },
+    "evt_002": {
+      "kind": "event",
+      "type": "deployer_outflow",
+      "ts": 1771483416,
+      "amount": 1000000000.0,
+      "from_addr": "0x3a6dc528316bbaa2d72a7cb846c80aed995ef390",
+      "to_addr": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+      "tx_hash": null,
+      "usd_value": null,
+      "notes": null
+    },
+    "evt_003": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1777969969,
+      "amount": 268300000.0,
+      "from_addr": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+      "to_addr": "0x6c0ee87e32eab69b14d5be07b44aed8efb4a60a0",
+      "tx_hash": null,
+      "usd_value": null,
+      "notes": null
+    },
+    "evt_004": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779102718,
+      "amount": 250000000.0,
+      "from_addr": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+      "to_addr": "0x0e30a0d5e6b39c49f60c517c0707a614583f673b",
+      "tx_hash": null,
+      "usd_value": null,
+      "notes": null
+    },
+    "evt_005": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1777969969,
+      "amount": 248200000.0,
+      "from_addr": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+      "to_addr": "0x010d972dffee2394ca65681935ea6c7a6b9ea06f",
+      "tx_hash": null,
+      "usd_value": null,
+      "notes": null
+    },
+    "evt_006": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1777968878,
+      "amount": 223500000.0,
+      "from_addr": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+      "to_addr": "0x49b6c390c22f81e32f6289e9489803ca1d172329",
+      "tx_hash": null,
+      "usd_value": null,
+      "notes": null
+    },
+    "evt_007": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1777969969,
+      "amount": 10000000.0,
+      "from_addr": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+      "to_addr": "0xd450e2831d1e25bb0f410e608a57ccba6ef0e0f0",
+      "tx_hash": null,
+      "usd_value": null,
+      "notes": null
+    },
+    "evt_008": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779440949,
+      "amount": 760021.7552930122,
+      "from_addr": "0x238a358808379702088667322f80ac48bad5e6c4",
+      "to_addr": "0x94345e87182670cf4b47bb7c2ed7293c5127c838",
+      "tx_hash": "0xb336b96dab01cbd8943696e1809112e91dd47c9d6ad8289ffc94a645b8185a75",
+      "usd_value": 124035.55046381961,
+      "notes": null
+    },
+    "evt_009": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779324607,
+      "amount": 675221.6830042204,
+      "from_addr": "0xc80633843f6e00bbc63dd4b2383acf3c4586e799",
+      "to_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "tx_hash": "0x6ec8d7f3eaebfed53ccab7eec2a3543d3c8aaa472b6a7fc1b7f7d23296007480",
+      "usd_value": 110196.17866628878,
+      "notes": null
+    },
+    "evt_010": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779289448,
+      "amount": 672468.252211361,
+      "from_addr": "0xdffa88b07c318e314c39c88afda226e95906f321",
+      "to_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "tx_hash": "0xb8d11a0800ca603979bea9bedf0aae65da2011d10b1e0ef257d3e43c529cdb7c",
+      "usd_value": 109746.81876089412,
+      "notes": null
+    },
+    "evt_011": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779289384,
+      "amount": 672468.252211361,
+      "from_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "to_addr": "0xdffa88b07c318e314c39c88afda226e95906f321",
+      "tx_hash": "0xd4354ce31294a99bfe7770e1fd4b76d2b16eadde3d7e7dee5f800d7a4ad77d70",
+      "usd_value": 109746.81876089412,
+      "notes": null
+    },
+    "evt_012": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779526214,
+      "amount": 385752.6496376,
+      "from_addr": "0xe3d36a94661a826bf2a070eaee2fd6c2d60eb777",
+      "to_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "tx_hash": "0x332b043040341c8431e53bb4673dfb2f7cd339b131c17845ade3010e399a7ee6",
+      "usd_value": 62954.83242085632,
+      "notes": null
+    },
+    "evt_013": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779526057,
+      "amount": 385752.6496376,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0xe3d36a94661a826bf2a070eaee2fd6c2d60eb777",
+      "tx_hash": "0x0bd77f85fd34a056ac0dd8d8520f82c7f3b302d58cd05fade212eb9ca40d8f92",
+      "usd_value": 62954.83242085632,
+      "notes": null
+    },
+    "evt_014": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779526603,
+      "amount": 350000.0,
+      "from_addr": "0x13beb6b127d051cbda1f0818635b953e32d0927b",
+      "to_addr": "0x63c45fa03a2ad0551997ac7824d8976be46dbe49",
+      "tx_hash": "0x83ce81f051099aa8199a6471e86fdd9e1fbc379df3f265cc428e115e00174109",
+      "usd_value": 57120.00000000001,
+      "notes": null
+    },
+    "evt_015": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779527137,
+      "amount": 345200.0,
+      "from_addr": "0x63c45fa03a2ad0551997ac7824d8976be46dbe49",
+      "to_addr": "0x13beb6b127d051cbda1f0818635b953e32d0927b",
+      "tx_hash": "0xa4239028fc4ab8a1bb738430ea92f5e1b178f67848386bc96bf775ea32cb9dac",
+      "usd_value": 56336.64000000001,
+      "notes": null
+    },
+    "evt_016": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779456732,
+      "amount": 289244.43921435124,
+      "from_addr": "0x63c45fa03a2ad0551997ac7824d8976be46dbe49",
+      "to_addr": "0x13beb6b127d051cbda1f0818635b953e32d0927b",
+      "tx_hash": "0xdc638d5840a5e6cd6239c8bdb1857818217e910a8b03a6667c5dd78bb3f5e70c",
+      "usd_value": 47204.69247978213,
+      "notes": null
+    },
+    "evt_017": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779285784,
+      "amount": 282221.8407646285,
+      "from_addr": "0xdffa88b07c318e314c39c88afda226e95906f321",
+      "to_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "tx_hash": "0x7a3f526c8094cb2d9358b5726e5f9f1463dd8e5c21d4bbe9fbc6c89e175835d6",
+      "usd_value": 46058.604412787376,
+      "notes": null
+    },
+    "evt_018": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779287015,
+      "amount": 266118.061396957,
+      "from_addr": "0x238a358808379702088667322f80ac48bad5e6c4",
+      "to_addr": "0xe18c5683978ec8d932e02a2857e3c5544a898f8e",
+      "tx_hash": "0x4a9d2af14a5f739f95d2be0fa5756966776af3428e047a5fbac2a1c32bc7a9bd",
+      "usd_value": 43430.46761998339,
+      "notes": null
+    },
+    "evt_019": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779285861,
+      "amount": 263368.98189539724,
+      "from_addr": "0x02231f8bdc8565ebd7b838f6c39c6ad87356fd8f",
+      "to_addr": "0x8f10b468b06c6fd214b65f87778827f7d113f996",
+      "tx_hash": "0xd5597d0ecf0cf5a6465805eefcd63e1dfdc8c5393038b8acf3a6a119b2de110e",
+      "usd_value": 42981.817845328835,
+      "notes": null
+    },
+    "evt_020": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779361248,
+      "amount": 252610.08000000002,
+      "from_addr": "0x53f78a071d04224b8e254e243fffc6d9f2f3fa23",
+      "to_addr": "0x8dac80ce96f69f9762bc450faa4d7fbd5891ae18",
+      "tx_hash": "0x86260c4816227be02153230a2cf595b49855762155b9b58ed45d0228bb5a5e49",
+      "usd_value": 41225.96505600001,
+      "notes": null
+    },
+    "evt_021": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779465806,
+      "amount": 239997.03000000003,
+      "from_addr": "0xeeb947edccc21258f3d28cb5ea7bbddde88500c0",
+      "to_addr": "0x108c062126c74adfd5c5a1b09d8552080ce827b1",
+      "tx_hash": "0x400975df843f21c6690bcf7f9ba96e9ff989f8f0e87d47c436a815246ed1b8c1",
+      "usd_value": 39167.515296000005,
+      "notes": null
+    },
+    "evt_022": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779464970,
+      "amount": 239997.03000000003,
+      "from_addr": "0x53f78a071d04224b8e254e243fffc6d9f2f3fa23",
+      "to_addr": "0xeeb947edccc21258f3d28cb5ea7bbddde88500c0",
+      "tx_hash": "0xf4ddda528f42c59ed7d8ec544518e33cccd2ad00943604b92c764a5d2e7b974d",
+      "usd_value": 39167.515296000005,
+      "notes": null
+    },
+    "evt_023": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296529,
+      "amount": 234194.44928144864,
+      "from_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "to_addr": "0x6d299f4bad5392af1e55e3e86a0339399543032b",
+      "tx_hash": "0x51d113a3edb36cdee13e1d3eeccf45eb2e56a04502aabf5c3d6c76aaa5932b4d",
+      "usd_value": 38220.534122732424,
+      "notes": null
+    },
+    "evt_024": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296481,
+      "amount": 234194.44928144864,
+      "from_addr": "0x6d299f4bad5392af1e55e3e86a0339399543032b",
+      "to_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "tx_hash": "0x1a1f11e7007789f410ac82d71181635095dcac07a4760474eb24168423da3038",
+      "usd_value": 38220.534122732424,
+      "notes": null
+    },
+    "evt_025": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779325708,
+      "amount": 226097.14997534401,
+      "from_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "to_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "tx_hash": "0x4bc3af8e0a35264c4fa26a7219b3d0a5e305b20ca5498e84d81830b5157cfcd8",
+      "usd_value": 36899.054875976144,
+      "notes": null
+    },
+    "evt_026": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779325705,
+      "amount": 226097.14997534401,
+      "from_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "to_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "tx_hash": "0xc7b468e656c08f9b39ba9fa83555855d231a31c705eb5cf77964fefea6d2d0de",
+      "usd_value": 36899.054875976144,
+      "notes": null
+    },
+    "evt_027": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779325599,
+      "amount": 226097.14997534401,
+      "from_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "to_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "tx_hash": "0x1aa044cba28147b4e5fe8741cd1b77c827ba131536b47bb3ff2183cd3e6445e3",
+      "usd_value": 36899.054875976144,
+      "notes": null
+    },
+    "evt_028": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779325596,
+      "amount": 226097.14997534401,
+      "from_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "to_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "tx_hash": "0xd12a3bdf39105235350dd971472fb5a9fc9b3c69bd0bd0301ebe4c00e0c43e6e",
+      "usd_value": 36899.054875976144,
+      "notes": null
+    },
+    "evt_029": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296880,
+      "amount": 219582.5208295106,
+      "from_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "to_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "tx_hash": "0x3854f6f02eec1ca6f660cabef045059f170820350d97624c5f8cb30d4816c3bd",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_030": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296877,
+      "amount": 219582.5208295106,
+      "from_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "to_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "tx_hash": "0xca6fe2c6635127449782737df6c279ecd82381a198af7672232a9fb848631826",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_031": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296873,
+      "amount": 219582.5208295106,
+      "from_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "to_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "tx_hash": "0x964e76ff4424dbccf75c2deb3973826b18982b06e6cc29830495e850253f6e6f",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_032": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296864,
+      "amount": 219582.5208295106,
+      "from_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "to_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "tx_hash": "0xe5ca0f31ebf07ae461e20b3bb234052666510af53851f5beed80df7776b5bb32",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_033": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296841,
+      "amount": 219582.5208295106,
+      "from_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "to_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "tx_hash": "0xd9bd0137673cec0dd0e6e81c34bda7ee494b8d7ca383ceee14a9fdfc409a38c8",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_034": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296838,
+      "amount": 219582.5208295106,
+      "from_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "to_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "tx_hash": "0x98db36729533b911003f3d04c1d64e1a930235ee30e4e840ab6313f5f59c46d4",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_035": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296837,
+      "amount": 219582.5208295106,
+      "from_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "to_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "tx_hash": "0xebef9c2c110cb329cc4c59ecd80c460dddaa9131355ba0486c754dc8b6f2ca68",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_036": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296834,
+      "amount": 219582.5208295106,
+      "from_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "to_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "tx_hash": "0x4ba969806b9e1d26cc7d3b1ad03ae564a3e0cda4de530bf9c2254709ed9e90c7",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_037": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296670,
+      "amount": 219582.5208295106,
+      "from_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "to_addr": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+      "tx_hash": "0x4fe2a6176f50ebf093724dfc1782224219a540a4edb50fccb5a2481ab789d9c5",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_038": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296584,
+      "amount": 219582.5208295106,
+      "from_addr": "0x6d299f4bad5392af1e55e3e86a0339399543032b",
+      "to_addr": "0xba7dac11883535368d1de42bb0ecfd2ed9eecce7",
+      "tx_hash": "0x94d7bb21b4f57604d32c98a4ecd11444d2f8e9b0bb1681867433bed6fd78ec37",
+      "usd_value": 35835.86739937613,
+      "notes": null
+    },
+    "evt_039": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779324163,
+      "amount": 203890.26286818,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0xc62082f140165e0e5a90a64b255f46717512e6ac2f2d949f3972f2e9fbb8f371",
+      "usd_value": 33274.890900086975,
+      "notes": null
+    },
+    "evt_040": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779324163,
+      "amount": 203890.26286818,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xc62082f140165e0e5a90a64b255f46717512e6ac2f2d949f3972f2e9fbb8f371",
+      "usd_value": 33274.890900086975,
+      "notes": null
+    },
+    "evt_041": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779369902,
+      "amount": 199998.0,
+      "from_addr": "0x4982085c9e2f89f2ecb8131eca71afad896e89cb",
+      "to_addr": "0xcc7eae6bf5a0d5aa49e1af66df971b9c92f3b191",
+      "tx_hash": "0xa910d2978d03131a40a26fcdc705ef7cbceba0c0785be0ac725b34a3fb7723ae",
+      "usd_value": 32639.673600000002,
+      "notes": null
+    },
+    "evt_042": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779447645,
+      "amount": 187771.46919053444,
+      "from_addr": "0x53f78a071d04224b8e254e243fffc6d9f2f3fa23",
+      "to_addr": "0x69be413d648ae00f0fbd9856f1355e22b36ee5e0",
+      "tx_hash": "0x1825ffed318421518cd719d2c4e9baa6cfdf49fb4f764466488749ffdad3d43c",
+      "usd_value": 30644.303771895222,
+      "notes": null
+    },
+    "evt_043": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779509396,
+      "amount": 185668.10423020666,
+      "from_addr": "0xb68ca2300e842bb5d446e8a9e308f639018661b6",
+      "to_addr": "0xffd46e596d89cf069ee93f2765ced64ad038e7c5",
+      "tx_hash": "0x6e95c75e90546e1470002a8bf375125fdb8e158b58603f841449ba15c9aeaa04",
+      "usd_value": 30301.03461036973,
+      "notes": null
+    },
+    "evt_044": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779430414,
+      "amount": 183756.79019260997,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x54c232fbcbeef5d151218e2d36bee2ea98d3b10c306e3d0637e00fae70f5fb62",
+      "usd_value": 29989.10815943395,
+      "notes": null
+    },
+    "evt_045": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779430414,
+      "amount": 183756.79019260997,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x54c232fbcbeef5d151218e2d36bee2ea98d3b10c306e3d0637e00fae70f5fb62",
+      "usd_value": 29989.10815943395,
+      "notes": null
+    },
+    "evt_046": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779287826,
+      "amount": 183545.02676319607,
+      "from_addr": "0x238a358808379702088667322f80ac48bad5e6c4",
+      "to_addr": "0xe18c5683978ec8d932e02a2857e3c5544a898f8e",
+      "tx_hash": "0xbc326254e35869bb1e9cc7bcc07b4bb7d30b62f798bf697e0a9a4ac16a66139c",
+      "usd_value": 29954.548367753603,
+      "notes": null
+    },
+    "evt_047": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779286068,
+      "amount": 182859.63274897975,
+      "from_addr": "0x9021069ce6842ac73d824941f841810e7d73f4c5",
+      "to_addr": "0x53f78a071d04224b8e254e243fffc6d9f2f3fa23",
+      "tx_hash": "0x924214cd17c6c87f9364d1aa181bb0f8d14982f20b08723b7cad85f486c5e8b0",
+      "usd_value": 29842.6920646335,
+      "notes": null
+    },
+    "evt_048": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779361248,
+      "amount": 179780.4127796254,
+      "from_addr": "0x53f78a071d04224b8e254e243fffc6d9f2f3fa23",
+      "to_addr": "0x69be413d648ae00f0fbd9856f1355e22b36ee5e0",
+      "tx_hash": "0x717f08799257a9e1622a0da1717dd93cb2067e7d4fe029ff31d4f5ef1bae8a10",
+      "usd_value": 29340.163365634864,
+      "notes": null
+    },
+    "evt_049": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779287003,
+      "amount": 162218.86286273864,
+      "from_addr": "0x485d922739bcfcf9756dd0e8b5d9f11e5736fda5",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x68e038f069e3abf7b47472969cfdde2831f3adb87fbb4a99db04515625205b99",
+      "usd_value": 26474.11841919895,
+      "notes": null
+    },
+    "evt_050": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779286995,
+      "amount": 162218.86286273,
+      "from_addr": "0x485d922739bcfcf9756dd0e8b5d9f11e5736fda5",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x18f95c2caf58ce15ff24806969c32639f2c632606044657249aa5fcf2be31b5d",
+      "usd_value": 26474.118419197537,
+      "notes": null
+    },
+    "evt_051": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779286995,
+      "amount": 162218.86286273,
+      "from_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "to_addr": "0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae",
+      "tx_hash": "0x18f95c2caf58ce15ff24806969c32639f2c632606044657249aa5fcf2be31b5d",
+      "usd_value": 26474.118419197537,
+      "notes": null
+    },
+    "evt_052": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779286995,
+      "amount": 162218.86286273,
+      "from_addr": "0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae",
+      "to_addr": "0x09ad820aac5779683b481c4674208a4e1b024afa",
+      "tx_hash": "0x18f95c2caf58ce15ff24806969c32639f2c632606044657249aa5fcf2be31b5d",
+      "usd_value": 26474.118419197537,
+      "notes": null
+    },
+    "evt_053": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779288903,
+      "amount": 161222.16173640848,
+      "from_addr": "0x3156020dff8d99af1ddc523ebdfb1ad2018554a0",
+      "to_addr": "0xc590175e458b83680867afd273527ff58f74c02b",
+      "tx_hash": "0x82030ffb047949c1785d2d873f07c5108d1a9c6de6948a2def06dac4ee5a91b4",
+      "usd_value": 26311.456795381866,
+      "notes": null
+    },
+    "evt_054": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779288903,
+      "amount": 161222.16173640848,
+      "from_addr": "0xc590175e458b83680867afd273527ff58f74c02b",
+      "to_addr": "0x52f1134be5fbae05b9f6cd11b2f8bf91512b4810",
+      "tx_hash": "0x82030ffb047949c1785d2d873f07c5108d1a9c6de6948a2def06dac4ee5a91b4",
+      "usd_value": 26311.456795381866,
+      "notes": null
+    },
+    "evt_055": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779323650,
+      "amount": 160419.46864228,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x78878553c9c4fa4ff8e0955cfd86557224cb640d721c622b4ee5ecc9ec7767a8",
+      "usd_value": 26180.4572824201,
+      "notes": null
+    },
+    "evt_056": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779323650,
+      "amount": 160419.46864228,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x78878553c9c4fa4ff8e0955cfd86557224cb640d721c622b4ee5ecc9ec7767a8",
+      "usd_value": 26180.4572824201,
+      "notes": null
+    },
+    "evt_057": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779323642,
+      "amount": 160419.46864228,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x7b10ee671d116b1acea6b123d4057d7de2ebce471e46d7f8ecc97869ed73380e",
+      "usd_value": 26180.4572824201,
+      "notes": null
+    },
+    "evt_058": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779323642,
+      "amount": 160419.46864228,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x7b10ee671d116b1acea6b123d4057d7de2ebce471e46d7f8ecc97869ed73380e",
+      "usd_value": 26180.4572824201,
+      "notes": null
+    },
+    "evt_059": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779345481,
+      "amount": 159968.48332511,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x04bb05157ec5b54095bb688279b4b76b4f9aefe54ff6ea6d2785d7beb3dbd7fe",
+      "usd_value": 26106.85647865795,
+      "notes": null
+    },
+    "evt_060": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779345481,
+      "amount": 159968.48332511,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x04bb05157ec5b54095bb688279b4b76b4f9aefe54ff6ea6d2785d7beb3dbd7fe",
+      "usd_value": 26106.85647865795,
+      "notes": null
+    },
+    "evt_061": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779359684,
+      "amount": 158522.98022021615,
+      "from_addr": "0x6d299f4bad5392af1e55e3e86a0339399543032b",
+      "to_addr": "0xadc4537732a7645cb1ceabf8d40e6e6c7589662a",
+      "tx_hash": "0x44962acdacf023e4b2171eed73f8e39d5b449a9e07afc7cd29d7add03f7341f5",
+      "usd_value": 25870.950371939278,
+      "notes": null
+    },
+    "evt_062": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779352563,
+      "amount": 156416.55187285834,
+      "from_addr": "0x081613bb04825775cc8b32f65ad34e2d1fa50f7d",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x2fa04bd7643d6b4bcb670b30cf749154709775c599c7b5f39e2b3a3adfd39a43",
+      "usd_value": 25527.181265650484,
+      "notes": null
+    },
+    "evt_063": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779377470,
+      "amount": 150000.0,
+      "from_addr": "0x93b996f91e60502af0c9a4d7d94a8668257d4800",
+      "to_addr": "0xd91b0d7c196926ba9504e35ec9cdea1e02e5ec18",
+      "tx_hash": "0xe1c5123ab21c1466c28c4afe2cedf047564753f3b9c74a89286d240d068ac3ff",
+      "usd_value": 24480.0,
+      "notes": null
+    },
+    "evt_064": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779447645,
+      "amount": 147746.3,
+      "from_addr": "0x53f78a071d04224b8e254e243fffc6d9f2f3fa23",
+      "to_addr": "0x8dac80ce96f69f9762bc450faa4d7fbd5891ae18",
+      "tx_hash": "0x5654b4cc9916e5b5c68272d6fea39dbff6b3ac0500e8c97dccd1b2f642eb46cf",
+      "usd_value": 24112.19616,
+      "notes": null
+    },
+    "evt_065": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779323605,
+      "amount": 142595.08323757,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0xa11ed6799d432105795fb7a035c395ee0189d2dda6f7de93a5e7426801918090",
+      "usd_value": 23271.517584371428,
+      "notes": null
+    },
+    "evt_066": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779323605,
+      "amount": 142595.08323757,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xa11ed6799d432105795fb7a035c395ee0189d2dda6f7de93a5e7426801918090",
+      "usd_value": 23271.517584371428,
+      "notes": null
+    },
+    "evt_067": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779303654,
+      "amount": 126635.36035864,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x584db849704ed14d1351612037eda73f87354e2f1e0f9e7276e87c9ffe06a5a2",
+      "usd_value": 20666.89081053005,
+      "notes": null
+    },
+    "evt_068": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779303654,
+      "amount": 126635.36035864,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x584db849704ed14d1351612037eda73f87354e2f1e0f9e7276e87c9ffe06a5a2",
+      "usd_value": 20666.89081053005,
+      "notes": null
+    },
+    "evt_069": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779306332,
+      "amount": 126188.69596816,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0xb2725a72adc04aab9e919d21266ec21e009bd0b9500953529dcd9b16e91088e5",
+      "usd_value": 20593.995182003713,
+      "notes": null
+    },
+    "evt_070": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779306332,
+      "amount": 126188.69596816,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xb2725a72adc04aab9e919d21266ec21e009bd0b9500953529dcd9b16e91088e5",
+      "usd_value": 20593.995182003713,
+      "notes": null
+    },
+    "evt_071": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779306200,
+      "amount": 126188.69596816,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x04152aa092a9d217ea95b357778af3e449153b68e33d62c3387cf381736c4479",
+      "usd_value": 20593.995182003713,
+      "notes": null
+    },
+    "evt_072": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779306200,
+      "amount": 126188.69596816,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x04152aa092a9d217ea95b357778af3e449153b68e33d62c3387cf381736c4479",
+      "usd_value": 20593.995182003713,
+      "notes": null
+    },
+    "evt_073": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779302737,
+      "amount": 124686.32605348,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x636680f6b46a11ec1f339b22f2f4f6152d15b8f32784d7852dcace80f177be43",
+      "usd_value": 20348.808411927937,
+      "notes": null
+    },
+    "evt_074": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779302737,
+      "amount": 124686.32605348,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x636680f6b46a11ec1f339b22f2f4f6152d15b8f32784d7852dcace80f177be43",
+      "usd_value": 20348.808411927937,
+      "notes": null
+    },
+    "evt_075": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779491517,
+      "amount": 123992.04489063392,
+      "from_addr": "0x88cbc58e412f7f266d519ddd185e4938cf30969a",
+      "to_addr": "0x21a600751bdb256488d6409324b7513898dbfd78",
+      "tx_hash": "0x55ae89775f7f59098cf12ff67564e5ed172c85ce5d4563192cc1443f127ce173",
+      "usd_value": 20235.501726151455,
+      "notes": null
+    },
+    "evt_076": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779420132,
+      "amount": 122377.331043,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0xc6c3cd8fbf7d4e5fed0863a09673e93d922c48f559d196e421872aee8ff77c5d",
+      "usd_value": 19971.9804262176,
+      "notes": null
+    },
+    "evt_077": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779420132,
+      "amount": 122377.331043,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xc6c3cd8fbf7d4e5fed0863a09673e93d922c48f559d196e421872aee8ff77c5d",
+      "usd_value": 19971.9804262176,
+      "notes": null
+    },
+    "evt_078": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779302047,
+      "amount": 121709.92590388999,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0xde2a68e7360ddb02a0828e0ad83c748e06250149c059f7940b9e562cfa183acc",
+      "usd_value": 19863.05990751485,
+      "notes": null
+    },
+    "evt_079": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779302047,
+      "amount": 121709.92590388999,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xde2a68e7360ddb02a0828e0ad83c748e06250149c059f7940b9e562cfa183acc",
+      "usd_value": 19863.05990751485,
+      "notes": null
+    },
+    "evt_080": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779305160,
+      "amount": 119820.393513,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0xf37319838453b37b73f9be97e07ee4d9b0adb388a89bbfae54d3d2156708801b",
+      "usd_value": 19554.6882213216,
+      "notes": null
+    },
+    "evt_081": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779305160,
+      "amount": 119820.393513,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xf37319838453b37b73f9be97e07ee4d9b0adb388a89bbfae54d3d2156708801b",
+      "usd_value": 19554.6882213216,
+      "notes": null
+    },
+    "evt_082": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779285861,
+      "amount": 118516.04185292874,
+      "from_addr": "0x8f10b468b06c6fd214b65f87778827f7d113f996",
+      "to_addr": "0x238a358808379702088667322f80ac48bad5e6c4",
+      "tx_hash": "0xd5597d0ecf0cf5a6465805eefcd63e1dfdc8c5393038b8acf3a6a119b2de110e",
+      "usd_value": 19341.81803039797,
+      "notes": null
+    },
+    "evt_083": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779297852,
+      "amount": 115210.63696062,
+      "from_addr": "0x238a358808379702088667322f80ac48bad5e6c4",
+      "to_addr": "0x625bef67951709efb5706ceb10ac034d484b144e",
+      "tx_hash": "0x9d692376979e58b89d65847a56ce26fc94bedf1849f05858aaa5d2c282c2fd07",
+      "usd_value": 18802.375951973187,
+      "notes": null
+    },
+    "evt_084": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779291878,
+      "amount": 113941.94948000001,
+      "from_addr": "0x653dd7677aea3030eab68c97ed3594bacf560158",
+      "to_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "tx_hash": "0xb9a97894857b72a875daa8b7d000863dee356781d3d257e1f7f073bf24ff3cb8",
+      "usd_value": 18595.326155136005,
+      "notes": null
+    },
+    "evt_085": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779296555,
+      "amount": 113767.14916,
+      "from_addr": "0x653dd7677aea3030eab68c97ed3594bacf560158",
+      "to_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "tx_hash": "0x2ab18c9b5e8c0c6b7324a8656d0a27af75eeefc1efc9ce66f125f6f6b4d306b0",
+      "usd_value": 18566.798742912,
+      "notes": null
+    },
+    "evt_086": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779295413,
+      "amount": 110805.5808504,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0xc27877668ce366d23921740ece93c08ef0a6b4a608f93bbb8b48699beca57ef9",
+      "usd_value": 18083.47079478528,
+      "notes": null
+    },
+    "evt_087": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779295413,
+      "amount": 110805.5808504,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xc27877668ce366d23921740ece93c08ef0a6b4a608f93bbb8b48699beca57ef9",
+      "usd_value": 18083.47079478528,
+      "notes": null
+    },
+    "evt_088": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779287057,
+      "amount": 110570.16143463588,
+      "from_addr": "0x238a358808379702088667322f80ac48bad5e6c4",
+      "to_addr": "0x723508dd82759d8350fcf96eed43b9d8801caadb",
+      "tx_hash": "0xcc94485bebc9e2ca624a783c7a0dafaa2027399c9dd1e93122261117d8dcae68",
+      "usd_value": 18045.05034613258,
+      "notes": null
+    },
+    "evt_089": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779287057,
+      "amount": 110570.07943453803,
+      "from_addr": "0x144d395b5562c742259932d2ee6e1d8d092a21b8",
+      "to_addr": "0x25af352f4490cb40f12bd5a881bdd99838cc9c14",
+      "tx_hash": "0x5092ace05afcae5b0cda2c49c0c6888f637cffd3b8f1fde5e5f8f7ae1546da8c",
+      "usd_value": 18045.036963716608,
+      "notes": null
+    },
+    "evt_090": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779287057,
+      "amount": 110570.07943453803,
+      "from_addr": "0x723508dd82759d8350fcf96eed43b9d8801caadb",
+      "to_addr": "0x144d395b5562c742259932d2ee6e1d8d092a21b8",
+      "tx_hash": "0xcc94485bebc9e2ca624a783c7a0dafaa2027399c9dd1e93122261117d8dcae68",
+      "usd_value": 18045.036963716608,
+      "notes": null
+    },
+    "evt_091": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779300718,
+      "amount": 107957.13113812845,
+      "from_addr": "0x3d90f66b534dd8482b181e24655a9e8265316be9",
+      "to_addr": "0x1e51e3caa9e2928b7aff4f697360974df058b358",
+      "tx_hash": "0x382eb5dd945eaf2f2128003427de7ace7b547ca74e356e5a894404f7270600a6",
+      "usd_value": 17618.603801742564,
+      "notes": null
+    },
+    "evt_092": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779378313,
+      "amount": 107657.047124,
+      "from_addr": "0x850ff4a5ea18d06b431ac984173395b6d00a435c",
+      "to_addr": "0x50df5521648520e15c5804109107d6cabb106273",
+      "tx_hash": "0xfeccfa211e68ae97644567074fe1b0c80cb04353e287559a0ed14ae84d339c50",
+      "usd_value": 17569.6300906368,
+      "notes": null
+    },
+    "evt_093": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779286978,
+      "amount": 107361.55204726319,
+      "from_addr": "0x67011fa7295ffc4c44caebafe6e7cd6d32baa24c",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xc179a1de86d0f94271e1aef2c3ccbd260d75779d8f9f81ea2e08599fb27d8c9c",
+      "usd_value": 17521.405294113352,
+      "notes": null
+    },
+    "evt_094": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779286973,
+      "amount": 107361.55204726319,
+      "from_addr": "0x67011fa7295ffc4c44caebafe6e7cd6d32baa24c",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xab3dacfec53515bd09169dd3234b9b6b699940b468e660633498c27c9d954e8d",
+      "usd_value": 17521.405294113352,
+      "notes": null
+    },
+    "evt_095": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779323621,
+      "amount": 106946.31242818001,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x9002feb4f85963213abb134efa9426438345e4f08bbee8ba22a77163f678d146",
+      "usd_value": 17453.63818827898,
+      "notes": null
+    },
+    "evt_096": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779323621,
+      "amount": 106946.31242818001,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x9002feb4f85963213abb134efa9426438345e4f08bbee8ba22a77163f678d146",
+      "usd_value": 17453.63818827898,
+      "notes": null
+    },
+    "evt_097": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779286967,
+      "amount": 105759.14082267717,
+      "from_addr": "0x67011fa7295ffc4c44caebafe6e7cd6d32baa24c",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0xee0ce9df04a87c00099cfdea8610c87d823bd80e45e94e4eb5f04251e9e28bca",
+      "usd_value": 17259.891782260915,
+      "notes": null
+    },
+    "evt_098": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779293898,
+      "amount": 103819.35003850001,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x7c2ef97cb5e2cbae9b2aaa2cd7661cd7ed8237a1aa992268bf718f01be33478e",
+      "usd_value": 16943.3179262832,
+      "notes": null
+    },
+    "evt_099": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779293898,
+      "amount": 103819.35003850001,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x7c2ef97cb5e2cbae9b2aaa2cd7661cd7ed8237a1aa992268bf718f01be33478e",
+      "usd_value": 16943.3179262832,
+      "notes": null
+    },
+    "evt_100": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779288921,
+      "amount": 102948.36168314,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x40166e694d2f90241bf054e0a9e1aa2138cbc5dae0b7f6193bbc73e3bed8bc31",
+      "usd_value": 16801.17262668845,
+      "notes": null
+    },
+    "evt_101": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779288921,
+      "amount": 102948.36168314,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x40166e694d2f90241bf054e0a9e1aa2138cbc5dae0b7f6193bbc73e3bed8bc31",
+      "usd_value": 16801.17262668845,
+      "notes": null
+    },
+    "evt_102": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779458911,
+      "amount": 101411.25762,
+      "from_addr": "0x653dd7677aea3030eab68c97ed3594bacf560158",
+      "to_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "tx_hash": "0x14d682b05a6d49d022b884064f7426c63327f1906a6051d4f4387f90e6cee8c3",
+      "usd_value": 16550.317243584002,
+      "notes": null
+    },
+    "evt_103": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779359787,
+      "amount": 100399.43478000001,
+      "from_addr": "0x653dd7677aea3030eab68c97ed3594bacf560158",
+      "to_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "tx_hash": "0x432d4ffa585603e9f2d166463a94dee6f55df1552a615aa63e728c57cf0a2d20",
+      "usd_value": 16385.187756096002,
+      "notes": null
+    },
+    "evt_104": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779286037,
+      "amount": 100228.67369164,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x955f5fc7fdcfb70775002533f528699e0d0b1b9b0f96e907b5a5ce251298d4ef",
+      "usd_value": 16357.319546475648,
+      "notes": null
+    },
+    "evt_105": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779286037,
+      "amount": 100228.67369164,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x955f5fc7fdcfb70775002533f528699e0d0b1b9b0f96e907b5a5ce251298d4ef",
+      "usd_value": 16357.319546475648,
+      "notes": null
+    },
+    "evt_106": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779543608,
+      "amount": 100047.36767003001,
+      "from_addr": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db",
+      "to_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "tx_hash": "0x70b280476707b41c5731f6422198c6c8ee17857234106f241bb656c6488b5c61",
+      "usd_value": 16327.7304037489,
+      "notes": null
+    },
+    "evt_107": {
+      "kind": "event",
+      "type": "recent_transfer",
+      "ts": 1779543608,
+      "amount": 100047.36767003001,
+      "from_addr": "0x6aba0315493b7e6989041c91181337b662fb1b90",
+      "to_addr": "0xb300000b72deaeb607a12d5f54773d1c19c7028d",
+      "tx_hash": "0x70b280476707b41c5731f6422198c6c8ee17857234106f241bb656c6488b5c61",
+      "usd_value": 16327.7304037489,
+      "notes": null
+    },
+    "m6_001": {
+      "kind": "m6",
+      "type": "rule11_full_dumper",
+      "addr": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+      "received": 1000000000.0,
+      "balance": 0.0,
+      "dumped_pct": 100.0,
+      "source_section": "rule_11",
+      "ts_received": 1771483416,
+      "ts_first_dump": null,
+      "usd_value": null
+    },
+    "node_001": {
+      "kind": "node",
+      "type": "deployer",
+      "addr": "0x3a6dc528316bbaa2d72a7cb846c80aed995ef390",
+      "balance": null,
+      "usd_value": null,
+      "label_hint": "项目方钱包 (分发追溯起点)"
+    },
+    "node_002": {
+      "kind": "node",
+      "type": "lp_pool",
+      "addr": "0x6d299f4bad5392af1e55e3e86a0339399543032b",
+      "balance": null,
+      "usd_value": null,
+      "label_hint": "DEX 主池"
+    },
+    "node_003": {
+      "kind": "node",
+      "type": "dumper",
+      "addr": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+      "balance": 0.0,
+      "usd_value": null,
+      "label_hint": "内幕接收方, 已分 100%"
+    },
+    "node_004": {
+      "kind": "node",
+      "type": "retail_fanout",
+      "addr": "0x6c0ee87e32eab69b14d5be07b44aed8efb4a60a0",
+      "balance": null,
+      "usd_value": null,
+      "label_hint": "分发下游 (来自 0x1de143f2…)"
+    },
+    "node_005": {
+      "kind": "node",
+      "type": "retail_fanout",
+      "addr": "0x0e30a0d5e6b39c49f60c517c0707a614583f673b",
+      "balance": null,
+      "usd_value": null,
+      "label_hint": "分发下游 (来自 0x1de143f2…)"
+    },
+    "node_006": {
+      "kind": "node",
+      "type": "retail_fanout",
+      "addr": "0x010d972dffee2394ca65681935ea6c7a6b9ea06f",
+      "balance": null,
+      "usd_value": null,
+      "label_hint": "分发下游 (来自 0x1de143f2…)"
+    }
+  },
+  "lineage": {
+    "_pipeline_source": "rule_11_backward_trace",
+    "deployer_addr": "0x3a6dc528316bbaa2d72a7cb846c80aed995ef390",
+    "mint_evt_ref": "evt_001",
+    "m6": {
+      "rows": [
+        {
+          "m6_ref": "m6_001",
+          "addr_short": "0x1de143f2",
+          "addr_full": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+          "received_from_deployer": 1000000000.0,
+          "current_balance": 0.0,
+          "dumped_pct": 100.0,
+          "identity_narrative": "<LLM_NARRATIVE_PLACEHOLDER>",
+          "status_narrative": "<LLM_NARRATIVE_PLACEHOLDER>"
+        }
+      ],
+      "n_quiet": 0,
+      "n_partial_dumper": 0,
+      "n_full_dumper": 1
+    },
+    "m4_notes": [
+      "项目方分发追溯: 项目方钱包 0x3a6dc528... 于 2026-02-19 06:41 铸造 1,000,000,000 tokens, 上线前向 1 个内幕地址分发 1,000,000,000. 潜伏钱包 (未分发) 0 个, 合计持仓 0 tokens.",
+      "<LLM_NARRATIVE_PLACEHOLDER>",
+      "<LLM_NARRATIVE_PLACEHOLDER>"
+    ],
+    "dumper_destinations_summary": {
+      "0x1de143f252dda0a6de2df7deb659f12209de0005": {
+        "n_destinations": 5,
+        "top_destination_addr": "0x6c0ee87e32eab69b14d5be07b44aed8efb4a60a0",
+        "top_destination_evt_ref": "evt_003"
+      }
+    },
+    "flowchart_nodes": [
+      {
+        "node_ref": "node_001",
+        "role": "DEPLOYER",
+        "addr_short": "0x3a6dc528…"
+      },
+      {
+        "node_ref": "node_002",
+        "role": "DEX_POOL",
+        "addr_short": "0x6d299f4b…"
+      },
+      {
+        "node_ref": "node_003",
+        "role": "RULE11_FULL",
+        "addr_short": "0x1de143f2…",
+        "dumped_pct": 100.0
+      },
+      {
+        "node_ref": "node_004",
+        "role": "DUMPER_DEST",
+        "addr_short": "0x6c0ee87e…"
+      },
+      {
+        "node_ref": "node_005",
+        "role": "OPERATOR_RELAY",
+        "addr_short": "0x0e30a0d5…"
+      },
+      {
+        "node_ref": "node_006",
+        "role": "OPERATOR_RELAY",
+        "addr_short": "0x010d972d…"
+      }
+    ],
+    "flowchart_edges": [
+      {
+        "from_node_ref": "node_001",
+        "to_node_ref": "node_003",
+        "amount": 1000000000.0,
+        "evt_ref": null,
+        "kind": "pre_launch_outflow"
+      },
+      {
+        "from_node_ref": "node_003",
+        "to_node_ref": "node_004",
+        "amount": 268300000.0,
+        "evt_ref": "evt_003",
+        "kind": "dumper_distribution"
+      },
+      {
+        "from_node_ref": "node_003",
+        "to_node_ref": "node_005",
+        "amount": 250000000.0,
+        "evt_ref": "evt_004",
+        "kind": "dumper_distribution"
+      },
+      {
+        "from_node_ref": "node_003",
+        "to_node_ref": "node_006",
+        "amount": 248200000.0,
+        "evt_ref": "evt_005",
+        "kind": "dumper_distribution"
+      }
+    ]
+  },
+  "anomaly": {
+    "waves": [
+      {
+        "emoji": "🟠",
+        "title": "第一波 上线前 OTC 预分发",
+        "ts_range": "2026-02-19 ~ 2026-02-19 UTC",
+        "status_text": "已完成",
+        "events": [
+          {
+            "evt_ref": "evt_002",
+            "ts": "2026-02-19 06:43",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "项目方 `0x3a6dc528…` → `0x1de143f2…`",
+            "amount": "1,000,000,000 tokens",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          }
+        ],
+        "_pipeline_locked_fields": [
+          "evt_ref",
+          "ts",
+          "from_to",
+          "amount"
+        ]
+      },
+      {
+        "emoji": "🔴",
+        "title": "第二波 分发主体向下游分发",
+        "ts_range": "2026-05-05 ~ 2026-05-18 UTC",
+        "status_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+        "events": [
+          {
+            "evt_ref": "evt_003",
+            "ts": "2026-05-05 08:32",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0x1de143f2…` → `0x6c0ee87e…`",
+            "amount": "268,300,000 tokens",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          },
+          {
+            "evt_ref": "evt_004",
+            "ts": "2026-05-18 11:11",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0x1de143f2…` → `0x0e30a0d5…`",
+            "amount": "250,000,000 tokens",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          },
+          {
+            "evt_ref": "evt_005",
+            "ts": "2026-05-05 08:32",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0x1de143f2…` → `0x010d972d…`",
+            "amount": "248,200,000 tokens",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          }
+        ],
+        "_pipeline_locked_fields": [
+          "evt_ref",
+          "ts",
+          "from_to",
+          "amount"
+        ]
+      },
+      {
+        "emoji": "🟠",
+        "title": "第三波 近 72h 异常活动",
+        "ts_range": "2026-05-20 ~ 2026-05-23 UTC",
+        "status_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+        "events": [
+          {
+            "evt_ref": "evt_008",
+            "ts": "2026-05-22 09:09",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0x238a3588…` → `0x94345e87…`",
+            "amount": "$124,036",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          },
+          {
+            "evt_ref": "evt_009",
+            "ts": "2026-05-21 00:50",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0xc8063384…` → `0x73d8bd54…`",
+            "amount": "$110,196",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          },
+          {
+            "evt_ref": "evt_010",
+            "ts": "2026-05-20 15:04",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0xdffa88b0…` → `0x28e2ea09…`",
+            "amount": "$109,747",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          },
+          {
+            "evt_ref": "evt_011",
+            "ts": "2026-05-20 15:03",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0x28e2ea09…` → `0xdffa88b0…`",
+            "amount": "$109,747",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          },
+          {
+            "evt_ref": "evt_012",
+            "ts": "2026-05-23 08:50",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0xe3d36a94…` → `0x73d8bd54…`",
+            "amount": "$62,955",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          },
+          {
+            "evt_ref": "evt_013",
+            "ts": "2026-05-23 08:47",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0x73d8bd54…` → `0xe3d36a94…`",
+            "amount": "$62,955",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          },
+          {
+            "evt_ref": "evt_014",
+            "ts": "2026-05-23 08:56",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0x13beb6b1…` → `0x63c45fa0…`",
+            "amount": "$57,120",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          },
+          {
+            "evt_ref": "evt_015",
+            "ts": "2026-05-23 09:05",
+            "hours_ago_text": "<LLM_NARRATIVE_PLACEHOLDER>",
+            "from_to": "`0x63c45fa0…` → `0x13beb6b1…`",
+            "amount": "$56,337",
+            "nature": "<LLM_NARRATIVE_PLACEHOLDER>"
+          }
+        ],
+        "_pipeline_locked_fields": [
+          "evt_ref",
+          "ts",
+          "from_to",
+          "amount"
+        ]
+      }
+    ],
+    "rhythm": {
+      "title": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "waves": [
+        {
+          "name": "第一波 上线前 OTC 预分发",
+          "ts_text": "2026-02-19 ~ 2026-02-19 UTC",
+          "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+        },
+        {
+          "name": "第二波 分发主体向下游分发",
+          "ts_text": "2026-05-05 ~ 2026-05-18 UTC",
+          "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+        },
+        {
+          "name": "第三波 近 72h 异常活动",
+          "ts_text": "2026-05-20 ~ 2026-05-23 UTC",
+          "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+        }
+      ]
+    },
+    "verdict_impact": "<LLM_NARRATIVE_PLACEHOLDER>",
+    "detector_summary": [
+      {
+        "emoji": "🔴",
+        "label": "上线前内幕分发",
+        "count": 1,
+        "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+      },
+      {
+        "emoji": "🔴",
+        "label": "已分完内幕钱包",
+        "count": 1,
+        "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+      },
+      {
+        "emoji": "⚪",
+        "label": "潜伏钱包 (未分发)",
+        "count": 0,
+        "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+      },
+      {
+        "emoji": "🔴",
+        "label": "近 72h 异常大单 (truncated ≥100)",
+        "count": 100,
+        "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+      }
+    ]
+  },
+  "monitoring_wallets": [
+    {
+      "n": 1,
+      "addr_short": "0x3a6dc528",
+      "addr_full": "0x3a6dc528316bbaa2d72a7cb846c80aed995ef390",
+      "role": "项目方部署钱包",
+      "status_emoji": "🟡",
+      "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "monitor_level": "HIGH",
+      "monitor_score": 5,
+      "monitor_role_enum": "deployer",
+      "monitor_reason": "项目方部署 / 内幕分发钱包, 余额变化跟项目方动作直接关联",
+      "source_behaviors": [],
+      "trigger_summary": "大额 (≥ $10k) 转入 DEX 路由 或 CEX 充值时上报"
+    },
+    {
+      "n": 2,
+      "addr_short": "0x1de143f2",
+      "addr_full": "0x1de143f252dda0a6de2df7deb659f12209de0005",
+      "role": "已分完钱包 (已分 100%)",
+      "status_emoji": "🟢",
+      "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "monitor_level": "HIGH",
+      "monitor_score": 5,
+      "monitor_role_enum": "deployer",
+      "monitor_reason": "项目方部署 / 内幕分发钱包, 余额变化跟项目方动作直接关联",
+      "source_behaviors": [],
+      "trigger_summary": "大额 (≥ $10k) 转入 DEX 路由 或 CEX 充值时上报"
+    },
+    {
+      "n": 3,
+      "addr_short": "0x0e30a0d5",
+      "addr_full": "0x0e30a0d5e6b39c49f60c517c0707a614583f673b",
+      "role": "庄家中转地 (持 85.40% 总供应)",
+      "status_emoji": "🔴",
+      "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "monitor_level": "CRITICAL",
+      "monitor_score": 10,
+      "monitor_role_enum": "deployer",
+      "monitor_reason": "项目方部署 / 内幕分发钱包, 余额变化跟项目方动作直接关联",
+      "source_behaviors": [],
+      "trigger_summary": "任何一笔转出 / 接币立即上报 (关联: 无)"
+    },
+    {
+      "n": 4,
+      "addr_short": "0x010d972d",
+      "addr_full": "0x010d972dffee2394ca65681935ea6c7a6b9ea06f",
+      "role": "庄家中转地 (持 4.14% 总供应)",
+      "status_emoji": "🔴",
+      "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "monitor_level": "HIGH",
+      "monitor_score": 7,
+      "monitor_role_enum": "deployer",
+      "monitor_reason": "项目方部署 / 内幕分发钱包, 余额变化跟项目方动作直接关联",
+      "source_behaviors": [],
+      "trigger_summary": "大额 (≥ $10k) 转入 DEX 路由 或 CEX 充值时上报"
+    },
+    {
+      "n": 5,
+      "addr_short": "0x02231f8b",
+      "addr_full": "0x02231f8bdc8565ebd7b838f6c39c6ad87356fd8f",
+      "role": "近 72h 异常大单参与方",
+      "status_emoji": "🟡",
+      "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "monitor_level": "HIGH",
+      "monitor_score": 7,
+      "monitor_role_enum": "anomaly_participant",
+      "monitor_reason": "近 72h 异常大单的链上参与方, 当下正在动",
+      "source_behaviors": [],
+      "trigger_summary": "大额 (≥ $10k) 转入 DEX 路由 或 CEX 充值时上报"
+    },
+    {
+      "n": 6,
+      "addr_short": "0x081613bb",
+      "addr_full": "0x081613bb04825775cc8b32f65ad34e2d1fa50f7d",
+      "role": "近 72h 异常大单参与方",
+      "status_emoji": "🟡",
+      "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "monitor_level": "HIGH",
+      "monitor_score": 7,
+      "monitor_role_enum": "anomaly_participant",
+      "monitor_reason": "近 72h 异常大单的链上参与方, 当下正在动",
+      "source_behaviors": [],
+      "trigger_summary": "大额 (≥ $10k) 转入 DEX 路由 或 CEX 充值时上报"
+    },
+    {
+      "n": 7,
+      "addr_short": "0x09ad820a",
+      "addr_full": "0x09ad820aac5779683b481c4674208a4e1b024afa",
+      "role": "近 72h 异常大单参与方",
+      "status_emoji": "🟡",
+      "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "monitor_level": "HIGH",
+      "monitor_score": 7,
+      "monitor_role_enum": "anomaly_participant",
+      "monitor_reason": "近 72h 异常大单的链上参与方, 当下正在动",
+      "source_behaviors": [],
+      "trigger_summary": "大额 (≥ $10k) 转入 DEX 路由 或 CEX 充值时上报"
+    },
+    {
+      "n": 8,
+      "addr_short": "0x108c0621",
+      "addr_full": "0x108c062126c74adfd5c5a1b09d8552080ce827b1",
+      "role": "近 72h 异常大单参与方",
+      "status_emoji": "🟡",
+      "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "monitor_level": "HIGH",
+      "monitor_score": 7,
+      "monitor_role_enum": "anomaly_participant",
+      "monitor_reason": "近 72h 异常大单的链上参与方, 当下正在动",
+      "source_behaviors": [],
+      "trigger_summary": "大额 (≥ $10k) 转入 DEX 路由 或 CEX 充值时上报"
+    },
+    {
+      "n": 9,
+      "addr_short": "0x1231deb6",
+      "addr_full": "0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae",
+      "role": "近 72h 异常大单参与方",
+      "status_emoji": "🟡",
+      "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "monitor_level": "HIGH",
+      "monitor_score": 7,
+      "monitor_role_enum": "anomaly_participant",
+      "monitor_reason": "近 72h 异常大单的链上参与方, 当下正在动",
+      "source_behaviors": [],
+      "trigger_summary": "大额 (≥ $10k) 转入 DEX 路由 或 CEX 充值时上报"
+    }
+  ],
+  "verdict": {
+    "enum": "EXIT_IF_HOLDING",
+    "cn_label": "建议卖出",
+    "baseline": "AVOID",
+    "downgrade_applied": 1,
+    "next_tier_enum": "AVOID",
+    "next_tier_cn": "慎入",
+    "one_liner": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "decision_action_block": {
+    "immediate_action": {
+      "action_enum": "sell",
+      "venue_enum": "alpha",
+      "tranches_n": 3,
+      "tranche_max_usd": 5569,
+      "horizon_hours": 48,
+      "slippage_pct_cap": 3,
+      "narrative": "<LLM_NARRATIVE_PLACEHOLDER>"
+    },
+    "stop_loss": {
+      "trigger_price_usd": 0.13872,
+      "current_price_usd": 0.1632,
+      "delta_pct": -15.0,
+      "rationale": "<LLM_NARRATIVE_PLACEHOLDER>"
+    },
+    "re_entry_conditions": [
+      {
+        "condition_type": "alpha_anomaly_72h_event_count",
+        "threshold": 0,
+        "current_value": 100,
+        "narrative": "<LLM_NARRATIVE_PLACEHOLDER>"
+      }
+    ]
+  },
+  "holdings_distribution": {
+    "_pipeline_source": "section_f_holders + section_l_distribution",
+    "role_rows": [
+      {
+        "role": "DEX_POOL",
+        "role_label": "DEX 主池",
+        "n_wallets": 1,
+        "total_balance": 153786.77974019945,
+        "pct_of_total": 0.015378677974019947,
+        "usd_value": 25098.00245360055,
+        "top_addr_short": "0x6d299f4b…",
+        "top_addr_full": "0x6d299f4bad5392af1e55e3e86a0339399543032b"
+      },
+      {
+        "role": "DEPLOYER",
+        "role_label": "项目方钱包",
+        "n_wallets": 0,
+        "total_balance": 0,
+        "pct_of_total": 0.0,
+        "usd_value": 0.0,
+        "top_addr_short": null,
+        "top_addr_full": null
+      },
+      {
+        "role": "RULE11_QUIET",
+        "role_label": "潜伏钱包 (内幕未分发)",
+        "n_wallets": 0,
+        "total_balance": 0,
+        "pct_of_total": 0.0,
+        "usd_value": 0.0,
+        "top_addr_short": null,
+        "top_addr_full": null
+      },
+      {
+        "role": "OPERATOR_RELAY",
+        "role_label": "庄家中转地 (≥1% 总供应)",
+        "n_wallets": 2,
+        "total_balance": 895399844.9999999,
+        "pct_of_total": 89.53998449999999,
+        "usd_value": 146129254.704,
+        "top_addr_short": "0x0e30a0d5…",
+        "top_addr_full": "0x0e30a0d5e6b39c49f60c517c0707a614583f673b"
+      },
+      {
+        "role": "DUMPER_DEST",
+        "role_label": "散户接收 (分发下游)",
+        "n_wallets": 1,
+        "total_balance": 9000000.0,
+        "pct_of_total": 0.8999999999999999,
+        "usd_value": 1468800.0,
+        "top_addr_short": "0xd450e283…",
+        "top_addr_full": "0xd450e2831d1e25bb0f410e608a57ccba6ef0e0f0"
+      },
+      {
+        "role": "OTHER",
+        "role_label": "其他 (散户+未分类)",
+        "n_wallets": 46,
+        "total_balance": 87441579.1331873,
+        "pct_of_total": 8.74415791331873,
+        "usd_value": 14270465.714536168,
+        "top_addr_short": "0x73d8bd54…",
+        "top_addr_full": "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db"
+      }
+    ],
+    "progress_bars": [
+      {
+        "role": "DEX_POOL",
+        "label": "DEX 主池",
+        "pct": 0.015378677974019947,
+        "bar": "░░░░░░░░░░░░░░░░░░░░",
+        "bar_absolute": "░░░░░░░░░░░░░░░░░░░░",
+        "value_text": "153,787 tokens (0.02% / $25,098)"
+      },
+      {
+        "role": "DEPLOYER",
+        "label": "项目方钱包",
+        "pct": 0.0,
+        "bar": "░░░░░░░░░░░░░░░░░░░░",
+        "bar_absolute": "░░░░░░░░░░░░░░░░░░░░",
+        "value_text": "0 tokens (0.00%)"
+      },
+      {
+        "role": "RULE11_QUIET",
+        "label": "潜伏钱包 (内幕未分发)",
+        "pct": 0.0,
+        "bar": "░░░░░░░░░░░░░░░░░░░░",
+        "bar_absolute": "░░░░░░░░░░░░░░░░░░░░",
+        "value_text": "0 tokens (0.00%)"
+      },
+      {
+        "role": "OPERATOR_RELAY",
+        "label": "庄家中转地 (≥1% 总供应)",
+        "pct": 89.53998449999999,
+        "bar": "████████████████████",
+        "bar_absolute": "██████████████████░░",
+        "value_text": "895,399,845 tokens (89.54% / $146,129,255)"
+      },
+      {
+        "role": "DUMPER_DEST",
+        "label": "散户接收 (分发下游)",
+        "pct": 0.8999999999999999,
+        "bar": "░░░░░░░░░░░░░░░░░░░░",
+        "bar_absolute": "░░░░░░░░░░░░░░░░░░░░",
+        "value_text": "9,000,000 tokens (0.90% / $1,468,800)"
+      },
+      {
+        "role": "OTHER",
+        "label": "其他 (散户+未分类)",
+        "pct": 8.74415791331873,
+        "bar": "██░░░░░░░░░░░░░░░░░░",
+        "bar_absolute": "██░░░░░░░░░░░░░░░░░░",
+        "value_text": "87,441,579 tokens (8.74% / $14,270,466)"
+      }
+    ],
+    "n_top_holders_classified": 50,
+    "key_takeaways": [
+      "<LLM_NARRATIVE_PLACEHOLDER>",
+      "<LLM_NARRATIVE_PLACEHOLDER>",
+      "<LLM_NARRATIVE_PLACEHOLDER>"
+    ]
+  },
+  "monitoring_footer": "<LLM_NARRATIVE_PLACEHOLDER>",
+  "multi_chain": {
+    "rows": [
+      {
+        "item": "**主战场链**",
+        "value": "**BSC** (BNB Chain)"
+      },
+      {
+        "item": "铸造链 (supply_chain)",
+        "value": "BSC, totalSupply 1,000,000,000"
+      },
+      {
+        "item": "交易链 (trading_venue_chain)",
+        "value": "BSC (Alpha + DEX 主池)"
+      },
+      {
+        "item": "跨链分布",
+        "value": "**单链, 无跨链桥发现** (v0.6 phase B.3 minimal — 仅 BSC 检测)"
+      },
+      {
+        "item": "报告覆盖范围",
+        "value": "**完整覆盖**"
+      }
+    ],
+    "gate_note": "✅ 无非 BSC 链数据需求.",
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "tge": {
+    "rows": [
+      {
+        "label": "LP 创建首笔 (DEX 启动)",
+        "time": "2026-05-19 13:09 UTC",
+        "price": "—",
+        "vs_current": "—"
+      },
+      {
+        "label": "Alpha 上线首笔",
+        "time": "2026-05-19 13:00 UTC",
+        "price": "—",
+        "vs_current": "—"
+      },
+      {
+        "label": "**当前价**",
+        "time": "2026-05-24",
+        "price": "**$0.1632**",
+        "vs_current": "1.00×"
+      }
+    ],
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "alloc": {
+    "rows": [
+      {
+        "item": "Alpha 配额比例 (官方披露)",
+        "value": "**未披露**",
+        "source": "Binance Alpha 官方接口当前未给出该字段"
+      },
+      {
+        "item": "项目方钱包 `0x3a6dc528…` 当前余额",
+        "value": "几乎空仓 (全部分发完)",
+        "source": "项目方分发追溯"
+      },
+      {
+        "item": "上线前内幕接收方 1 个累计余额",
+        "value": "0 tokens (= 0.00% 总供应)",
+        "source": "内幕钱包累计"
+      },
+      {
+        "item": "潜伏钱包 0 个持仓 (核心未来风险)",
+        "value": "**0 tokens (= 0.00% 总供应 / $0)**",
+        "source": "未分发内幕钱包"
+      },
+      {
+        "item": "已分完内幕钱包 1 个 (分发完成)",
+        "value": "已 100% 分完, 剩余 0",
+        "source": "已分 ≥95% 的内幕钱包"
+      }
+    ],
+    "n_quiet": 0,
+    "quiet_balance_pct_total": 0.0,
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "cex_trace": {
+    "rows": [
+      {
+        "exchange": "Binance",
+        "status": "未上线",
+        "ts": "—",
+        "since": "—"
+      },
+      {
+        "exchange": "Aster",
+        "status": "未核实",
+        "ts": "—",
+        "since": "—"
+      },
+      {
+        "exchange": "Bitget",
+        "status": "未核实",
+        "ts": "—",
+        "since": "—"
+      }
+    ],
+    "new_catalyst": "无 14 天内新催化剂",
+    "tier_explanation": "当前 S1 (Alpha only)",
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "liq": {
+    "rows": [
+      {
+        "anchor": "**不超 5% 滑点的最大单笔买入 (估算)**",
+        "value": "$16,708",
+        "note": "由 Alpha 24h vol 推导 (vol_24h / 96 × 0.05 启发式估算)"
+      },
+      {
+        "anchor": "DEX 主池流动性",
+        "value": "$92,644",
+        "note": "DexScreener 0x6d299f4b…"
+      },
+      {
+        "anchor": "DEX 主池 24h 交易量",
+        "value": "$1,147,696",
+        "note": "DexScreener"
+      },
+      {
+        "anchor": "LP 24h 净流",
+        "value": "+2.58% (in 2,512,904 / out 2,448,132)",
+        "note": "surf agent.bsc_transfers"
+      },
+      {
+        "anchor": "DEX 主池地址",
+        "value": "`0x6d299f4bad5392af1e55e3e86a0339399543032b`",
+        "note": "FDV $163,272,166"
+      }
+    ],
+    "current_price_usd": 0.1632,
+    "dex_pool_addr": "0x6d299f4bad5392af1e55e3e86a0339399543032b",
+    "dex_pool_liquidity_usd": 92644.1,
+    "alpha_5pct_depth_usd_est": 16708,
+    "lp_24h_flow": {
+      "lp_in_tokens": 2512904.1781092454,
+      "lp_out_tokens": 2448131.9007904003,
+      "net_pct": 2.58
+    },
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "decision_anchors": [
+    {
+      "anchor": "Alpha 5% 撤单上限",
+      "value": "$16,708",
+      "status": "🟡 中等"
+    },
+    {
+      "anchor": "DEX 主池 USD 流动性",
+      "value": "$92,644",
+      "status": "🟡"
+    },
+    {
+      "anchor": "LP 24h 净流",
+      "value": "+2.58%",
+      "status": "🟢"
+    }
+  ],
+  "_pipeline_timings": {
+    "section_a": 0.948721208027564,
+    "rule_11": 9.583625916973688,
+    "pool_discovery": 0.21586420899257064,
+    "section_anomaly_72h": 1.6228956669801846,
+    "section_cex_trace": 0.3128209999995306,
+    "section_liq": 1.5258898750180379,
+    "section_tge_alloc_multi_chain": 1.5575872500194237,
+    "section_f_l_distribution": 2.012951707933098
+  },
+  "_pipeline_total_seconds": 17.780996167100966,
+  "cross_sym": {
+    "_pipeline_source": "section_cross_sym",
+    "whales": [],
+    "summary_narrative": "<LLM_NARRATIVE_PLACEHOLDER>",
+    "_scope": "active",
+    "_registry_age_secs": 0,
+    "_credits_used": 0,
+    "_skip_reason": "no_candidates"
+  },
+  "behavior_profile": {
+    "_schema_version": "v0.7.26",
+    "_calibrated_for": "context_B_crypto_operator",
+    "_calibration_sample_size": 8,
+    "_calibration_doc": "v0725_5_CALIBRATION.md",
+    "active_labels": [
+      "C3"
+    ],
+    "primary_behavior": "C3",
+    "by_label": {
+      "A1": {
+        "severity": "OFF",
+        "category": "A",
+        "trigger_metrics": {},
+        "human_summary_zh": ""
+      },
+      "A2": {
+        "severity": "OFF",
+        "category": "A",
+        "trigger_metrics": {},
+        "human_summary_zh": ""
+      },
+      "A3": {
+        "severity": "OFF",
+        "category": "A",
+        "trigger_metrics": {},
+        "human_summary_zh": ""
+      },
+      "B1": {
+        "severity": "OFF",
+        "category": "B",
+        "trigger_metrics": {},
+        "human_summary_zh": ""
+      },
+      "B2": {
+        "severity": "OFF",
+        "category": "B",
+        "trigger_metrics": {},
+        "human_summary_zh": ""
+      },
+      "C1": {
+        "severity": "OFF",
+        "category": "C",
+        "trigger_metrics": {},
+        "human_summary_zh": ""
+      },
+      "C2": {
+        "severity": "OFF",
+        "category": "C",
+        "trigger_metrics": {},
+        "human_summary_zh": ""
+      },
+      "C3": {
+        "severity": "STRONG",
+        "category": "C",
+        "trigger_metrics": {
+          "anomaly_72h_count": 100,
+          "truncated": true
+        },
+        "human_summary_zh": "近 72h 100 笔大额异常转移 (检测器 满量程截断), 链上行为活跃"
+      },
+      "D1": {
+        "severity": "OFF",
+        "category": "D",
+        "trigger_metrics": {},
+        "human_summary_zh": ""
+      },
+      "D2": {
+        "severity": "OFF",
+        "category": "D",
+        "trigger_metrics": {},
+        "human_summary_zh": ""
+      }
+    },
+    "category_order": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "category_names_zh": {
+      "A": "筹码准备",
+      "B": "成交制造",
+      "C": "出货行为",
+      "D": "协同结构"
+    },
+    "label_names_zh": {
+      "A1": "潜伏蓄筹 (内幕余额集中未流出)",
+      "A2": "CEX 提币 大规模分发 控筹",
+      "A3": "Mint / 跨链桥 / 挖矿 供应源",
+      "B1": "对敲成交放大 (24h vol 不可信)",
+      "B2": "假深度 (LP/mcap 失配 或 vol/LP 偏高)",
+      "C1": "链上确认流出 (CEX 充值 + DEX swap)",
+      "C2": "历史 高频 operator 清仓",
+      "C3": "近 72h 异常链上活动",
+      "D1": "跨 Alpha 余额命中钱包",
+      "D2": "跨链部署 / 协同"
+    }
+  },
+  "monitoring_summary": {
+    "_schema_version": "v0.7.27",
+    "_calibrated_for": "context_B_crypto_operator",
+    "level_counts": {
+      "CRITICAL": 1,
+      "HIGH": 8,
+      "NORMAL": 0,
+      "NOT_TRACKED": 0
+    }
+  },
+  "address_role_index": {
+    "0x3a6dc528316bbaa2d72a7cb846c80aed995ef390": {
+      "primary_role": "deployer",
+      "all_roles": [
+        "deployer"
+      ],
+      "primary_section_anchor": "section-alloc",
+      "primary_section_label_zh": "项目方话语权",
+      "addr_short": "0x3a6dc528"
+    }
+  }
+}

@@ -1,0 +1,183 @@
+# term_translation.yaml — v0.6.0-beta.6 大白话翻译表 (REFERENCE-ONLY)
+#
+# !! IMPORTANT — NOT LOADED AT RUNTIME !!
+# adversarial review beta.6 9th-audit MED 4 caught the previous version of this comment
+# claiming render_report.py "selects zh/en via dominant-language ratio" —
+# untrue, no code path loads this file. Demoted to non-runtime reference
+# documentation in beta.7.
+#
+# The actual translations are HARDCODED in:
+#   - section_l_distribution._ROLE_LABELS (role enum → 中文 label)
+#   - forensic_pipeline._build_monitoring_wallets (per-wallet role string)
+#   - forensic_pipeline detector_summary[].label
+#   - validator._TIER_CN_LABELS (verdict enum → 中文)
+#
+# This file serves two purposes:
+#   1. A single canonical source for what jargon → 大白话 should look like
+#      across the codebase. If you change a label here, update the
+#      hardcoded copy + grep to verify consistency.
+#   2. EN translation reference for future v0.7 bilingual emit (if needed).
+#
+# v0.4.8 时代曾经有"大白话化"重写, v0.6 重写时丢了, beta.6 重新加回 (hardcoded
+# 各文件而不是动态 load — 简单 + 不引入 yaml dependency)。
+
+version: "0.6.0-beta.6"
+updated: "2026-05-24"
+
+
+# ============================================================
+# Forensic methodology terms — Rule 11 / m6 / sections
+# ============================================================
+methodology:
+  rule_11:
+    zh: "项目方派发追溯"
+    en: "Project Distribution Trace"
+    short_zh: "派发追溯"
+    short_en: "DistTrace"
+
+  m6:
+    zh: "内幕钱包"
+    en: "Insider Wallet"
+    short_zh: "内幕"
+    short_en: "Insider"
+
+  m6_ref:
+    zh: "内幕#"
+    en: "Insider#"
+
+  evt_ref:
+    zh: "事件#"
+    en: "Event#"
+
+  pre_launch:
+    zh: "上线前预分发"
+    en: "Pre-launch Pre-distribution"
+
+  deployer_outflow:
+    zh: "项目方转出"
+    en: "Project Wallet Outflow"
+
+  recent_transfer:
+    zh: "近期大单"
+    en: "Recent Large Transfer"
+
+
+# ============================================================
+# Holdings role enum (DEX_POOL / DEPLOYER / RULE11_QUIET / RULE11_PARTIAL /
+# RULE11_FULL / OPERATOR_RELAY / DUMPER_DEST / OTHER)
+# ============================================================
+roles:
+  DEX_POOL:
+    zh: "DEX 主池"
+    en: "DEX Main Pool"
+    short_zh: "主池"
+    short_en: "Pool"
+
+  DEPLOYER:
+    zh: "项目方钱包"
+    en: "Project Wallet"
+    short_zh: "项目方"
+    short_en: "Deployer"
+
+  RULE11_QUIET:
+    zh: "潜伏钱包"
+    en: "Dormant Wallet"
+    short_zh: "潜伏"
+    short_en: "Dormant"
+    full_zh: "潜伏钱包 (内幕未派发, 核心未来风险)"
+    full_en: "Dormant Wallet (insider, not yet distributed, future risk)"
+
+  RULE11_PARTIAL:
+    zh: "派发中"
+    en: "Partial Distributor"
+    short_zh: "派发中"
+    short_en: "Partial"
+    full_zh: "派发中钱包 (内幕已派发部分)"
+    full_en: "Partial Distributor (insider, partially distributed)"
+
+  RULE11_FULL:
+    zh: "已派完"
+    en: "Full Distributor"
+    short_zh: "已派完"
+    short_en: "Full"
+    full_zh: "已派完钱包 (内幕已 100% 派发)"
+    full_en: "Full Distributor (insider, 100% distributed)"
+
+  OPERATOR_RELAY:
+    zh: "庄家中转地"
+    en: "Operator Relay"
+    short_zh: "庄家中转"
+    short_en: "Relay"
+    full_zh: "庄家中转地 (≥1% 总供应, 内幕集中持有)"
+    full_en: "Operator Relay (≥1% supply, insider concentration)"
+
+  DUMPER_DEST:
+    zh: "散户接收"
+    en: "Retail Receiver"
+    short_zh: "散户"
+    short_en: "Retail"
+    full_zh: "散户接收方 (派发下游, <1% 总供应)"
+    full_en: "Retail Receiver (distribution downstream, <1% supply)"
+
+  OTHER:
+    zh: "其他"
+    en: "Other"
+    short_zh: "其他"
+    short_en: "Other"
+    full_zh: "其他 (散户 + 未分类)"
+    full_en: "Other (retail + unclassified)"
+
+
+# ============================================================
+# Severity tiers
+# ============================================================
+severity:
+  critical:
+    zh: "高风险"
+    en: "Critical"
+  high:
+    zh: "中高风险"
+    en: "High"
+  watch:
+    zh: "观察"
+    en: "Watch"
+  resolved:
+    zh: "已了结"
+    en: "Resolved"
+
+
+# ============================================================
+# Status emojis / labels
+# ============================================================
+status:
+  firing:
+    zh: "已触发"
+    en: "Firing"
+  truncated:
+    zh: "数据被截断 (实际更多)"
+    en: "Truncated (more than shown)"
+
+  # Verdict enum (canonical, already in pipeline as cn_label / next_tier_cn,
+  # listed here for reference)
+  verdict_enum:
+    ENTER:
+      zh: "可以进"
+      en: "Enter"
+    HOLD:
+      zh: "可以持"
+      en: "Hold"
+    WAIT:
+      zh: "等等看"
+      en: "Wait"
+    AVOID:
+      zh: "慎入"
+      en: "Avoid"
+    EXIT_IF_HOLDING:
+      zh: "建议卖出"
+      en: "Exit If Holding"
+    ADVISORY:
+      zh: "中性无方向"
+      en: "Advisory"
+    INSUFFICIENT_DATA:
+      zh: "数据不足"
+      en: "Insufficient Data"

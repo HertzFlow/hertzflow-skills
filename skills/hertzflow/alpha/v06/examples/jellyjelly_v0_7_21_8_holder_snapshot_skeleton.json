@@ -1,0 +1,545 @@
+{
+  "_schema_version": "0.7.21.8",
+  "_pipeline_status": "ok",
+  "_field_authority": {
+    "locked": [
+      "meta",
+      "tier_classification",
+      "evidence_graph",
+      "anomaly.waves[].events[].evt_ref",
+      "anomaly.waves[].events[].ts",
+      "anomaly.waves[].events[].amount",
+      "anomaly.waves[].events[].from_to",
+      "lineage.m6.rows",
+      "cross_sym.whales[].address",
+      "cross_sym.whales[].this_token_pct",
+      "cross_sym.whales[].this_token_balance",
+      "cross_sym.whales[].cross_sym_count",
+      "cross_sym.whales[].cross_sym_tokens",
+      "cross_sym.whales[].top_cross_sym_token",
+      "cross_sym.whales[].arkham_label",
+      "cross_sym.whales[].pre_launch_insider_count",
+      "cross_sym.whales[].pre_launch_insider_tokens",
+      "cross_sym.whales[].behavior_signature"
+    ],
+    "derived_locked": [
+      "cross_sym.whales[].identity_classification_enum",
+      "cross_sym.whales[].confidence_score",
+      "cross_sym.whales[].evidence_required_fields",
+      "cross_sym.whales[].role_classification",
+      "wash_infrastructure.setups[].executor_X",
+      "wash_infrastructure.setups[].maker_buy_P",
+      "wash_infrastructure.setups[].maker_sell_Q",
+      "wash_infrastructure.setups[].atomic_pair_ratio",
+      "wash_infrastructure.setups[].p_drift_pct",
+      "wash_infrastructure.setups[].q_drift_pct",
+      "wash_infrastructure.setups[].p_tok_in",
+      "wash_infrastructure.setups[].q_tok_in",
+      "wash_infrastructure.setups[].tx_from_diversity",
+      "wash_infrastructure.setups[].classification"
+    ],
+    "writable": [
+      "verdict.one_liner",
+      "anomaly.waves[].events[].nature",
+      "anomaly.detector_summary[].detail",
+      "anomaly.verdict_impact",
+      "*.interpretation",
+      "holdings_distribution.key_takeaways",
+      "lineage.m4_notes",
+      "monitoring_wallets[].alert",
+      "monitoring_footer",
+      "cross_sym.whales[].identity_narrative",
+      "cross_sym.whales[].risk_assessment_narrative",
+      "cross_sym.summary_narrative",
+      "wash_infrastructure.setups[].investigation_narrative",
+      "wash_infrastructure.summary_narrative"
+    ]
+  },
+  "meta": {
+    "symbol": "jellyjelly",
+    "name": "jelly-my-jelly",
+    "contract_address": "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump",
+    "chain": "Solana",
+    "chain_id": "CT_501",
+    "alpha_listing_date_utc": "2025-02-26",
+    "total_supply": 999999099,
+    "circulating_supply": 999999099,
+    "circ_ratio": 1.0,
+    "alpha_vol_24h_usd": 687608.7246531503,
+    "alpha_price_usd": 0.059903269014008095,
+    "alpha_percent_change_24h": 0.29,
+    "alpha_market_cap_usd": 59903215.04116271,
+    "alpha_fdv_usd": 59903215.04116271,
+    "alpha_liquidity_usd": 4451278.686836986,
+    "alpha_price_high_24h": 0.06346618607411839,
+    "alpha_price_low_24h": 0.05668663648770892,
+    "alpha_count_24h": 4433.0,
+    "alpha_holders": 33690.0,
+    "token_type_initial": "MEME_LIKELY",
+    "single_chain": true,
+    "primary_chain": "solana",
+    "primary_chain_derivation": "holder_snapshot_uses_active_chain",
+    "coingecko_platforms": {
+      "solana": "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump"
+    },
+    "chain_lp_realtime": {
+      "solana": {
+        "lp_tokens": null,
+        "lp_usd": null,
+        "n_dex_pools": 0,
+        "top_pool_addr": null,
+        "top_pool_balance": null,
+        "surf_supported": true,
+        "ca_on_chain": "FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump",
+        "surf_chain": "solana"
+      }
+    },
+    "realtime_token_info": {
+      "price_usd": 0.060711,
+      "volume_24h_usd": 4479403,
+      "market_cap_usd": 60925968,
+      "fdv_usd": 60925968,
+      "price_change_24h_pct": 1.24375,
+      "surf_project_id": "ee09c244-69dd-4537-84bf-92e500026663",
+      "surf_chains": [
+        "Solana"
+      ],
+      "surf_match_reason": "ca_in_contracts",
+      "fetch_ok": true
+    },
+    "data_freshness": {
+      "latest_surf_block_time": null,
+      "latest_surf_date_utc": null,
+      "lag_hours": null,
+      "warning": null
+    },
+    "report_lang_locked": "zh",
+    "_holder_snapshot_mode": true,
+    "_sql_supported": false
+  },
+  "tier_classification": {
+    "tier": "S1",
+    "s1_date": "2025-02-26",
+    "s2_date": null,
+    "s3_date": null
+  },
+  "evidence_graph": {},
+  "lineage": {
+    "_pipeline_source": "rule_11_backward_trace",
+    "deployer_addr": null,
+    "mint_evt_ref": null,
+    "m6": {
+      "rows": [],
+      "n_quiet": 0,
+      "n_partial_dumper": 0,
+      "n_full_dumper": 0
+    },
+    "m4_notes": [
+      "",
+      "<LLM_NARRATIVE_PLACEHOLDER>",
+      "<LLM_NARRATIVE_PLACEHOLDER>"
+    ],
+    "summary_locked_numbers": {},
+    "dumper_destinations_summary": {},
+    "flowchart_nodes": [],
+    "flowchart_edges": []
+  },
+  "anomaly": {
+    "waves": [],
+    "rhythm": {
+      "title": "<LLM_NARRATIVE_PLACEHOLDER>",
+      "waves": []
+    },
+    "verdict_impact": "<LLM_NARRATIVE_PLACEHOLDER>",
+    "detector_summary": [
+      {
+        "emoji": "⚪",
+        "label": "上线前内幕分发",
+        "count": 0,
+        "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+      },
+      {
+        "emoji": "⚪",
+        "label": "已分完内幕钱包",
+        "count": 0,
+        "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+      },
+      {
+        "emoji": "⚪",
+        "label": "潜伏钱包 (未分发)",
+        "count": 0,
+        "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+      },
+      {
+        "emoji": "⚪",
+        "label": "近 72h 异常大单",
+        "count": 0,
+        "detail": "<LLM_NARRATIVE_PLACEHOLDER>"
+      }
+    ]
+  },
+  "monitoring_wallets": [],
+  "decision_summary": {
+    "_pipeline_source": "forensic_pipeline.decision_summary",
+    "primary_chain": "solana",
+    "primary_chain_derivation": "lp_zero_fallback_alpha_chain",
+    "primary_chain_lp_usd": null,
+    "realtime_24h_vol_usd": 4479403,
+    "realtime_price_usd": 0.060711,
+    "verdict_enum": "ADVISORY",
+    "verdict_cn_label": "观察",
+    "entry_size_cap_usd": 358,
+    "short_term_catalysts": [],
+    "blindspots": [
+      "主战场 solana 的链上 SQL 不在 surf 覆盖, forensic SQL 段全部跳过, 仅保留 Alpha 实时 + token-holders 快照"
+    ],
+    "narrative": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "verdict": {
+    "enum": "ADVISORY",
+    "cn_label": "观察",
+    "baseline": "ADVISORY",
+    "downgrade_applied": 0,
+    "next_tier_enum": "ADVISORY",
+    "next_tier_cn": "观察",
+    "one_liner": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "decision_action_block": {
+    "immediate_action": {
+      "action_enum": "wait",
+      "venue_enum": "alpha",
+      "tranches_n": 1,
+      "tranche_max_usd": 1000,
+      "horizon_hours": 0,
+      "slippage_pct_cap": 3,
+      "narrative": "<LLM_NARRATIVE_PLACEHOLDER>"
+    },
+    "stop_loss": {
+      "trigger_price_usd": 0.051604,
+      "current_price_usd": 0.060711,
+      "delta_pct": -15.0,
+      "rationale": "<LLM_NARRATIVE_PLACEHOLDER>"
+    },
+    "re_entry_conditions": [
+      {
+        "condition_type": "alpha_anomaly_72h_event_count",
+        "threshold": 0,
+        "current_value": 0,
+        "narrative": "<LLM_NARRATIVE_PLACEHOLDER>"
+      }
+    ]
+  },
+  "cross_sym": {
+    "_pipeline_source": "section_cross_sym",
+    "whales": [],
+    "summary_narrative": "<LLM_NARRATIVE_PLACEHOLDER>",
+    "_scope": null,
+    "_registry_age_secs": null,
+    "_credits_used": 0,
+    "_skip_reason": "surf_no_sql_solana"
+  },
+  "wash_infrastructure": {
+    "_pipeline_source": "section_wash_infra",
+    "setups": [],
+    "summary_narrative": "<LLM_NARRATIVE_PLACEHOLDER>",
+    "_credits_used": 0,
+    "_skip_reason": "surf_no_sql_solana",
+    "_truncated": false,
+    "_truncation_meta": null,
+    "_n_candidates_scanned": 0
+  },
+  "flow_operators": {
+    "_pipeline_source": "section_flow_operators",
+    "operators": [],
+    "summary_narrative": "<LLM_NARRATIVE_PLACEHOLDER>",
+    "_credits_used": 0,
+    "_skip_reason": "surf_no_sql_solana",
+    "_n_candidates_scanned": 0
+  },
+  "holdings_distribution": {
+    "_pipeline_source": "section_f_holders + section_l_distribution",
+    "role_rows": [
+      {
+        "role": "DEX_POOL",
+        "role_label": "DEX 主池",
+        "n_wallets": 0,
+        "total_balance": 0,
+        "pct_of_total": 0.0,
+        "usd_value": 0.0,
+        "top_addr_short": null,
+        "top_addr_full": null
+      },
+      {
+        "role": "DEPLOYER",
+        "role_label": "项目方钱包",
+        "n_wallets": 0,
+        "total_balance": 0,
+        "pct_of_total": 0.0,
+        "usd_value": 0.0,
+        "top_addr_short": null,
+        "top_addr_full": null
+      },
+      {
+        "role": "RULE11_QUIET",
+        "role_label": "潜伏钱包 (内幕未分发)",
+        "n_wallets": 0,
+        "total_balance": 0,
+        "pct_of_total": 0.0,
+        "usd_value": 0.0,
+        "top_addr_short": null,
+        "top_addr_full": null
+      },
+      {
+        "role": "OTHER",
+        "role_label": "其他 (散户+未分类)",
+        "n_wallets": 40,
+        "total_balance": 962007318461153.0,
+        "pct_of_total": 96200818.52305278,
+        "usd_value": 58404426311095.06,
+        "top_addr_short": "u6PJ8DtQuP…",
+        "top_addr_full": "u6PJ8DtQuPFnfmwHbGFULQ4u4EgjDiyYKjVEsynXq2w"
+      }
+    ],
+    "progress_bars": [
+      {
+        "role": "DEX_POOL",
+        "label": "DEX 主池",
+        "pct": 0.0,
+        "bar": "░░░░░░░░░░░░░░░░░░░░",
+        "bar_absolute": "░░░░░░░░░░░░░░░░░░░░",
+        "value_text": "0 tokens (0.00%)"
+      },
+      {
+        "role": "DEPLOYER",
+        "label": "项目方钱包",
+        "pct": 0.0,
+        "bar": "░░░░░░░░░░░░░░░░░░░░",
+        "bar_absolute": "░░░░░░░░░░░░░░░░░░░░",
+        "value_text": "0 tokens (0.00%)"
+      },
+      {
+        "role": "RULE11_QUIET",
+        "label": "潜伏钱包 (内幕未分发)",
+        "pct": 0.0,
+        "bar": "░░░░░░░░░░░░░░░░░░░░",
+        "bar_absolute": "░░░░░░░░░░░░░░░░░░░░",
+        "value_text": "0 tokens (0.00%)"
+      },
+      {
+        "role": "OTHER",
+        "label": "其他 (散户+未分类)",
+        "pct": 96200818.52305278,
+        "bar": "████████████████████",
+        "bar_absolute": "████████████████████",
+        "value_text": "962,007,318,461,153 tokens (96200818.52% / $58,404,426,311,095)"
+      }
+    ],
+    "n_top_holders_classified": 40,
+    "key_takeaways": [
+      "<LLM_NARRATIVE_PLACEHOLDER>",
+      "<LLM_NARRATIVE_PLACEHOLDER>",
+      "<LLM_NARRATIVE_PLACEHOLDER>"
+    ]
+  },
+  "monitoring_footer": "<LLM_NARRATIVE_PLACEHOLDER>",
+  "multi_chain": {
+    "rows": [
+      {
+        "item": "**主战场链**",
+        "value": "**solana** (单链, 无 BSC 镜像; Binance Alpha 以 SPL token 直接挂)"
+      },
+      {
+        "item": "铸造链 (supply_chain)",
+        "value": "solana, totalSupply 999,999,099"
+      },
+      {
+        "item": "交易链 (trading_venue_chain)",
+        "value": "solana (Alpha + DEX 主池)"
+      },
+      {
+        "item": "跨链分布",
+        "value": "**单链 solana** — Alpha 直接挂 SPL token, 没有 BSC / EVM 镜像桥; 本报告仅 holder snapshot + Alpha 实时, **不**包含 forensic SQL 段"
+      },
+      {
+        "item": "报告覆盖范围",
+        "value": "**HOLDER_SNAPSHOT (主链 solana)** — surf 不覆盖 solana 的 `onchain-sql` (无 `agent.solana_transfers` 表), 全部 forensic SQL 段已跳过; 保留 Alpha 实时行情 + surf token-holders REST + monitoring 导出"
+      }
+    ],
+    "gate_note": "⚠️ 主链 solana 走 HOLDER_SNAPSHOT 模式 — surf onchain-sql 不覆盖该链, forensic SQL 段全部跳过. 实时行情 / holders / mcap / FDV 等 REST 数据正常拉取. 内幕谱系 / wash / 流水大户 / 跨币 4 类 SQL 检测**无数据**, 顶部 banner 已说明; 用 Solscan / Helius / Shyft / Vybe 手工核对",
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "tge": {
+    "rows": [
+      {
+        "label": "LP 创建首笔 (DEX 启动)",
+        "time": "—",
+        "price": "—",
+        "vs_current": "—"
+      },
+      {
+        "label": "Alpha 上线首笔",
+        "time": "2025-02-26 09:20 UTC",
+        "price": "—",
+        "vs_current": "—"
+      },
+      {
+        "label": "**当前价**",
+        "time": "2026-06-02",
+        "price": "**$0.0607**",
+        "vs_current": "1.00×"
+      }
+    ],
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "alloc": {
+    "rows": [
+      {
+        "item": "Alpha 配额比例 (官方披露)",
+        "value": "**未披露**",
+        "source": "Binance Alpha 官方接口当前未给出该字段"
+      },
+      {
+        "item": "项目方钱包 `—` 当前余额",
+        "value": "未知",
+        "source": "项目方分发追溯"
+      },
+      {
+        "item": "上线前内幕接收方 0 个累计余额",
+        "value": "0 tokens (= 0.00% 总供应)",
+        "source": "内幕钱包累计"
+      },
+      {
+        "item": "潜伏钱包 0 个持仓 (核心未来风险)",
+        "value": "**0 tokens (= 0.00% 总供应 / $0)**",
+        "source": "未分发内幕钱包"
+      },
+      {
+        "item": "已分完内幕钱包 0 个 (分发完成)",
+        "value": "已 100% 分完, 剩余 0",
+        "source": "已转出 ≥95% 的内幕钱包"
+      }
+    ],
+    "n_quiet": 0,
+    "quiet_balance_pct_total": 0.0,
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "dump_tracking": {
+    "_pipeline_source": "dump_tracker",
+    "insider_n_wallets": 0,
+    "confirmed_cex_tokens": 0,
+    "confirmed_cex_pct": null,
+    "confirmed_cex_labels": [],
+    "confirmed_dex_tokens": 0,
+    "confirmed_dex_pct": null,
+    "confirmed_dex_swaps": 0,
+    "confirmed_total_tokens": 0,
+    "confirmed_total_pct": null,
+    "confirmed_est_profit_usd": null,
+    "confirmed_capped": false,
+    "tree_holds_tokens": 0,
+    "tree_holds_pct_supply": null,
+    "pure_insider_holds_tokens": 0,
+    "pure_insider_holds_pct_supply": null,
+    "insider_holds_tokens": 0,
+    "insider_holds_pct_supply": null,
+    "median_price_usd": null,
+    "wash_dominated": false,
+    "n_dex_sellers": 0,
+    "total_dex_swaps": 0,
+    "top_seller_swaps": 0,
+    "buckets_complete": false,
+    "interpretation": "未检测到 insider 向 CEX/DEX 的确认卖出 (链上无法确认的转账不计入)."
+  },
+  "cex_trace": {
+    "rows": [
+      {
+        "exchange": "Binance",
+        "status": "未上线",
+        "ts": "—",
+        "since": "—"
+      },
+      {
+        "exchange": "Aster",
+        "status": "未核实",
+        "ts": "—",
+        "since": "—"
+      },
+      {
+        "exchange": "Bitget",
+        "status": "未核实",
+        "ts": "—",
+        "since": "—"
+      }
+    ],
+    "new_catalyst": "无 14 天内新催化剂",
+    "tier_explanation": "当前 S1 (Alpha only)",
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "liq": {
+    "rows": [
+      {
+        "anchor": "**不超 5% 滑点的最大单笔买入 (估算)**",
+        "value": "$358",
+        "note": "由 Alpha 24h vol 推导 (vol_24h / 96 × 0.05 启发式估算)"
+      },
+      {
+        "anchor": "DEX 主池流动性",
+        "value": "—",
+        "note": "无主池"
+      },
+      {
+        "anchor": "DEX 主池 24h 交易量",
+        "value": "$4,479,403",
+        "note": "surf project-detail (跨链 CEX+DEX 实时聚合)"
+      },
+      {
+        "anchor": "LP 24h 净流",
+        "value": "—",
+        "note": "surf 不覆盖 (chain SQL 表不存在), 见顶部 Solana banner"
+      },
+      {
+        "anchor": "DEX 主池地址",
+        "value": "—",
+        "note": "FDV $60,925,968"
+      }
+    ],
+    "current_price_usd": 0.060711,
+    "dex_pool_addr": null,
+    "dex_pool_liquidity_usd": null,
+    "alpha_5pct_depth_usd_est": 358,
+    "lp_24h_flow": {},
+    "interpretation": "<LLM_NARRATIVE_PLACEHOLDER>"
+  },
+  "decision_anchors": [
+    {
+      "anchor": "Alpha 5% 撤单上限",
+      "value": "$358",
+      "status": "🔴 超薄"
+    },
+    {
+      "anchor": "DEX 主池 USD 流动性",
+      "value": "—",
+      "status": "🔴"
+    },
+    {
+      "anchor": "LP 24h 净流",
+      "value": "—",
+      "status": "🟢"
+    }
+  ],
+  "_pipeline_timings": {
+    "section_a": 19.10585558391176,
+    "rule_11": 4.5541091822087765e-05,
+    "pool_discovery": 4.375004209578037e-05,
+    "section_anomaly_72h": 5.250005051493645e-05,
+    "section_cex_trace": 0.36819320905487984,
+    "section_liq": 0.00011833303142338991,
+    "section_tge_alloc_multi_chain": 1.4443007910158485,
+    "dump_tracker": 1.4958903193473816e-05,
+    "section_f_l_distribution": 0.00010966707486659288,
+    "section_cross_sym": 2.6540947146713734e-05,
+    "section_wash_infra": 6.749993190169334e-06,
+    "section_flow_operators": 1.4159595593810081e-06
+  },
+  "_pipeline_total_seconds": 20.933041292009875
+}

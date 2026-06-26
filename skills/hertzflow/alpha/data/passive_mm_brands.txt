@@ -1,0 +1,42 @@
+# Passive Market Makers + OTC Desks
+#
+# 这些品牌做 **被动做市** (合规, 双向报价, 不操纵 circulation):
+# - 监管要求他们不能坐庄
+# - BscScan / Etherscan 通常会有 label
+# - 出现在持有人 / 上溯链 → 排除 from "operator/insider" candidate (噪音过滤)
+#
+# 不要把这个列表当成 "operator detection" — 主动做市商 (坐庄) 故意 NOT label.
+# 主动做市商靠行为 detection (convergence hub / shared funder cluster / 反取证 funder).
+#
+# Format: 一行一个 brand 关键词 (case-insensitive, word boundary match against BscScan label).
+# Updates: 加新品牌时附引证 (Twitter / News / 官方公告).
+
+wintermute
+gsr
+b2c2
+cumberland
+amber group
+amber finance
+galaxy digital
+galaxy trading
+flow traders
+jump trading
+jump crypto
+alameda research
+pulsar trading
+auros
+dwf labs
+falconx
+falcon x
+genesis trading
+qcp capital
+quantstamp
+folkvang
+keyrock
+3ac
+three arrows
+fbg capital
+huobi otc
+binance otc
+bitget otc
+okx otc

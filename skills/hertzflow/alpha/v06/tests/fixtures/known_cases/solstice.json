@@ -1,0 +1,26 @@
+{
+  "_doc": "Known-good v0.7.9 forensic invariants for SOLSTICE. Regression test asserts pipeline still surfaces these addresses + structural counts.",
+  "ca": "0x02bcc4c181b83a8c0a342bc003389cbecb4bc54d",
+  "symbol": "SLX",
+  "_v079_schema": {
+    "single_chain": false,
+    "primary_chain": "solana",
+    "primary_chain_derivation": "non_surf_inferred",
+    "data_freshness_warning_set": true
+  },
+  "_decision_summary": {
+    "verdict_enum": "ADVISORY",
+    "entry_size_cap_usd": 28744,
+    "primary_chain": "solana",
+    "n_blindspots": 2
+  },
+  "m6_min_rows": 2,
+  "expected_m6_addrs": [
+    "0x884903d3a7e813b08a1d9c7e97040422b62989a4",
+    "0xffc1f98fdbaa26a647da6fc4cc110fa3e0bd9300"
+  ],
+  "cross_sym_whales_min": 0,
+  "expected_cross_sym_addrs": [],
+  "wash_infra_setups_min": 0,
+  "expected_wash_setups": []
+}

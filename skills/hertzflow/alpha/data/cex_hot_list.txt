@@ -1,0 +1,99 @@
+# Canonical CEX hot wallet exclusion list for binance-alpha skill
+#
+# Source: hand-curated from BscScan labels + Binance Hot 1..51 publicly
+# documented hot wallets + on-chain heuristics (CEX-typical churn pattern).
+#
+# Format: one lowercase 40-hex BSC address per line. Lines starting
+# with `#` or whitespace-only lines are ignored.
+#
+# Purpose: Section M2 of binance-alpha (cross-token operator registry)
+# uses this list to exclude CEX hot wallets from cluster-center attribution.
+# Without this filter, Binance Hot 17 fanning out to 30+ Alpha tokens
+# would generate dominant false-positive "cross-token operator" hits.
+#
+# To add a wallet: lowercase, one per line, drop a `# label` comment
+# above. To remove: delete the line.
+#
+# Last reviewed: 2026-05-20 (v0.2.0 initial population).
+# Verified-live BSC addresses 2026-05 by direct on-chain inspection.
+
+# --- Binance hot wallets ---
+0x3c783c21a0383057d128bae431894a5c19f9cf06   # Binance Hot 17 (heavy Alpha-token fanout)
+0xf68a4b64162906eff0ff6ae34e2bb1cd42fef62d   # Binance Hot 6
+0x8894e0a0c962cb723c1976a4421c95949be2d4e3   # Binance Hot (ZEST/SHARE cluster center)
+0xf977814e90da44bfa03b6295a0616a897441acec   # Binance 8 (multi-chain)
+0xe2fcb3a467cf60d6fa1a8717a4e0ec0c0e5bdaa9   # Binance 22
+0x161ba15a5f335c9f06bb5bbb0a9ce14076fbb645   # Binance 28
+0xeb2d2f1b8c558a40207669291fda468e50c8a0bb   # Binance Cold (per BscScan label, but heavy hot-cycle behavior)
+0x0681d8db095565fe8a346fa0277bffde9c0edbbf   # Binance Hot 4
+0x73af3bb9544d28a0bb24cfaadbcdf2ca4cd5cce4   # Binance Hot (BSC, retail withdraw flow)
+0xa180fe01b906a1be37be6c534a3300785b20d947   # Binance: Hot Wallet 16 (v0.4.2 NEX audit — adversarial review false positive operator hit)
+0x01c952174c24e1210d26961d456a77a39e1f0bb0   # Binance: Hot Wallet 23 (v0.4.2 NEX audit — adversarial review false positive operator hit)
+0xe2fc31f816a9b94326492132018c3aecc4a93ae1   # Binance: Withdrawals 7 (v0.4.2 NEX audit — adversarial review flagged as size-4 STRONG operator, actually CEX withdraw funnel)
+0x28c6c06298d514db089934071355e5743bf21d60   # Binance 14
+0x21a31ee1afc51d94c2efccaa2092ad1028285549   # Binance 15
+0xdfd5293d8e347dfe59e90efd55b2956a1343963d   # Binance 16
+0x56eddb7aa87536c09ccc2793473599fd21a8b17f   # Binance 18
+0x9696f59e4d72e237be84ffd425dcad154bf96976   # Binance Hot (BSC, generic)
+
+# --- OKX hot wallets ---
+0x68b22215ff74e3606bd5e6c1de8c2d68180c85f7   # OKX Hot 1
+0x6cc5f688a315f3dc28a7781717a9a798a59fda7b   # OKX Hot
+0x236f9f97e0e62388479bf9e5ba4889e46b0273c3   # OKX Hot
+0xf5988713400da6fc8a58ec9515e2b0df9b40b115   # OKX 175 (v0.4.2 NEX audit — adversarial review false positive operator hit)
+0x68d65ee9d6efb2f33fce4d0fc2c5b85a99ea9d49   # OKX BSC
+0x59d83d3a0ee1c2dde79b21ada1f6f7e2fdb50f9b   # OKX 2
+
+# --- Gate.io hot wallets ---
+0x0d0707963952f2fba59dd06f2b425ace40b492fe   # Gate.io 1
+0x7793cd85c11a924478d358d49b05b37e91b5810f   # Gate.io
+0x1c4b70a3968436b9a0a9cf5205c787eb81bb558c   # Gate.io 2
+
+# --- MEXC hot wallets ---
+0x4982085c9e2f89f2ecb8131eca71afad896e89cb   # MEXC Hot 1
+0x9642b23ed1e01df1092b92641051881a322f5d4e   # MEXC Hot
+
+# --- Bybit hot wallets ---
+0xee5b5b923ffce93a870b3104b7ca09c3db80047a   # Bybit Hot
+0xf89d7b9c864f589bbf53a82105107622b35eaa40   # Bybit
+
+# --- KuCoin hot wallets ---
+0x7c4081f74953e0c2f49b18f6b9a47957c1b7adbe   # KuCoin Hot
+
+# --- Bitget hot wallets ---
+0x0639556f03714a74a5feeaf5736a4a64ff70d206   # Bitget Hot
+0x97b9d2102a9a65a26e1ee82d59e42d1b73b68689   # Bitget 3 (v0.4.4 NEX audit — adversarial review flagged size-2 cluster funder, actually CEX deposit routing)
+
+# --- Binance deposit/withdrawal/infra ---
+0x29bdfbf7d27462a2d115748ace2bd71a2646946c   # Binance: Hot Wallet 17 (multi-token routing — discovered v0.3.7 WARD audit)
+0x73f5ebe90f27b46ea12e5795d16c4b408b19cc6f   # Binance: Hot Wallet 18
+0xdccf3b77da55107280bd850ea519df3705d1a75a   # Binance: Withdrawals 2
+
+# --- Other CEX deposit funders ---
+0x6596da8b65995d5feacff8c2936f0b7a2051b0d0   # Gate: Deposit Funder (high fanout — gas-fee dispenser for Gate user deposits)
+
+# --- DEX routers / aggregators / bridges (v0.3.7 expansion) ---
+# v0.3.7 lesson: v0.2.x carved DEX routers OUT of this list because we
+# only used it for "CEX hot wallet" detection. But Section M2 cluster
+# analysis treats ANY non-listed funder as a potential operator. DEX
+# routers and bridges fan out gas/tokens to MANY users, generating
+# massive false-positive operator clusters. They must be excluded.
+# Same logic for cross-chain bridges (deBridge etc.).
+0xb300000b72deaeb607a12d5f54773d1c19c7028d   # Binance: DEX Router (vanity prefix b300000b is Binance's choice)
+0xe7351fd770a37282b91d153ee690b63579d6dd7f   # deBridge: DlnDestination (cross-chain bridge)
+
+# Notes:
+# - List combines CEX hot + deposit funders + DEX routers + bridges +
+#   any address whose fanout pattern generates false-positive operator
+#   clusters. v0.3.7 lesson: ANY high-fanout infra fed by external
+#   users (not by operators) must be excluded; ignoring DEX/bridges as
+#   "informative" was wrong because they HIDE real operators in noise.
+# - This list is conservative-by-necessity; missing entries silently
+#   become false-positive operator hits. When users discover one (via
+#   BscScan label check), submit a PR. Until then, individual users
+#   can rm + re-init known_operators.json to clear pollution.
+# - The skill ALSO respects $CEX_HOT_LIST_PATH env override; advanced
+#   users who maintain their own list should set that.
+# - Future direction: replace bundled list with BscScan public-label
+#   probe at funder-classification time (one HTTP per cluster center)
+#   so we don't have to maintain a curated list at all. v0.3.x backlog.

@@ -1,0 +1,9 @@
+token,skeleton,A1,A2,A3,B1,B2,C1,C2,C3,D1,D2,pure_insider_pct,wash_top_bot_share,mint_pct_supply_max,fanout_hub_count,high_throughput_count,anomaly_72h_count,cross_sym_count,non_primary_chain_count
+beat,beat_v0724e_skeleton.json,MEDIUM,STRONG,STRONG,STRONG,MEDIUM,STRONG,STRONG,MEDIUM,OFF,OFF,2.95,0.167,15.0,3,100,11,0,0
+collect,collect_v07210_skeleton.json,OFF,OFF,OFF,MEDIUM,WEAK,STRONG,OFF,MEDIUM,OFF,OFF,0.851,0.246,0,0,0,16,0,0
+fartcoin,fartcoin_v07219_skeleton.json,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF,0,0.0,0,0,0,0,0,0
+h,h_v0724d_skeleton.json,OFF,OFF,STRONG,STRONG,STRONG,OFF,STRONG,STRONG,MEDIUM,MEDIUM,0,0.157,100.0,0,97,100,3,1
+jct,jct_v0724e_skeleton.json,OFF,STRONG,STRONG,STRONG,MEDIUM,OFF,STRONG,STRONG,WEAK,MEDIUM,0,0.088,10.68,5,100,100,1,1
+jellyjelly,jellyjelly_v07219_skeleton.json,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF,0,0.0,0,0,0,0,0,0
+lab,lab_v07219_skeleton.json,OFF,OFF,OFF,STRONG,MEDIUM,STRONG,OFF,MEDIUM,OFF,OFF,1.12,0.148,0,0,0,16,0,0
+play,PLAY/PLAY_v0721_skeleton.json,MEDIUM,OFF,OFF,STRONG,MEDIUM,MEDIUM,OFF,MEDIUM,OFF,WEAK,3.719,0.15,0,0,0,19,0,0
