@@ -257,6 +257,98 @@ def _funded_by_seed_one_hop(
         return set()
 
 
+def _trace_operator_forward(
+    prefix: str, supply_ca: str, initial_seed: set[str], top_holder_set: set[str],
+    total_supply: float, date_floor: str, code_cache: dict[str, bool],
+    do_not_expand: set[str], max_hops: int = _LINEAGE_MAX_HOPS,
+) -> tuple[set[str], int]:
+    """FORWARD expansion of the operator distribution tree from the seed,
+    following ALL out-edges (including pass-through EOAs with ~0 current
+    balance), then intersecting with the current top holders.
+
+    Fixes the CAP 0xf440 miss: the operator routed `Safe → 0x5692 / 0xe7ae
+    (pass-through EOAs, ~0 balance now) → 0xf440 (holds 104M)`. The
+    candidate-restricted BFS below only walks among current top-100 holders, so
+    the 0-balance feeders were never candidates and the chain broke — 0xf440 (an
+    operator stash) was mis-bucketed as non-operator, understating operator%.
+
+    Each hop queries every address that received >= min_edge from the current
+    frontier (NOT restricted to top holders), adds them to the reachable set +
+    frontier, and repeats. The result is `reachable ∩ top_holder_set`: only
+    addresses that are BOTH reachable from the operator tree AND still hold a
+    top-holder balance. This is also the contamination guard — a wallet the
+    operator SOLD to that then dumped is reachable but no longer a top holder, so
+    it is NOT marked operator; only wallets that received an operator allocation
+    and STILL HOLD it (0xf440) are. `min_edge` keeps the walk on the
+    distribution backbone (large allocations), not retail-sized dust.
+
+    Bounded: <= max_hops surf calls; frontier capped per hop."""
+    table = _TRANSFERS_TABLE.get(prefix)
+    if not table or not initial_seed or not top_holder_set:
+        return set(), 0
+    min_edge = max(0.001 * (total_supply or 0), 1_000_000.0)
+    operator_holders: set[str] = set()
+    reachable: set[str] = set()
+    frontier = {a for a in initial_seed if a}
+    hops = 0
+    from section_a_scope import _run_surf_with_retry
+    from chain_router import decimals_factor_str
+    df = decimals_factor_str()
+    for _ in range(max_hops):
+        if not frontier:
+            break
+        front = sorted(frontier)[:300]  # cap IN-list size
+        from_list = ",".join(f"'{a}'" for a in front)
+        # adversarial review MEDIUM: require at least ONE large transfer
+        # (max(amt) >= min_edge), not just many small ones summing over — a
+        # market-maker / exchange-deposit cluster receiving lots of dust must not
+        # cross the operator-edge threshold by aggregation alone.
+        sql = (
+            f'SELECT lower("to") AS a, '
+            f'sum(toFloat64(toDecimal256(amount_raw,0))/{df}) AS s, '
+            f'max(toFloat64(toDecimal256(amount_raw,0))/{df}) AS mx '
+            f"FROM {table} WHERE contract_address='{supply_ca.lower()}' "
+            f'AND lower("from") IN ({from_list}) AND block_date >= \'{date_floor}\' '
+            f"GROUP BY a HAVING s >= {min_edge} AND mx >= {min_edge} ORDER BY s DESC LIMIT 1000"
+        )
+        try:
+            doc, _err = _run_surf_with_retry(
+                ["surf", "onchain-sql"],
+                stdin=json.dumps({"sql": sql, "max_rows": 1000}),
+                base_timeout=60, max_attempts=3,
+            )
+        except Exception as e:  # noqa: BLE001
+            print(f"[supply_chain_overhang] forward-trace query failed (non-fatal): "
+                  f"{str(e)[:120]}", file=sys.stderr)
+            break
+        hops += 1
+        recips = {(r.get("a") or "").lower() for r in (doc or {}).get("data") or [] if r.get("a")}
+        new = recips - reachable - initial_seed
+        if not new:
+            break
+        reachable |= new
+        # A reached top-holder is an operator STASH → mark it, but do NOT expand
+        # through it (terminal; expanding would follow its own sells/buyers).
+        operator_holders |= (new & top_holder_set)
+        # adversarial review HIGH: only expand through genuine PASS-THROUGH EOAs
+        # (not a current top holder → it forwarded what it received) that are NOT
+        # DEX-pool/router/CEX/bridge/staking/neutral-infra. Crucially, never expand
+        # through a NON-seed CONTRACT (a Uniswap/Pancake pool, router or CEX is a
+        # contract) — that would fan out to genuine public buyers and mark them
+        # operator. Only EOA pass-throughs propagate the operator tree.
+        next_frontier: set[str] = set()
+        for a in new:
+            if a in top_holder_set or a in do_not_expand:
+                continue
+            if _is_contract(prefix, a, code_cache):  # non-seed contract (pool/router/CEX)
+                continue
+            next_frontier.add(a)
+        frontier = next_frontier
+        if len(reachable) > 2000:  # runaway guard
+            break
+    return operator_holders, hops
+
+
 def _trace_operator_distribution(
     prefix: str, supply_ca: str, eoas: list[str], initial_seed: set[str],
     date_floor: str, code_cache: dict[str, bool], max_hops: int = _LINEAGE_MAX_HOPS,
@@ -545,6 +637,23 @@ def _compute_inner(
     op_funded, _hops_used = _trace_operator_distribution(
         prefix, supply_ca, bfs_candidates, seed, date_floor, code_cache
     )
+    # ---- 4c-bis: FORWARD expansion through pass-through EOAs (CAP 0xf440 fix).
+    # Follows the full operator out-tree (incl 0-balance feeders) and keeps the
+    # top holders reachable from it — catches operator stashes the candidate BFS
+    # misses when the operator routes via throwaway intermediaries. ----
+    _top_holder_set = {a for a, _b in topk}
+    _fwd_no_expand = excluded_addrs | staking_addrs | relay_addrs | neutral_infra
+    # forward seed = the operator DISTRIBUTION HUBS (genesis/reserve/mint seed +
+    # project multisig Safes). These are roots the trace must expand FROM even
+    # when they are also top holders (the Safe holds 586M AND distributes); the
+    # top-holder "don't expand" guard only filters DISCOVERED downstream nodes,
+    # not these starting hubs.
+    _fwd_seed = set(seed) | multisig_addrs | reserve_addrs
+    op_forward, _fwd_hops = _trace_operator_forward(
+        prefix, supply_ca, _fwd_seed, _top_holder_set, total_supply, date_floor,
+        code_cache, _fwd_no_expand,
+    )
+    op_funded = op_funded | op_forward
 
     # ---- 4d. wallet cluster graph (wallet↔wallet operator groups) ----
     # adversarial review CRIT#2: never let bridge / staking / relay / neutral-infra addresses
