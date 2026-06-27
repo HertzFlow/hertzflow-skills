@@ -1197,6 +1197,9 @@ _{{ t("report.meta_line_tier", tier=tier_classification.tier, s1_date=tier_class
 {# v0.8.4.8: 速读 3 个数字 — 庄家弹药 / 交易所中转池 / 可验证非庄家方抛压.
    交易所池中性 (散户 vs 项目方托管无法区分), 不并入任一侧. #}
 > **{{ t("render.chip_speedread_prefix") }}**: {{ t("render.chip_speedread_circ", circ="%.1f"|format(_circ / 1_000_000)) }} · **{{ t("render.chip_nonop_pressure") }} {% if _circ %}{{ "%.1f"|format(_retail_with_tail_pct) }}%{% else %}—{% endif %}** ({{ "{:,.0f}".format(_retail_with_tail) }} tokens = {{ t("render.chip_top100_verifiable", pct="%.1f"|format(_retail_topdown_pct)) }}{% if _tail_pct > 0.1 %} + {{ t("render.chip_tail", pct="%.1f"|format(_tail_pct)) }}{% if _n_fanout_in_tail > 5 %} {{ t("render.chip_tail_fanout_warn", n=_n_fanout_in_tail) }}{% endif %}{% endif %}) · {{ t("render.chip_op_ammo") }} {% if _circ %}{{ "%.1f"|format(_operator_topdown_in_circ_pct) }}%{% else %}—{% endif %}{% if _operator_topdown_has_unminted %} {{ t("render.chip_op_ammo_unminted", alpha_circ="%.0f"|format(_circ_alpha / 1_000_000), chain_circ="%.0f"|format(_circ / 1_000_000), ratio="%.2f"|format(_implied_vs_alpha_ratio)) }}{% if _implied_vs_alpha_ratio < 0.9 %}{{ t("render.chip_op_ammo_overest") }}{% else %}{{ t("render.chip_op_ammo_underest") }}{% endif %}){% endif %} · {{ t("render.chip_cex_pool") }} {% if _circ %}{{ "%.1f"|format(_cex_pool_pct) }}%{% else %}—{% endif %} ({{ t("render.chip_cex_pool_n", n=_cex_pool_n) }}) · {{ t("render.chip_confirmed_realized", usd="{:,.0f}".format(dump_tracking.confirmed_net_sellout_usd or 0), pct="%.1f"|format(dump_tracking.confirmed_total_pct or 0)) }}{% if (dump_tracking.confirmed_net_sellout_usd or 0) == 0 %} {{ t("render.chip_no_seller_detected") }}{% endif %}.
+{% if primary_sales is defined and primary_sales and primary_sales.get('pools') %}{% set _psa_top0 = primary_sales.get('pools')[0] %}>
+> **{{ t("render.psa_speedread_prefix") }}**: {{ t("render.psa_speedread_line", pct="%.1f"|format(_psa_top0.pct_of_circulating or 0), tokens="{:,.0f}".format(_psa_top0.tokens_distributed or 0), n=_psa_top0.n_recipients or 0, top10="%.1f"|format(_psa_top0.top10_pct or 0)) }}{% if (_psa_top0.n_named_recipients or 0) > 0 %} {{ t("render.psa_speedread_kol", n=_psa_top0.n_named_recipients) }}{% endif %}
+{% endif %}
 
 {# v0.8.6.8: 三桶 sanity check. 三桶 (op/cex/retail) 任一 = 0% 都不正常,
    说明数据 thin 或 detector 漏算. 自动加排查 banner. 用户 review
@@ -1290,6 +1293,50 @@ _{{ t("report.meta_line_tier", tier=tier_classification.tier, s1_date=tier_class
 
 {% endif %}{% endif %}---
 
+{# v1.2.0: primary-sale (CCA / IDO / launchpad) attribution. Self-gated — the
+   pipeline only populates primary_sales.pools when an operator-funded high-fan-out
+   distribution pool is detected, so the whole section is absent for tokens with no
+   public sale. Placed right after the 真实派发 (chip / supply-overhang) section. #}
+{% if primary_sales is defined and primary_sales and primary_sales.get('pools') -%}
+{% set _psa_explorer = {'ethereum':'https://etherscan.io/address/', 'bsc':'https://bscscan.com/address/', 'base':'https://basescan.org/address/', 'arbitrum':'https://arbiscan.io/address/', 'polygon':'https://polygonscan.com/address/', 'optimism':'https://optimistic.etherscan.io/address/'}.get(primary_sales.get('chain'), 'https://etherscan.io/address/') -%}
+### {{ t("render.psa_h3") }}
+
+> {{ t("render.psa_intro") }}
+
+{% for _ps in primary_sales.get('pools', []) -%}
+**{{ t("render.psa_pool_title", n=loop.index) }}** [`{{ _ps.pool_addr[:12] }}…`]({{ _psa_explorer }}{{ _ps.pool_addr }}){% if _ps.label %} · {{ _ps.label }}{% endif %}
+
+{{ t("render.psa_pool_line",
+     tokens="{:,.0f}".format(_ps.tokens_distributed or 0),
+     pct="%.1f"|format(_ps.pct_of_circulating or 0),
+     n=_ps.n_recipients or 0,
+     top5="%.1f"|format(_ps.top5_pct or 0),
+     top10="%.1f"|format(_ps.top10_pct or 0),
+     op="%.1f"|format(_ps.operator_overlap_pct or 0)) }}
+
+{% if _ps.named_recipients -%}
+{{ t("render.psa_kol_intro", n=_ps.n_named_recipients or 0, pct=(("≥" if _ps.named_pct_is_lower_bound else "") ~ ("%.1f"|format(_ps.named_pct_of_pool or 0)))) }}
+
+| # | {{ t("render.psa_kol_col_name") }} | {{ t("render.psa_kol_col_addr") }} | {{ t("render.psa_kol_col_tokens") }} | {{ t("render.psa_kol_col_pct") }} |
+|---:|---|---|---:|---:|
+{% for _kr in _ps.named_recipients -%}
+| {{ loop.index }} | {% if _kr.kind == 'entity' %}🅴 {% endif %}{{ _kr.name }} | [`{{ _kr.addr[:12] }}…`]({{ _psa_explorer }}{{ _kr.addr }}) | {{ "{:,.0f}".format(_kr.tokens or 0) }} | {{ "%.1f"|format(_kr.pct_of_pool or 0) }}% |
+{% endfor %}
+{% endif %}
+
+{% endfor -%}
+{% set _ps_social = primary_sales.get('social') or {} -%}
+{% if _ps_social.get('event_hits') -%}
+> {{ t("render.psa_social_intro") }}
+>
+{% for _h in _ps_social.get('event_hits', [])[:3] -%}
+> - **[{{ _h.event }}]** @{{ _h.handle }} ({{ _h.likes }}♥){% if _h.announced_pct %} · {{ t("render.psa_social_alloc", pct=_h.announced_pct) }}{% endif %}: {{ _h.excerpt }}
+{% endfor %}>
+> _{{ t("render.psa_social_caveat") }}_
+{% endif %}
+---
+
+{% endif -%}
 {# v0.7.23.4: surface mining-fed wallet stock + flow directly in the
    dump_tracker table when funding_attribution.mining_fed_outflows produced
    data. mining-fed wallets ARE insiders in the operator sense (received
@@ -2958,7 +3005,7 @@ def render(skeleton_path: str, filled_path: str, out_path: str, mode: str = "def
     # rather than silently allowing the bypass.
     #
     # Motivation: cross-LLM acceptance testing on v0.7.1 revealed that
-    # agents (adversarial review, claude) default to invoking tests/smoke_fill.py as
+    # review agents default to invoking tests/smoke_fill.py as
     # a production fill step instead of authoring narrative directly,
     # producing reports full of placeholder stubs that look "filled" but
     # carry no analytical content. SKILL.md guidance alone proved
@@ -3179,7 +3226,7 @@ def render(skeleton_path: str, filled_path: str, out_path: str, mode: str = "def
 
     # v0.6.4: prepend UTF-8 BOM (U+FEFF) so downstream viewers / wrappers
     # that auto-detect encoding don't misread UTF-8 as cp1252 / Latin-1.
-    # Empirical: 3/3 cross-LLM testers (Claude / adversarial review / Kimi) produced
+    # Empirical: 3/3 cross-LLM testers produced
     # mojibake in their wrapper-rendered output when no BOM was present.
     # BOM is a no-op for any UTF-8-aware viewer (GitHub, VSCode, most
     # markdown renderers strip it silently) and a strong signal to

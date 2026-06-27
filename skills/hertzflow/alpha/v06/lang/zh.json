@@ -1036,7 +1036,22 @@
   "tldr_caveat_none": "当前 链上侦测完整度未触发主要盲区 提示条.",
   "tldr_blindspot_footer": "CEX 提币阶段 (链下) + OTC + 跨链桥未走 surf 索引等路径**结构性不可见**. **实际真实出货 可能 5-50× 于本报告数字** — 完整 提醒 见 default 报告顶部 callout.",
   "tldr_mode_footer": "TLDR 模式. 完整 链上侦测 详细 → 跑 `--mode=default` 看 18-28KB 战情简报. AI 深挖 → `--mode=deep` (全展开). 监控钱包 import → `monitoring_paste.json`.",
-  "tldr_disclaimer": "仅数据研究, 不构成交易指令或财务意见."
+  "tldr_disclaimer": "仅数据研究, 不构成交易指令或财务意见.",
+  "psa_h3": "🎯 一级公募分配归因 (CCA / IDO / 公售)",
+  "psa_intro": "项目方公开分发池(CCA 拍卖 / IDO / launchpad / 空投赎回)的链上真实分发拆解 — 占流通比例、接收方集中度、内幕/KOL 捕获份额。纯链上检测,无公售则本栏不出现。",
+  "psa_pool_title": "分发池 {n}",
+  "psa_pool_line": "分发 **{tokens}** token = **{pct}% 流通**,分给 **{n}** 个钱包。接收方集中度:前 5 占 **{top5}%** / 前 10 占 **{top10}%**;与庄家地址重叠 {op}%。(公平公售应高度分散;前 N 高度集中 = 白名单/关联方捕获信号。)",
+  "psa_kol_intro": "**命名接收方 {n} 个(KOL/ENS/命名实体,合占该池 {pct}%)** — 大额公售配额流向可识别的 KOL/ENS/命名实体钱包,是白名单/关联分配的直接信号(标 🅴 的为命名实体如基金会/协议,非个人 KOL):",
+  "psa_kol_col_name": "命名标识 (KOL/ENS/实体)",
+  "psa_kol_col_addr": "地址",
+  "psa_kol_col_tokens": "获配 token",
+  "psa_kol_col_pct": "占池 %",
+  "psa_social_intro": "**社媒佐证(best-effort,可能 fuzzy)** — surf 检索到的公售事件,用于给上述池子贴名(CCA/IDO/launchpad);链上数字为准:",
+  "psa_social_alloc": "公告配额 {pct}%",
+  "psa_social_caveat": "社媒命名为辅助,短 ticker 可能误匹配;池子占比/集中度以链上为权威。",
+  "psa_speedread_prefix": "🎯 一级公募",
+  "psa_speedread_line": "公售池占流通 **{pct}%**(分发 {tokens} token 给 {n} 钱包),前 10 接收方占 **{top10}%**。",
+  "psa_speedread_kol": "含 {n} 个命名接收方(KOL/ENS/实体)。"
  },
  "screen": {
   "dim_name_phase": "当前阶段",
@@ -1126,7 +1141,12 @@
   "one_sentence_supply": "仍有供应源",
   "one_sentence_high_mcap": "已在高位",
   "one_sentence_join": " + ",
-  "one_sentence_period": "."
+  "one_sentence_period": ".",
+  "dim_name_psa": "一级公募分配",
+  "psa_label_concentrated": "🔴 高度集中",
+  "psa_label_semi": "🟡 半集中",
+  "psa_label_dispersed": "🟢 较分散",
+  "psa_ev": "公售池占流通 {pct:.1f}%({tokens} token / {n} 钱包),前 10 接收方占 {top10:.1f}%,{n_kol} 个命名接收方(KOL/ENS/实体)"
  },
  "sec1": {
   "cross_sym": {

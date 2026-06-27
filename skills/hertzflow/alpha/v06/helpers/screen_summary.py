@@ -443,6 +443,12 @@ def build_screen_summary(skel: dict[str, Any]) -> dict[str, Any]:
     dims = [dim_phase, dim_chip_struct, dim_insider_dump, dim_volume,
             dim_supply, dim_market, dim_monitor]
 
+    # v1.2.0: primary-sale (CCA / IDO) dimension — inserted right after 筹码结构
+    # when a public-sale pool was detected; omitted entirely otherwise.
+    dim_primary_sale = _dim_primary_sale(skel.get("primary_sales"))
+    if dim_primary_sale:
+        dims.insert(2, dim_primary_sale)
+
     # ==================== One-sentence summary ====================
     one_sentence = _one_sentence(dim_phase, dim_chip_struct, dim_volume,
                                   dim_supply, dim_market)
@@ -532,6 +538,36 @@ def _dim_chip_struct(op_pct: float, cex_pct: float, retail_pct: float,
             locked_pct=float(overhang.get("locked_pct_of_total") or 0),
         )
     return {"name": t("screen.dim_name_chip"), "label": label,
+            "evidence": evidence, "_state": state}
+
+
+def _dim_primary_sale(ps: dict | None) -> dict | None:
+    """Dimension (v1.2.0): 一级公募分配 — surfaces the top public-sale pool's share
+    of circulating, recipient count, top-10 concentration and KOL count directly in
+    the headline. Returns None when no public sale was detected (dimension omitted).
+
+    `_state` token: CONCENTRATED / SEMI / DISPERSED
+    """
+    if not ps or not ps.get("pools"):
+        return None
+    p = (ps.get("pools") or [{}])[0]
+    pct = float(p.get("pct_of_circulating") or 0)
+    top10 = float(p.get("top10_pct") or 0)
+    n = int(p.get("n_recipients") or 0)
+    n_kol = int(p.get("n_named_recipients") or 0)
+    if top10 >= 50:
+        label = t("screen.psa_label_concentrated")
+        state = "CONCENTRATED"
+    elif top10 >= 30:
+        label = t("screen.psa_label_semi")
+        state = "SEMI"
+    else:
+        label = t("screen.psa_label_dispersed")
+        state = "DISPERSED"
+    evidence = t("screen.psa_ev", pct=pct,
+                 tokens="{:,.0f}".format(p.get("tokens_distributed") or 0),
+                 n=n, top10=top10, n_kol=n_kol)
+    return {"name": t("screen.dim_name_psa"), "label": label,
             "evidence": evidence, "_state": state}
 
 

@@ -1036,7 +1036,22 @@
   "tldr_caveat_none": "Current on-chain detection completeness did not trigger any major blind-spot callout.",
   "tldr_blindspot_footer": "The CEX-withdrawal phase (off-chain) + OTC + bridges not in the surf index are **structurally invisible**. **Real sell-out may be 5-50× the figures here** — see the top callout of the default report for the full caveat.",
   "tldr_mode_footer": "TLDR mode. Full on-chain detection detail → run `--mode=default` for the 18-28KB briefing. AI deep-dive → `--mode=deep` (fully expanded). Wallet monitoring import → `monitoring_paste.json`.",
-  "tldr_disclaimer": "Data research only; not a trading instruction or financial opinion."
+  "tldr_disclaimer": "Data research only; not a trading instruction or financial opinion.",
+  "psa_h3": "🎯 Primary-Sale Allocation Attribution (CCA / IDO / Public Sale)",
+  "psa_intro": "On-chain reconstruction of the project's public-distribution pools (CCA auction / IDO / launchpad / airdrop redemption) — share of circulating, recipient concentration, and insider/KOL capture. Pure on-chain detection; absent when no public sale exists.",
+  "psa_pool_title": "Distribution Pool {n}",
+  "psa_pool_line": "Distributed **{tokens}** tokens = **{pct}% of circulating** to **{n}** wallets. Recipient concentration: top-5 **{top5}%** / top-10 **{top10}%**; overlap with operator wallets {op}%. (A fair public sale is highly dispersed; high top-N concentration = whitelist / associated-party capture.)",
+  "psa_kol_intro": "**{n} named recipients ({pct}% of the pool)** — large public-sale allocations flowing to identifiable KOL/ENS/named-entity wallets is a direct whitelist / associated-allocation signal (🅴 marks a named entity — foundation/protocol — not an individual KOL):",
+  "psa_kol_col_name": "Named identity (KOL/ENS/entity)",
+  "psa_kol_col_addr": "Address",
+  "psa_kol_col_tokens": "Allocated",
+  "psa_kol_col_pct": "% of pool",
+  "psa_social_intro": "**Social corroboration (best-effort, may be fuzzy)** — public-sale events found via surf, used to name the pools above (CCA/IDO/launchpad); on-chain numbers are authoritative:",
+  "psa_social_alloc": "announced {pct}%",
+  "psa_social_caveat": "Social naming is advisory and can mis-match on short tickers; pool share / concentration are authoritative from on-chain.",
+  "psa_speedread_prefix": "🎯 Primary sale",
+  "psa_speedread_line": "Public-sale pool = **{pct}%** of circulating ({tokens} tokens to {n} wallets), top-10 recipients **{top10}%**.",
+  "psa_speedread_kol": "incl. {n} named recipients (KOL/ENS/entity)."
  },
  "screen": {
   "dim_name_phase": "Current phase",
@@ -1126,7 +1141,12 @@
   "one_sentence_supply": "supply source still present",
   "one_sentence_high_mcap": "already at a high level",
   "one_sentence_join": " + ",
-  "one_sentence_period": "."
+  "one_sentence_period": ".",
+  "dim_name_psa": "Primary-sale alloc",
+  "psa_label_concentrated": "🔴 Concentrated",
+  "psa_label_semi": "🟡 Semi-concentrated",
+  "psa_label_dispersed": "🟢 Dispersed",
+  "psa_ev": "Public-sale pool = {pct:.1f}% of circulating ({tokens} tokens / {n} wallets), top-10 recipients {top10:.1f}%, {n_kol} named recipients (KOL/ENS/entity)"
  },
  "sec1": {
   "cross_sym": {

@@ -395,6 +395,7 @@ def compute_supply_chain_overhang(
     date_floor: str,
     alpha_listing_date: str | None = None,
     deployer_addr: str | None = None,
+    symbol: str | None = None,
 ) -> dict[str, Any]:
     """Accurate 真实派发 3-bucket split for a multi-chain token's CANONICAL
     supply chain, reusing `_compute_chip_3way`.
@@ -443,7 +444,7 @@ def compute_supply_chain_overhang(
                 total_supply=float(total_supply or 0),
                 circulating_supply=float(circulating_supply or 0),
                 date_floor=date_floor, alpha_listing_date=alpha_listing_date,
-                deployer_addr=deployer_addr,
+                deployer_addr=deployer_addr, symbol=symbol,
             )
         except Exception as e:  # noqa: BLE001 — fail-soft, never crash pipeline
             print(f"[supply_chain_overhang] failed (non-fatal): {str(e)[:200]}",
@@ -456,7 +457,7 @@ def compute_supply_chain_overhang(
 def _compute_inner(
     *, prefix: str, supply_ca: str, split: dict[str, Any], total_supply: float,
     circulating_supply: float, date_floor: str, alpha_listing_date: str | None,
-    deployer_addr: str | None,
+    deployer_addr: str | None, symbol: str | None = None,
 ) -> dict[str, Any]:
     from funding_source_attribution import discover_mint_authorities
     from wallet_cluster_graph_detector import discover_wallet_cluster_graph
@@ -687,6 +688,36 @@ def _compute_inner(
               | reserve_addrs | set(seed))
     op_set = {a for a in op_set if a not in _drop}
 
+    # ---- 5-bis: primary-sale (CCA / IDO / launchpad) attribution (v1.2.0) ----
+    # Detect the project's public-distribution pools on this chain + attribute how
+    # much each was captured by insider/operator-related wallets vs dispersed
+    # public, and highlight every KOL/ENS-named recipient. Gated + cheap.
+    primary_sales: dict[str, Any] = {}
+    try:
+        from primary_sale_attribution import (
+            detect_primary_sale_pools, enrich_with_social,
+        )
+        # FUNDING seed = the project TREASURY hubs (genesis lineage seed + multisig
+        # Safes + reserve contracts) — these are what actually fund a CCA/IDO pool;
+        # the narrow rule_11 `seed` alone misses a Safe-funded sale. operator_set =
+        # full op_set for the recipient-overlap metric only.
+        _fund_seed = set(seed) | multisig_addrs | reserve_addrs
+        _pools = detect_primary_sale_pools(
+            prefix=prefix, supply_ca=supply_ca, operator_seed=_fund_seed,
+            operator_set=op_set, total_supply=total_supply,
+            circulating_supply=circulating_supply, date_floor=date_floor,
+            is_contract_fn=_is_contract, code_cache=code_cache,
+            listing_date=alpha_listing_date,
+        )
+        if _pools:
+            primary_sales = {"pools": _pools, "chain": prefix}
+            if symbol:
+                primary_sales["social"] = enrich_with_social(symbol, _pools)
+    except Exception as e:  # noqa: BLE001
+        print(f"[supply_chain_overhang] primary-sale attribution failed (non-fatal): "
+              f"{str(e)[:120]}", file=sys.stderr)
+        primary_sales = {"_error": str(e)[:120]}
+
     # ---- 6. buckets anchored to Alpha circulating_supply ----
     # v1.1.1 (UB): the buckets are % of the AUTHORITATIVE Alpha circulating float,
     # NOT the on-chain top-holder sum. Project-controlled supply that is not
@@ -806,6 +837,7 @@ def _compute_inner(
         "rule11_summary": rule11_summary,
         "operator_seed": sorted(seed),
         "classified_rows": classified_rows,
+        "primary_sales": primary_sales,
         "_method": (
             "buckets anchored to Alpha circulating_supply; overhang = "
             "total − circulating (undistributed project reserve, subtracted from "

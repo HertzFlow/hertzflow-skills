@@ -1820,6 +1820,7 @@ def build_skeleton(
                     date_floor=_date_floor,
                     alpha_listing_date=scope.get("alpha_listing_date_utc"),
                     deployer_addr=(rule11.get("deployer") if isinstance(rule11, dict) else None),
+                    symbol=scope.get("symbol"),
                 )
                 print(
                     f"[supply_chain_overhang] operator={supply_chain_overhang.get('operator_pct')}% "
@@ -1840,6 +1841,81 @@ def build_skeleton(
             supply_chain_overhang = {"split": False, "_error": str(_e)[:200]}
     timings["supply_chain_overhang"] = time.perf_counter() - t
     _ck("supply_chain_overhang", supply_chain_overhang)
+
+    # ---------- Round 7g: primary-sale (CCA / IDO) attribution — UNIVERSAL ----------
+    # Self-check EVERY token for project public-distribution pools (CCA / IDO /
+    # launchpad / airdrop redemption) and attribute insider/KOL capture. Multi-
+    # chain split tokens reuse the supply-chain detection already computed inside
+    # compute_supply_chain_overhang; single-chain tokens detect on the primary
+    # chain using the deployer / pre-launch / mint-authority operator seed. Gated:
+    # no operator-funded distribution pool → empty dict → render omits the section.
+    t = time.perf_counter()
+    primary_sales: dict = {}
+    if not holder_snapshot_mode and scope.get("contract_address"):
+        try:
+            _sco_ps = (supply_chain_overhang.get("primary_sales")
+                       if isinstance(supply_chain_overhang, dict) else None)
+            _is_split = bool(isinstance(supply_chain_overhang, dict)
+                             and supply_chain_overhang.get("split"))
+            if isinstance(_sco_ps, dict) and _sco_ps.get("pools"):
+                primary_sales = _sco_ps  # multi-chain: detected on the supply chain
+            elif not _is_split:
+                # single-chain ONLY. adversarial review HIGH: never fall back to the Alpha listing
+                # chain for a split/mirror token — its public sale lives on the
+                # canonical supply chain (handled above); detecting on the mirror chain
+                # would catch bridge activity with the wrong seed/denominator.
+                from chain_router import set_active_chain as _psa_set_chain
+                from helpers.supply_chain_overhang import _is_contract as _psa_is_contract
+                from helpers.primary_sale_attribution import (
+                    detect_primary_sale_pools as _psa_detect,
+                    enrich_with_social as _psa_social,
+                )
+                _psa_prefix = (_psa_set_chain(chain_id) if chain_id else None)
+                if _psa_prefix and _psa_prefix != "solana":
+                    # FUNDING seed = treasury sources only (deployer / pre-launch /
+                    # mint authorities) — narrow, for the operator-funded gate.
+                    _psa_seed: set = set()
+                    if isinstance(rule11, dict) and rule11.get("deployer"):
+                        _psa_seed.add(_norm_addr(rule11["deployer"]))
+                    _r11_recv = (rule11.get("pre_launch_receivers") or []) if isinstance(rule11, dict) else []
+                    for _r in _r11_recv:
+                        _a = _norm_addr(_r.get("address") or _r.get("addr") or "")
+                        if _a:
+                            _psa_seed.add(_a)
+                    if isinstance(funding_attribution, dict):
+                        for _a in (funding_attribution.get("mint_authorities", {}).get("authorities") or []):
+                            _ad = _norm_addr(_a.get("address") or _a.get("addr") or "")
+                            if _ad:
+                                _psa_seed.add(_ad)
+                    # operator relay members are project-controlled distribution hubs
+                    # (Safe/multisig-like) — add to BOTH the funding seed (so a
+                    # Safe-funded single-chain CCA is not missed, adversarial review HIGH) and the
+                    # overlap set. Still far narrower than the full operator_set.
+                    _relay = (distribution.get("operator_relay_members") or []) if isinstance(distribution, dict) else []
+                    for _m in _relay:
+                        _a = _norm_addr(_m.get("addr") or _m.get("address") or "")
+                        if _a:
+                            _psa_seed.add(_a)
+                    _psa_overlap: set = set(_psa_seed)
+                    _psa_pools = _psa_detect(
+                        prefix=_psa_prefix, supply_ca=scope["contract_address"],
+                        operator_seed=_psa_seed, operator_set=_psa_overlap,
+                        total_supply=float(scope.get("total_supply") or 0),
+                        circulating_supply=float(scope.get("circulating_supply") or 0),
+                        date_floor=_date_floor, is_contract_fn=_psa_is_contract,
+                        code_cache={}, listing_date=scope.get("alpha_listing_date_utc"),
+                    )
+                    if _psa_pools:
+                        primary_sales = {"pools": _psa_pools, "chain": _psa_prefix}
+                        if scope.get("symbol"):
+                            primary_sales["social"] = _psa_social(scope["symbol"], _psa_pools)
+        except Exception as _e:
+            import sys as _sys
+            print(f"[primary_sale] universal attribution failed (non-fatal): {_e}",
+                  file=_sys.stderr)
+            primary_sales = {"_error": str(_e)[:200]}
+    timings["primary_sales"] = time.perf_counter() - t
+    _ck("primary_sales", primary_sales)
 
     # ---------- Build the skeleton report_data ----------
     # Locked sections (pipeline-populated)
@@ -2236,6 +2312,9 @@ def build_skeleton(
         # overhang). split=False (or absent) for single-chain tokens. Read by
         # screen_summary._compute_chip_3way override + render 真实派发 section.
         "supply_chain_overhang": supply_chain_overhang,
+        # v1.2.0: primary-sale (CCA / IDO / launchpad) attribution — universal,
+        # top-level so the render reads one place regardless of chain topology.
+        "primary_sales": primary_sales,
         # v0.8.6.6: mining-mode dump_tracker fallback (extra_receivers =
         # mint_authority + cluster + ht + fanout + wcg cluster). Unlocks
         # confirmed net sellout for cross-chain bridge / mining tokens
