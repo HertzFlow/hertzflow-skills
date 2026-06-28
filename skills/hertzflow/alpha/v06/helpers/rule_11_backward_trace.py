@@ -665,6 +665,14 @@ def _no_anchor_partial(
                 c = cls_map.get(h["addr"]) or {}
                 h["is_protocol_lockup"] = bool(c.get("is_protocol_lockup"))
                 h["is_cex_custody"] = bool(c.get("is_cex_custody"))
+                # parity with the deployer-anchored enrich (the DEX / vesting /
+                # multisig / treasury flags were missing here, so a DEX pool reached
+                # the monitoring list with is_dex_infra unset and was mislabeled an
+                # operator wallet).
+                h["is_dex_infra"] = bool(c.get("is_dex_infra"))
+                h["is_vesting"] = bool(c.get("is_vesting"))
+                h["is_multisig"] = bool(c.get("is_multisig"))
+                h["is_treasury"] = bool(c.get("is_treasury"))
                 h["arkham_label"] = c.get("display_label")
         except Exception as e:
             print(f"[rule_11] no-anchor lockup classifier failed: {e}", file=sys.stderr)

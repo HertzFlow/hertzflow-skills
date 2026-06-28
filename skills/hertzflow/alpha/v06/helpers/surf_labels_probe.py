@@ -101,6 +101,16 @@ DEX_POOL_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Self-identifying DEX terms — version-pools, concentrated-liquidity, AMM pairs.
+# These are unambiguously DEX even without a protocol-name prefix, so they do NOT
+# need the DEX_PROTOCOL_NAMES gate (which only exists to keep a bare "Pool"/"Vault"
+# from sweeping in staking/mining pools). Fixes a bare "V3 Pool" Arkham label
+# (conf 1.0) falling to OTHER_NAMED and then being mistaken for an operator wallet.
+DEX_STRONG_RE = re.compile(
+    r"\b(V[23]\s*Pool|Concentrated\s*Liquidity|AMM\s*Pair)\b",
+    re.IGNORECASE,
+)
+
 DEX_PROTOCOL_NAMES = re.compile(
     r"^(PancakeSwap|Uniswap|SushiSwap|1inch|0x|Paraswap|Curve|Balancer|"
     r"Thena|Wombat|Biswap|ApeSwap|MDEX|BabySwap|Beethoven|Trader\s*Joe)",
@@ -146,31 +156,54 @@ def classify_label(label: str | None,
     if et in ("market_maker", "mm"):
         return "MARKET_MAKER"
 
-    # Text-pattern fallback (when entity_type is empty but label exists)
-    if label:
-        if CEX_DEPOSIT_RE.search(label):
+    # Text-pattern fallback. Match against the entity_name AND the label, each on
+    # its own (preserves intra-field adjacency, e.g. "Binance Wallet", without
+    # creating false cross-field adjacency). Previously only `label` was checked, so
+    # e.g. label "Proxy (EIP-1967 Transparent)" + entity "Binance Wallet" fell to
+    # OTHER_NAMED — the "Binance Wallet" CEX signal was ignored — and the address was
+    # then mistaken for an operator wallet. entity_name is checked first as the more
+    # authoritative field.
+    for text in (entity_name, label):
+        if not text:
+            continue
+        if CEX_DEPOSIT_RE.search(text):
             return "CEX_DEPOSIT"
-        if CEX_HOT_RE.search(label):
+        if CEX_HOT_RE.search(text):
             return "CEX_HOT_WALLET"
-        if DEX_POOL_RE.search(label) and DEX_PROTOCOL_NAMES.match(entity_name or label):
+        # self-identifying DEX terms (V2/V3 Pool, concentrated liquidity) need no
+        # protocol-name prefix; a bare Pool/Vault/Router still requires a known
+        # protocol to avoid sweeping in staking/mining pools.
+        if DEX_STRONG_RE.search(text):
             return "DEX_POOL"
-        if BRIDGE_RE.search(label):
+        if DEX_POOL_RE.search(text) and DEX_PROTOCOL_NAMES.match(entity_name or label or ""):
+            return "DEX_POOL"
+        if BRIDGE_RE.search(text):
             return "BRIDGE"
-        if MARKET_MAKER_RE.search(label):
+        if MARKET_MAKER_RE.search(text):
             return "MARKET_MAKER"
-        # has label but no class matched
-        return "OTHER_NAMED"
 
-    # entity_name match without label
-    if entity_name:
-        en = entity_name.lower()
-        if DEX_PROTOCOL_NAMES.match(entity_name):
-            return "DEX_POOL"
-        if MARKET_MAKER_RE.search(entity_name):
-            return "MARKET_MAKER"
+    if label or entity_name:
         return "OTHER_NAMED"
-
     return "UNLABELED"
+
+
+def neutral_infra_kind(label: str | None,
+                       entity_name: str | None = None,
+                       entity_type: str | None = None) -> str | None:
+    """Return 'cex' / 'dex' when (label, entity) identifies NEUTRAL infra — an
+    exchange-custody / listing-channel wallet or a DEX liquidity pool — that is NOT
+    a project insider, else None. Built on `classify_label`, so the CEX match
+    requires brand+type adjacency (a bare brand mention does not qualify) — keeping
+    listing / liquidity wallets out of the insider / operator sets without hiding a
+    genuine insider whose label merely contains an exchange name. Deliberately does
+    NOT treat vesting / multisig / treasury as neutral: those are project-controlled
+    locked funds (operator-side), not neutral infra."""
+    cls = classify_label(label, entity_name, entity_type)
+    if cls in ("CEX_HOT_WALLET", "CEX_DEPOSIT"):
+        return "cex"
+    if cls == "DEX_POOL":
+        return "dex"
+    return None
 
 
 # Classifications that should be removed from cross-sym whale candidates.

@@ -1700,18 +1700,25 @@ _{{ t("report.meta_line_tier", tier=tier_classification.tier, s1_date=tier_class
 
 {# v0.7.22 P0 #3: lineage 谱系默认折叠. 散户 不需要逐行看 41 个内幕钱包,
    汇总 行给"项目方 → N 个一级钱包 + N 已分完 / N 分发中 / N 潜伏"概要. #}
+{# v1.2.2: separate NEUTRAL infra (CEX custody / DEX pool) receivers from genuine
+   insider wallets. The rows carry is_cex_custody / is_dex_infra; count only the
+   insiders for the "内幕钱包" headline, and flag the infra rows in the table so a
+   Binance-listing / liquidity-pool receiver isn't presented as an insider. #}
+{%- set _li = namespace(infra=0) -%}
+{%- for r in lineage.m6.rows -%}{%- if r.get('is_cex_custody') or r.get('is_dex_infra') -%}{%- set _li.infra = _li.infra + 1 -%}{%- endif -%}{%- endfor -%}
+{%- set _m6_insiders = (lineage.m6.rows | length) - _li.infra -%}
 <details{% if mode == 'deep' %} open{% endif %}>
-<summary>📂 <strong>{{ t("section.lineage.title") }}</strong> — {{ t("render.lineage_summary", n=lineage.m6.rows|length, full=lineage.m6.n_full_dumper or 0, partial=lineage.m6.n_partial_dumper or 0, quiet=lineage.m6.n_quiet or 0) }}</summary>
+<summary>📂 <strong>{{ t("section.lineage.title") }}</strong> — {{ t("render.lineage_summary", n=_m6_insiders, full=lineage.m6.n_full_dumper or 0, partial=lineage.m6.n_partial_dumper or 0, quiet=lineage.m6.n_quiet or 0) }}{% if _li.infra > 0 %} (+{{ _li.infra }} CEX/DEX 中性 infra){% endif %}</summary>
 
 {{ t("section.lineage.table_h3") }}:
 
 | {{ t("section.lineage.table_header_id") }} | {{ t("section.lineage.table_header_addr") }} | {{ t("section.lineage.table_header_recv") }} | {{ t("section.lineage.table_header_balance") }} | {{ t("section.lineage.table_header_dumped") }} |
 |---|---|---|---|---|
-{% for r in lineage.m6.rows %}| `{{ r.m6_ref }}` | [`{{ r.addr_short | md_cell }}`]({{ explorer_url(r.addr_full) }}) | {{ "{:,.0f}".format(r.received_from_deployer) }} | {{ "{:,.0f}".format(r.current_balance) if r.current_balance is not none else "—" }} | {{ ("%.1f"|format(r.dumped_pct) ~ "%") if r.dumped_pct is not none else "—" }} |
+{% for r in lineage.m6.rows %}| `{{ r.m6_ref }}` | [`{{ r.addr_short | md_cell }}`]({{ explorer_url(r.addr_full) }}){% if r.get('is_cex_custody') %} 🏦{{ r.get('arkham_label') or 'CEX' }}{% elif r.get('is_dex_infra') %} 💧{{ r.get('arkham_label') or 'DEX' }}{% endif %} | {{ "{:,.0f}".format(r.received_from_deployer) }} | {{ "{:,.0f}".format(r.current_balance) if r.current_balance is not none else "—" }} | {{ ("%.1f"|format(r.dumped_pct) ~ "%") if r.dumped_pct is not none else "—" }} |
 {% endfor %}
 
-{%- set _m6_total_lineage = lineage.m6.rows | length -%}
-{%- set _m6_other = _m6_total_lineage - (lineage.m6.n_quiet or 0) - (lineage.m6.n_partial_dumper or 0) - (lineage.m6.n_full_dumper or 0) -%}
+{%- set _m6_total_lineage = _m6_insiders -%}
+{%- set _m6_other = _m6_insiders - (lineage.m6.n_quiet or 0) - (lineage.m6.n_partial_dumper or 0) - (lineage.m6.n_full_dumper or 0) -%}
 _{{ t("render.lineage_stats", total=_m6_total_lineage, quiet=lineage.m6.n_quiet or 0, partial=lineage.m6.n_partial_dumper or 0, full=lineage.m6.n_full_dumper or 0) }}{% if _m6_other > 0 %}{{ t("render.lineage_stats_other", n=_m6_other) }}{% endif %}_
 
 {# v0.8.4.9.1: m4_notes 是 LLM fill 生成, 可能含跟 v0.8.4.9 数字统一

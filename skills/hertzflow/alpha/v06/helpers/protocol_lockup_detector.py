@@ -87,12 +87,29 @@ DEX_INFRA_LABEL_RE = re.compile(
     r"pancake\w*\s*router|uniswap\w*\s*router|sushi\w*\s*router|"
     r"universal\s*router|"
     r"pool\s*manager|poolmanager|"
-    r"vault|"
     r"lifi\s*diamond|"
     r"stargate|hop\s*protocol|across\s*protocol|squid\s*router|"
     r"v[2-4]\s*pool|liquidity\s*pool|"
     r"v[2-4]\s*hook|hooks\b"
     r")\b",
+    re.IGNORECASE,
+)
+# A bare "Vault" is NOT enough to call DEX/DeFi infra — "Team Vault" / "Operator
+# Vault" are operator-controlled treasuries, not neutral DeFi. Only count a vault as
+# DEX/DeFi-neutral when a yield/DEX protocol name co-occurs (yearn/beefy/convex/...).
+DEX_VAULT_PROTOCOL_RE = re.compile(
+    r"\b(yearn|beefy|convex|aura|tokemak|pancake\w*|uniswap|sushi\w*|curve|"
+    r"balancer|thena|wombat|apeswap|trader\s*joe|biswap|mdex|venus|alpaca|"
+    r"autofarm|morpho|aave|compound|gmx|pendle|gamma|arrakis|ichi|reaper|"
+    r"frax|lido|maker|stakedao|harvest|badger|idle|enzyme|sommelier)\b",
+    re.IGNORECASE,
+)
+# VC / investment arms ("Binance Labs", "Coinbase Ventures", "OKX Ventures") carry an
+# exchange brand but are operator-side investors, NOT neutral CEX custody — exclude
+# from is_cex_custody. NOTE: deliberately NOT "fund" — an exchange "Insurance Fund" /
+# "SAFU Fund" / "Reserve Fund" IS real CEX custody, not a VC arm.
+VC_ARM_LABEL_RE = re.compile(
+    r"\b(labs|ventures|capital|partners|incubat|accelerat)\b",
     re.IGNORECASE,
 )
 
@@ -207,7 +224,8 @@ def classify_protocol_lockup(
     is_vesting = bool(VESTING_LABEL_RE.search(text))
     is_multisig = bool(MULTISIG_LABEL_RE.search(text))
     is_treasury = bool(TREASURY_LABEL_RE.search(text))
-    is_dex_infra = bool(DEX_INFRA_LABEL_RE.search(text))
+    is_dex_infra = bool(DEX_INFRA_LABEL_RE.search(text)) or (
+        "vault" in text.lower() and bool(DEX_VAULT_PROTOCOL_RE.search(text)))
     # CEX custody: brand name in label text, OR Arkham entity_type=cex/exchange.
     # dex_infra takes PRECEDENCE: a label like "Dex Router (OKX)" is OKX's DEX
     # aggregator router (a swap venue), NOT an OKX exchange deposit — the CEX
@@ -254,6 +272,11 @@ def classify_protocol_lockup(
          or (_orphan_cex_match
              and not is_vesting and not is_multisig and not is_treasury))
         and not is_dex_infra
+        # VC / investment arm ("Binance Labs", "Coinbase Ventures") carries an
+        # exchange brand but is an operator-side EARLY INVESTOR (an insider-type
+        # holder that can dump), NOT neutral exchange custody — must stay in the
+        # insider/operator set, so it does NOT qualify as CEX.
+        and not VC_ARM_LABEL_RE.search(text)
     )
     # v0.8.1: third-party distribution platforms — launchpads, task /
     # quest platforms, airdrop SaaS, generic claim-distributor contracts.

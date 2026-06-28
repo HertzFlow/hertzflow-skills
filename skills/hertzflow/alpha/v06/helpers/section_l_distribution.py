@@ -81,6 +81,7 @@ def _arkham_lockup_from_top_holders(top_addrs: list[str]) -> set[str]:
         return set()
     try:
         from surf_labels_probe import resolve_labels
+        from surf_labels_probe import neutral_infra_kind as _neutral_infra_kind
         from protocol_lockup_detector import (
             VESTING_LABEL_RE,
             MULTISIG_LABEL_RE,
@@ -132,6 +133,14 @@ def _arkham_lockup_from_top_holders(top_addrs: list[str]) -> set[str]:
         if (VESTING_LABEL_RE.search(label_text)
                 or MULTISIG_LABEL_RE.search(label_text)
                 or TREASURY_LABEL_RE.search(label_text)):
+            extra.add(_norm_addr(addr))
+        elif _neutral_infra_kind(info.get("label"), info.get("entity_name"),
+                                 info.get("entity_type")):
+            # CEX custody / DEX pool — the docstring above (v0.7.10.3) already
+            # documents that DEX-infra / CEX-custody receivers belong in this
+            # separated-from-insiders bucket, but the implementation only matched
+            # vesting/multisig/treasury, so a "Binance Wallet" or a bare "V3 Pool"
+            # top-holder that was a dumper-destination leaked into OPERATOR_RELAY.
             extra.add(_norm_addr(addr))
     return extra
 

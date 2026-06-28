@@ -437,7 +437,10 @@
   "role_anomaly_72h": "Recent 72h anomaly participant",
   "role_operator_relay_with_pct": "Operator relay (holding {pct:.2f}% of supply)",
   "role_cross_sym_whale": "Cross-token whale (holds {pct:.2f}% + {n_cross} other Alpha tokens, class {cls})",
-  "role_flow_operator": "Flow operator {sub} (this-token {n_tx:,} tx · across {n_alpha} Alpha tokens)"
+  "role_flow_operator": "Flow operator {sub} (this-token {n_tx:,} tx · across {n_alpha} Alpha tokens)",
+  "role_cex_custody": "🏦 CEX platform relay ({label})",
+  "role_dex_pool": "💧 DEX liquidity pool ({label})",
+  "role_lockup_infra": "🔒 lockup/treasury contract ({label})"
  },
  "common": {
   "unknown": "Unknown",

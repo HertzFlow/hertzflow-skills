@@ -100,13 +100,17 @@ _DEX_ROUTER_INFRA_RE = _re.compile(
     r"li\.?fi\s*diamond",
     _re.IGNORECASE,
 )
+# Kept in sync with protocol_lockup_detector.DEX_VAULT_PROTOCOL_RE so a DeFi yield
+# vault (Gamma / Arrakis / Pancake / Lido / ...) is recognized identically by the
+# chip three-way and the source classifier.
 _VAULT_PROTOCOL_RE = _re.compile(
-    r"\b(pancakeswap|uniswap|sushiswap|curve|balancer|beefy|yearn|thena|"
+    r"\b(pancake\w*|uniswap|sushi\w*|curve|balancer|beefy|yearn|thena|"
     r"wombat|apeswap|trader\s*joe|biswap|mdex|venus|alpaca|autofarm|"
-    r"convex|aura|tokemak)\b",
+    r"convex|aura|tokemak|gamma|arrakis|ichi|reaper|frax|lido|maker|"
+    r"stakedao|harvest|badger|idle|enzyme|sommelier|morpho|aave|compound|gmx|pendle)\b",
     _re.IGNORECASE,
 )
-_VC_ARM_RE = _re.compile(r"\b(ventures|labs|capital|partners|fund)\b", _re.IGNORECASE)
+_VC_ARM_RE = _re.compile(r"\b(ventures|labs|capital|partners|incubat|accelerat)\b", _re.IGNORECASE)  # not "fund": exchange Insurance/SAFU/Reserve Fund IS CEX
 # monitoring roles that, when already correctly assigned, mark neutral infra.
 _NEUTRAL_INFRA_ROLES = frozenset({
     "router_aggregator", "dex_pool", "public_cex_hot_wallet",
@@ -130,6 +134,13 @@ def _is_neutral_infra_label(label: str) -> bool:
     # CEX custody — but not a VC arm ("Coinbase Ventures", "Binance Labs").
     if _CEX_RE.search(lab) and not _VC_ARM_RE.search(lab):
         return True
+    # NOTE (v1.2.2): a bare DEX liquidity POOL ("V3 Pool") is intentionally NOT
+    # matched here — `test_neutral_infra_label_matcher` pins that, because the
+    # supply-chain chip three-way counts a pool's balance as circulating liquidity
+    # (not operator, not "verifiable retail"). Reclassifying pools as neutral would
+    # change the chip denominator + needs an end-to-end retail-bucket skip; out of
+    # scope for the operator/insider-mislabel fix. Routers / aggregators / pool-
+    # MANAGERS (the V4 singleton) are still matched above via _DEX_ROUTER_INFRA_RE.
     return False
 
 

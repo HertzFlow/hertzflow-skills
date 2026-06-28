@@ -262,6 +262,33 @@ def _derive_action_enum(verdict_enum: str) -> str:
     }.get(verdict_enum, "wait")
 
 
+def _receiver_infra_kind(r: dict) -> str | None:
+    """'cex' / 'dex' if a rule_11 receiver is NEUTRAL infra (exchange custody / DEX
+    pool — not a project insider), else None. Used everywhere a rule_11 receiver
+    feeds an insider/operator set (monitoring roles, pre-launch / dumper detector
+    counts, canonical-chain operator set, primary-sale seed) so listing-channel +
+    liquidity wallets stay out. Vesting / multisig / treasury are NOT neutral —
+    they are operator-controlled.
+
+    Trusts the upstream is_cex_custody / is_dex_infra flags (now reliable: the source
+    classifier `classify_protocol_lockup` excludes VC arms like "Binance Labs" from
+    CEX and requires a yield/DEX protocol for a bare "Vault", so a VC investor /
+    operator vault is NOT dropped), then re-derives strictly from the Arkham label
+    for receivers whose enrich path left the flags unset."""
+    if r.get("is_cex_custody"):
+        return "cex"
+    if r.get("is_dex_infra"):
+        return "dex"
+    lbl = r.get("arkham_label")
+    if lbl:
+        try:
+            from surf_labels_probe import neutral_infra_kind
+            return neutral_infra_kind(lbl, lbl, None)
+        except Exception:
+            return None
+    return None
+
+
 def _build_monitoring_wallets(rule11: dict, anomaly72: dict, eg,
                               distribution: dict | None = None,
                               cross_sym: dict | None = None,
@@ -311,29 +338,48 @@ def _build_monitoring_wallets(rule11: dict, anomaly72: dict, eg,
         if addr in seen_addrs:
             continue
         seen_addrs.add(addr)
-        # `or 0`: unknown (unconfirmed-backfill) dumped_pct → 0 so the
-        # comparisons + `dp=` format kwargs below can't crash on None
-        # (v0.7.13 issue #1 Bug 1 defense-in-depth).
-        dp = r.get("dumped_pct") or 0
-        if dp == 0.0:
-            role_label = _i18n_t("monitoring.role_quiet_full_with_balance",
-                                 balance=r["current_balance"])
-            emoji = "🔴"
-        elif dp >= 95.0:
-            role_label = _i18n_t("monitoring.role_full_dumper_with_pct", dp=dp)
-            emoji = "🟢"  # green: largely past
-        else:
-            role_label = _i18n_t("monitoring.role_partial_with_pct", dp=dp)
-            emoji = "🟠"
-        wallets.append({
+        # Identity-aware relabel: a deployer-receiver that is actually CEX custody
+        # (e.g. "Binance Wallet" — the Alpha listing channel) or a DEX pool (the
+        # deployer seeding liquidity) is NOT a project insider and must not be shown
+        # as "项目方内幕分发". Trust the upstream infra flags, but defensively
+        # re-derive from the Arkham label too — enrich paths differ in which flags
+        # they set, e.g. a bare "V3 Pool" can arrive with is_dex_infra unset. Setting
+        # arkham_classification / entity makes monitoring_ranker canonicalize the
+        # wallet to dex_pool / public_cex_hot_wallet instead of deployer/insider.
+        _lbl = r.get("arkham_label")
+        _infra = _receiver_infra_kind(r)   # 'cex' / 'dex' / None (NOT vesting/treasury)
+        _w = {
             "n": n,
             "addr_short": r["addr"][:10],
             "addr_full": r["addr"],
-            "role": role_label,
-            "status_emoji": emoji,
             "balance_tokens": float(r.get("current_balance") or 0),
             "alert": "<LLM_NARRATIVE_PLACEHOLDER>",
-        })
+        }
+        if _infra == "cex":
+            _w["role"] = _i18n_t("monitoring.role_cex_custody", label=(_lbl or "CEX"))
+            _w["status_emoji"] = "⚪"
+            _w["arkham_classification"] = "CEX_HOT_WALLET"
+            _w["arkham_entity_name"] = _lbl or ""
+        elif _infra == "dex":
+            _w["role"] = _i18n_t("monitoring.role_dex_pool", label=(_lbl or "DEX"))
+            _w["status_emoji"] = "⚪"
+            _w["arkham_classification"] = "DEX_POOL"
+            _w["arkham_entity_name"] = _lbl or ""
+        else:
+            # `or 0`: unknown (unconfirmed-backfill) dumped_pct → 0 so the comparisons
+            # + `dp=` kwargs can't crash on None (v0.7.13 defense-in-depth).
+            dp = r.get("dumped_pct") or 0
+            if dp == 0.0:
+                _w["role"] = _i18n_t("monitoring.role_quiet_full_with_balance",
+                                     balance=r["current_balance"])
+                _w["status_emoji"] = "🔴"
+            elif dp >= 95.0:
+                _w["role"] = _i18n_t("monitoring.role_full_dumper_with_pct", dp=dp)
+                _w["status_emoji"] = "🟢"  # green: largely past
+            else:
+                _w["role"] = _i18n_t("monitoring.role_partial_with_pct", dp=dp)
+                _w["status_emoji"] = "🟠"
+        wallets.append(_w)
         n += 1
 
     # 3. Cross-sym mega-wallets (v0.7.3) — top-100 holders that also hold
@@ -1879,6 +1925,11 @@ def build_skeleton(
                         _psa_seed.add(_norm_addr(rule11["deployer"]))
                     _r11_recv = (rule11.get("pre_launch_receivers") or []) if isinstance(rule11, dict) else []
                     for _r in _r11_recv:
+                        # parity with monitoring / counts / supply_chain: a CEX
+                        # listing-channel or DEX pool receiver is not an operator and
+                        # must not seed the primary-sale funding set (adversarial review HIGH).
+                        if _receiver_infra_kind(_r):
+                            continue
                         _a = _norm_addr(_r.get("address") or _r.get("addr") or "")
                         if _a:
                             _psa_seed.add(_a)
@@ -1916,6 +1967,13 @@ def build_skeleton(
             primary_sales = {"_error": str(_e)[:200]}
     timings["primary_sales"] = time.perf_counter() - t
     _ck("primary_sales", primary_sales)
+
+    # Insider-only pre-launch receivers: exclude NEUTRAL infra (CEX custody / DEX
+    # pool) so the "上线前内幕分发" / "已分完" detector counts don't include the
+    # exchange listing-channel wallet or the liquidity pool as insider distribution.
+    # (Vesting/multisig/treasury stay — they are project-controlled allocations.)
+    _pre_recv = (rule11.get("pre_launch_receivers") or []) if isinstance(rule11, dict) else []
+    _insider_recv = [r for r in _pre_recv if not _receiver_infra_kind(r)]
 
     # ---------- Build the skeleton report_data ----------
     # Locked sections (pipeline-populated)
@@ -2079,6 +2137,10 @@ def build_skeleton(
                         "is_vesting": r.get("is_vesting", False),
                         "is_multisig": r.get("is_multisig", False),
                         "is_cex_custody": r.get("is_cex_custody", False),
+                        # v1.2.2: also carry DEX-infra / treasury so the m6 table can
+                        # flag a liquidity pool or treasury row, not just CEX/vesting.
+                        "is_dex_infra": r.get("is_dex_infra", False),
+                        "is_treasury": r.get("is_treasury", False),
                         "arkham_label": r.get("arkham_label"),
                         # LLM writes the interpretation
                         "identity_narrative": "<LLM_NARRATIVE_PLACEHOLDER>",
@@ -2087,12 +2149,15 @@ def build_skeleton(
                     for r in rule11["pre_launch_receivers"]
                 ],
                 "n_quiet": len(rule11["quiet_wallets"]),
+                # consistency with the detector_summary counts: exclude neutral infra
+                # (CEX/DEX) so the lineage dumper tally doesn't present a listing /
+                # liquidity wallet as an insider partial/full dumper.
                 "n_partial_dumper": sum(
-                    1 for r in rule11["pre_launch_receivers"]
+                    1 for r in _insider_recv
                     if r.get("dumped_pct") is not None and 0 < r["dumped_pct"] < 95
                 ),
                 "n_full_dumper": sum(
-                    1 for r in rule11["pre_launch_receivers"]
+                    1 for r in _insider_recv
                     if r.get("dumped_pct") is not None and r["dumped_pct"] >= 95
                 ),
             },
@@ -2156,19 +2221,19 @@ def build_skeleton(
             "detector_summary": [
                 # Mandatory categories (R10 enforces presence). v0.6.2: labels via i18n.
                 {
-                    "emoji": "🔴" if len(rule11["pre_launch_receivers"]) > 0 else "⚪",
+                    "emoji": "🔴" if len(_insider_recv) > 0 else "⚪",
                     "label": _i18n_t("anomaly.detector_label.pre_launch_distribution"),
-                    "count": len(rule11["pre_launch_receivers"]),
+                    "count": len(_insider_recv),  # excludes CEX/DEX neutral infra
                     "detail": "<LLM_NARRATIVE_PLACEHOLDER>",
                 },
                 {
                     "emoji": "🔴" if sum(
-                        1 for r in rule11["pre_launch_receivers"]
+                        1 for r in _insider_recv
                         if r.get("dumped_pct") is not None and r["dumped_pct"] >= 95
                     ) > 0 else "⚪",
                     "label": _i18n_t("anomaly.detector_label.full_dumper_wallets"),
                     "count": sum(
-                        1 for r in rule11["pre_launch_receivers"]
+                        1 for r in _insider_recv
                         if r.get("dumped_pct") is not None and r["dumped_pct"] >= 95
                     ),
                     "detail": "<LLM_NARRATIVE_PLACEHOLDER>",

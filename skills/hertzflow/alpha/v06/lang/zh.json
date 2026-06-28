@@ -437,7 +437,10 @@
   "role_anomaly_72h": "近 72h 异常大单参与方",
   "role_operator_relay_with_pct": "庄家中转地 (持 {pct:.2f}% 总供应)",
   "role_cross_sym_whale": "跨币大户 (持 {pct:.2f}% + 同时持有 {n_cross} 个其他 Alpha 币, 分类 {cls})",
-  "role_flow_operator": "流水大户 {sub} (本币 {n_tx:,} tx · 跨 {n_alpha} Alpha 币)"
+  "role_flow_operator": "流水大户 {sub} (本币 {n_tx:,} tx · 跨 {n_alpha} Alpha 币)",
+  "role_cex_custody": "🏦 CEX 平台中转 ({label})",
+  "role_dex_pool": "💧 DEX 流动性池 ({label})",
+  "role_lockup_infra": "🔒 锁仓/金库合约 ({label})"
  },
  "common": {
   "unknown": "未知",
