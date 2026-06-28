@@ -532,6 +532,15 @@ def _compute_inner(
         if cls in ("CEX_HOT_WALLET", "CEX_DEPOSIT"):
             relay_addrs.add(addr)
             continue
+        # v1.2.3 (product spec): a DEX liquidity POOL is the same "hard-to-judge,
+        # neutral" type as a CEX deposit — its balance mixes operator-added liquidity
+        # with retail-traded flow and cannot be split, so it is neither 庄家可控 nor
+        # verifiable retail sell-pressure. Route it to the relay/neutral bucket (NOT
+        # non_operator), exactly like CEX. (Routers/aggregators/pool-managers are
+        # already removed via neutral_infra; this covers the per-pair pool itself.)
+        if cls == "DEX_POOL":
+            relay_addrs.add(addr)
+            continue
         # vesting / timelock = project RESERVE (operator-side undistributed) —
         # checked BEFORE staking so "vesting" is never caught by the ve heuristic.
         if _LOCK_LABEL_RE.search(label):
@@ -614,10 +623,24 @@ def _compute_inner(
                 if _dep:
                     rule11_ops.add(_dep)
                     seed.add(_dep)
+                try:
+                    from surf_labels_probe import neutral_infra_kind as _nik
+                except Exception:
+                    _nik = lambda *a, **k: None  # noqa: E731
                 for r in (_r11.get("pre_launch_receivers") or []):
                     a = (r.get("addr") or "").lower()
-                    if a:
-                        rule11_ops.add(a)
+                    if not a:
+                        continue
+                    # parity with the monitoring / detector-count filter: a CEX
+                    # listing-channel or DEX liquidity wallet that received from the
+                    # deployer is NOT an operator — keep it out of the operator set.
+                    _rlbl = r.get("arkham_label")   # NB: not `_lbl` — that name is the
+                    # holder-label CLOSURE used later (line ~816); shadowing it with a
+                    # str/None here broke _compute_inner with 'NoneType not callable'.
+                    if (r.get("is_cex_custody") or r.get("is_dex_infra")
+                            or (_rlbl and _nik(_rlbl, _rlbl, None))):
+                        continue
+                    rule11_ops.add(a)
                 for d in (_r11.get("dumper_destinations") or {}):
                     a = (d or "").lower()
                     if a:
@@ -842,8 +865,8 @@ def _compute_inner(
             "buckets anchored to Alpha circulating_supply; overhang = "
             "total − circulating (undistributed project reserve, subtracted from "
             "operator). operator = rule_11 lineage + multi-hop genesis BFS + "
-            "wallet cluster + multisig/reserve contracts; relay = CEX "
-            "(resolve_labels); staking/ve locks = non-operator; bridge excluded. "
+            "wallet cluster + multisig/reserve contracts; relay = CEX + DEX "
+            "liquidity pool (resolve_labels); staking/ve locks = non-operator; bridge excluded. "
             "All SQL under chain_lock(supply_chain)."
         ),
     }
