@@ -300,7 +300,7 @@ class Validator:
         # writing narrative that directly contradicts what the pipeline-locked
         # data says — e.g. cex_trace.interpretation saying "no perp catalyst"
         # when locked tier == "S2" + Binance perp listing row is present.
-        # Two independent LLMs (Claude + adversarial review) made this mistake on STAR
+        # Two independent LLMs (an LLM + adversarial review) made this mistake on STAR
         # 2026-05-25 cross-LLM test; user caught it on read.
         self._check_narrative_vs_locked_semantic(filled)
 
@@ -342,11 +342,17 @@ class Validator:
         # v0.8.4.9.4: accept 0.6.x AND 0.7.x AND 0.8.x. v0.9.0 加: 跟
         # 0.8 schema 兼容 (没 breaking change), 只是 architecture rearch
         # (folder 重组 + 单 skill router). schema 字段未动.
+        # v1.2.0: accept ALL 1.x via a "1." prefix — the per-minor enumeration meant
+        # every _version.py bump (1.0→1.1→1.2…) silently broke the FIRST render with
+        # a V_SCHEMA_VERSION hard-fail until someone re-listed it. The s_ver != f_ver
+        # check above still catches a genuine skeleton/filled mismatch; within the 1.x
+        # line the schema is forward-compatible, so a prefix accept is correct + stops
+        # this recurring on every release.
         if s_ver and not (s_ver.startswith("0.6") or s_ver.startswith("0.7")
                           or s_ver.startswith("0.8") or s_ver.startswith("0.9")
-                          or s_ver.startswith("1.0") or s_ver.startswith("1.1")):
+                          or s_ver.startswith("1.")):
             self.errors.append(
-                f"V_SCHEMA_VERSION: expected 0.6.x / 0.7.x / 0.8.x / 0.9.x / 1.0.x / 1.1.x, "
+                f"V_SCHEMA_VERSION: expected 0.6.x / 0.7.x / 0.8.x / 0.9.x / 1.x, "
                 f"got {s_ver!r}"
             )
 
@@ -839,7 +845,7 @@ class Validator:
     # certain values. Catches the "LLM dismisses a catalyst that the
     # pipeline clearly captured" failure mode (STAR 2026-05-25:
     # cex_trace.tier locked to "S2" + Binance perp listing 10d ago, but
-    # narrative said "perp 未确认" — both Claude and adversarial review did this).
+    # narrative said "perp 未确认" — both an LLM and adversarial review did this).
     #
     # Design notes:
     # - Phrase patterns are conservative substrings (long enough to avoid
@@ -1381,9 +1387,9 @@ class Validator:
     # ============================================================
     # Three soft-fail checks that catch dud narrative not caught by earlier
     # validators. v0.7.2 acceptance testing found two distinct failure modes:
-    #   1. adversarial review/Claude default to invoking tests/smoke_fill.py → caught by
+    #   1. adversarial review/an LLM default to invoking tests/smoke_fill.py → caught by
     #      render_report.py smoke gate (v0.7.2).
-    #   2. Kimi did real LLM fill but with boilerplate evasion like
+    #   2. another LLM did real LLM fill but with boilerplate evasion like
     #      "该字段已沿邻近锁定数据补充叙述" repeated across slots, or
     #      hallucinated numbers that don't match locked fields → caught
     #      by the validators below (v0.7.3).
@@ -1396,7 +1402,7 @@ class Validator:
     # phrases that have NO legitimate analytical use case. Expanded only
     # after observing the phrase in real lazy-LLM output.
     _GENERIC_BOILERPLATE_PHRASES = (
-        # Kimi v0.7.1 boilerplate (observed 2026-05-25):
+        # another LLM v0.7.1 boilerplate (observed 2026-05-25):
         "该字段已沿邻近锁定数据补充叙述",
         "本字段已沿邻近锁定数据补充叙述",
         "沿邻近锁定数据补充叙述",
@@ -1413,7 +1419,7 @@ class Validator:
         "见上方表格",
         "见上文",
         "见相邻字段",
-        # English equivalents (Claude sometimes mixes EN in ZH reports):
+        # English equivalents (an LLM sometimes mixes EN in ZH reports):
         "see adjacent locked fields",
         "see above",
         "refer to the locked data",
@@ -1463,7 +1469,7 @@ class Validator:
         Strategy: collect every narrative string across the whole filled
         document, normalize via the same _norm() as v0.6.4, count occurrences,
         flag the largest cluster if it covers > 25% of the corpus (and corpus
-        size ≥ 8). Threshold 25% chosen empirically — kimi v0.7.1 report had
+        size ≥ 8). Threshold 25% chosen empirically — another llm v0.7.1 report had
         the "该字段已沿邻近..." template covering ~40% of slots.
         """
         import re
