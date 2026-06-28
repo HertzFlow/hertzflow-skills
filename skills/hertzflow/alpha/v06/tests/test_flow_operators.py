@@ -21,7 +21,7 @@ import flow_operator_detector as fod
 
 def test_thresholds_match_design_doc():
     """Thresholds in flow_operator_detector must match v0721_DESIGN.md.
-    Per CLAUDE.md M35 we pre-register; this test refuses silent tuning.
+    Per project methodology M35 we pre-register; this test refuses silent tuning.
     """
     assert fod.MIN_TX_THIS_TOKEN == 200
     assert fod.MAX_TX_FROM_DIVERSITY == 0.05

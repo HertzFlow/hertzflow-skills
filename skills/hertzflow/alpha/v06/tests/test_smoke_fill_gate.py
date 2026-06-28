@@ -2,7 +2,7 @@
 """test_smoke_fill_gate.py — regression test for v0.7.2 smoke-fixture gate.
 
 Cross-LLM acceptance testing of v0.7.1 found that agents (both adversarial review and
-Claude) defaulted to invoking `tests/smoke_fill.py` as their LLM fill
+an LLM) defaulted to invoking `tests/smoke_fill.py` as their LLM fill
 step in production runs, producing reports full of NATO-suffix placeholder
 stubs. v0.7.2 closes this at the renderer level by:
 

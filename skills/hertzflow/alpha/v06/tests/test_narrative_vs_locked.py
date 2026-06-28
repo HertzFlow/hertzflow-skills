@@ -2,7 +2,7 @@
 """test_narrative_vs_locked.py — v0.6.4 V_NARRATIVE_VS_LOCKED_SEMANTIC.
 
 Triggered by cross-LLM regression test on STAR 2026-05-25: two
-independent LLMs (Claude + adversarial review) both filled cex_trace.interpretation
+independent LLMs (an LLM + adversarial review) both filled cex_trace.interpretation
 with "perp 未确认" while locked tier == "S2" + Binance perp listing
 row was present. Validator V_NARRATIVE_VS_LOCKED_SEMANTIC catches
 this contradiction class.

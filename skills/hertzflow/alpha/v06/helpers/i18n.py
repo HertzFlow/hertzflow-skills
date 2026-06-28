@@ -2,7 +2,7 @@
 """i18n.py — single-source-of-truth language loader for v0.6.2.
 
 v0.6.1 had ~221 hardcoded Chinese strings across 13 files. Users running
-the skill in English contexts (adversarial review / kimi / English-speaking analysts)
+the skill in English contexts (adversarial review / other LLMs / English-speaking analysts)
 got Chinese reports they couldn't read. v0.6.2 centralizes all user-facing
 strings into lang/<lang>.yaml files.
 

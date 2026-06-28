@@ -4,7 +4,7 @@ narrative quality validators.
 
 Motivation: v0.7.2 smoke-fixture gate catches agents invoking
 tests/smoke_fill.py literally, but does NOT catch:
-  - Kimi-style boilerplate (real LLM fill but lazy):
+  - Lazy-LLM-style boilerplate (real LLM fill but lazy):
     "该字段已沿邻近锁定数据补充叙述" repeated across slots
   - Numeric hallucination ("0.5%" cited but locked has 0.19%)
   - Template reuse across non-array slots (10 different sections all
@@ -85,14 +85,14 @@ def _count_errors(errors: list[str], prefix: str) -> int:
 # V_NARRATIVE_GENERIC_PHRASES
 # ============================================================
 
-def test_generic_phrases_fires_on_kimi_boilerplate() -> None:
-    """Kimi v0.7.1 observed boilerplate must trigger the validator."""
+def test_generic_phrases_fires_on_lazy_llm_boilerplate() -> None:
+    """A lazy LLM v0.7.1 observed boilerplate must trigger the validator."""
     skel = _load_skeleton()
     filled = _smoke_fill_filled(skel)
     assert _patch_slot(filled, "interpretation", "该字段已沿邻近锁定数据补充叙述")
     errs = Validator().validate(skel, filled)
     assert _has_error(errs, "V_NARRATIVE_GENERIC_PHRASES"), (
-        f"Kimi boilerplate must trigger V_NARRATIVE_GENERIC_PHRASES. Errors:\n"
+        f"A lazy LLM boilerplate must trigger V_NARRATIVE_GENERIC_PHRASES. Errors:\n"
         + "\n".join(errs[:10])
     )
 
