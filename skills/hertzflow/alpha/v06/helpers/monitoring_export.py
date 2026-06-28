@@ -522,9 +522,11 @@ def to_paste_json(canonical: list[dict]) -> str:
     - Binance Wallet bulk import → paste → ✅ works
     - OKX wallet bulk import → paste → ✅ works (paste only, no upload)
     """
-    # v0.7.27: skip NOT_TRACKED entries entirely (infra / public CEX hot
-    # wallets — they generate constant noise that drowns out real signal
-    # in retail's tracker UI). Output now sorted by monitor_level via
+    # v0.7.27: skip NOT_TRACKED entries entirely (neutral infra — DEX
+    # routers / public CEX hot wallets / DEX liquidity pools — they generate
+    # constant noise that drowns out real signal in retail's tracker UI, and
+    # wallet apps already surface CEX/LP state natively). Output sorted by
+    # monitor_level via
     # build_canonical, so the first entries are always CRITICAL → HIGH.
     # Per-entry emoji uses monitor_level (🚨/🔥/👀) when available,
     # otherwise falls back to severity emoji for legacy compat.

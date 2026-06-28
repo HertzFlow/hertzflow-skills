@@ -34,7 +34,8 @@ calibration will validate on n ≥ 30 tokens):
         + recency_bonus       (72h +3 / 7d +2 / 60d +1)
         + behavior_linkage    (A2/A3/C1 +3, C2/D1 +2, B1 +1)
 
-  if router/aggregator OR public CEX hot wallet: score = -999 (NOT_TRACKED hard)
+  if router/aggregator OR public CEX hot wallet OR dex_pool: score = -999
+  (NOT_TRACKED hard — neutral infra; wallet apps already surface CEX/LP natively)
 
   Level: score >= 8 → CRITICAL
          score >= 5 → HIGH
@@ -88,11 +89,17 @@ ROLE_BASE_SCORE = {
     "cex_deposit_destination": 3,
     "cross_alpha_inactive_whale": 2,
     "unknown_top_holder": 2,
-    "dex_pool": 2,
 
     # NOT_TRACKED hard
     "router_aggregator": -999,
     "public_cex_hot_wallet": -999,
+    # dex_pool (product spec 2026-06-29): a DEX liquidity pool is neutral, token-specific
+    # infra — NOT a project/insider wallet to "catch dumping". The wallet apps the
+    # paste imports into (Binance Wallet / OKX) ALREADY surface this token's LP /
+    # pool state natively, so re-listing the pool address in the paste is redundant
+    # noise. Keep it correctly classified in the report (m6 badge / waves / the
+    # relay bucket of 真实派发), but drop it from the import paste like CEX/routers.
+    "dex_pool": -999,
 
     # Fallback
     "other": 1,

@@ -134,6 +134,43 @@ def test_paste_json_format():
     assert j[0]["emoji"] == "🔴"   # critical → 🔴
 
 
+def test_dex_pool_excluded_from_paste():
+    """product spec 2026-06-29: a DEX liquidity pool is neutral, token-specific infra and
+    wallet apps already surface LP state natively, so it must NOT appear in the
+    import paste. monitoring_ranker scores dex_pool -999 → NOT_TRACKED, and
+    to_paste_json skips NOT_TRACKED — verify the full path end-to-end, alongside
+    CEX (already excluded) and a real deployer wallet (kept)."""
+    from monitoring_ranker import annotate_monitoring_wallets
+    from monitoring_export import build_canonical, to_paste_json
+    import json as _json
+
+    skel = {"monitoring_wallets": [
+        {"addr_full": "0x" + "a" * 40, "addr_short": "0xaaaa",
+         "role": "项目方部署钱包", "status_emoji": "🔴", "balance_tokens": 5_000_000,
+         "monitor_role_enum": "deployer"},
+        {"addr_full": "0x" + "b" * 40, "addr_short": "0xbbbb",
+         "role": "DEX 主池", "status_emoji": "🟡", "balance_tokens": 9_000_000,
+         "monitor_role_enum": "dex_pool"},
+        {"addr_full": "0x" + "c" * 40, "addr_short": "0xcccc",
+         "role": "Binance hot wallet", "status_emoji": "🟡", "balance_tokens": 8_000_000,
+         "monitor_role_enum": "public_cex_hot_wallet"},
+    ]}
+    annotate_monitoring_wallets(skel)
+    by_addr = {w["addr_full"]: w.get("monitor_level") for w in skel["monitoring_wallets"]}
+    assert by_addr["0x" + "b" * 40] == "NOT_TRACKED", by_addr   # DEX pool
+    assert by_addr["0x" + "c" * 40] == "NOT_TRACKED", by_addr   # CEX hot wallet
+    assert by_addr["0x" + "a" * 40] != "NOT_TRACKED", by_addr   # deployer kept
+
+    canonical = build_canonical(symbol="O", chain="bsc",
+                                contract_address="0x" + "d" * 40,
+                                monitoring_wallets=skel["monitoring_wallets"])
+    paste = _json.loads(to_paste_json(canonical))
+    addrs = {p["address"] for p in paste}
+    assert ("0x" + "a" * 40) in addrs           # deployer kept
+    assert ("0x" + "b" * 40) not in addrs        # DEX pool dropped
+    assert ("0x" + "c" * 40) not in addrs        # CEX dropped
+
+
 def test_paste_json_pure_ascii_bytes():
     """beta.16: monitoring_paste.json must be pure ASCII bytes.
 
