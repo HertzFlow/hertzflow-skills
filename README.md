@@ -18,7 +18,7 @@
 
 `hertzflow-skills` is the umbrella repository for HertzFlow's open-source
 AI-agent trading toolkit. Each skill inside this repo plugs into your
-AI coding agent (Claude Code, Cursor, adversarial review CLI, Windsurf, and ~50
+AI coding agent (Claude Code, Cursor, Codex CLI, Windsurf, and ~50
 others) and gives the agent a specific research capability — on-chain
 forensics, CEX intelligence, perp metrics, and more.
 
@@ -378,7 +378,7 @@ and contribute back to the ecosystem.
 维护中。
 
 每个 sub-skill 都嵌入你的 AI coding agent (Claude Code / Cursor /
-adversarial review CLI / Windsurf / Cline / Continue / Aider 等 50+ 种), 给
+Codex CLI / Windsurf / Cline / Continue / Aider 等 50+ 种), 给
 agent 加一项专属研究能力 — 链上取证、CEX 情报、永续盘口、跨链桥
 审计等。
 

@@ -100,7 +100,7 @@ report.md
 
 ## Onboarding (agent must follow verbatim)
 
-> **Audience for this section is the LLM agent (Claude / adversarial review / Kimi /
+> **Audience for this section is the LLM agent (Claude Code / Codex / Cursor /
 > Cursor / etc.) installing this skill on behalf of the user, not the
 > human reader.** Follow steps 1-4 in order, switch locale based on the
 > user's most recent message language (CJK characters → `zh`, otherwise
@@ -465,10 +465,10 @@ pipeline → render 的单元测试管道, **不是生产环境的 fill 步骤**
    **中文**: 写到 `/tmp/filled.json`, 跑 `render_report.py`.
 
 **Background / 背景**: cross-LLM acceptance testing of v0.7.1 found that
-both adversarial review and Claude agents defaulted to running
+multiple AI agents defaulted to running
 `python3 tests/smoke_fill.py` as their fill step, yielding reports full
 of placeholder text that looked "filled" but carried no analytical
-content. v0.7.1 跨 LLM 验收时发现 adversarial review 和 Claude 都默认调
+content. v0.7.1 跨 LLM 验收时发现多个 agent 都默认调
 `tests/smoke_fill.py` 当 fill 步骤, 产出看似"已填"实际无 analytical
 content 的占位符报告. The v0.7.2 render gate exists because docs alone
 were not sufficient — agents read code paths over prose. v0.7.2 的
@@ -942,7 +942,7 @@ Per-CA cost (Surf credits, ~$0.0079/credit):
 
 USD: ~$1.6-2.4 per forensic in surf credits + LLM API tokens for the
 fill step (~5-10k input tokens, ~2-3k output tokens — under $0.05 on
-Claude Sonnet 4.6 or adversarial review GPT-5).
+a frontier LLM).
 
 ## What v0.6 does NOT cover (acknowledged limitations)
 
@@ -987,9 +987,9 @@ paths to be present. Construct → fail closed; validate → fail closed.
 ## Cross-LLM test matrix (target)
 
 The skill targets identical-quality output across:
-- **Claude Sonnet 4.6 / Opus 4.7** (reference)
-- **adversarial review GPT-5.3** (cross-model bias check)
-- **Kimi K2** (lower-cost / non-frontier verification)
+- **A frontier LLM** (reference)
+- **A second frontier LLM** (cross-model bias check)
+- **A non-frontier LLM** (lower-cost verification)
 
 E2E pass criteria per LLM:
 1. Pipeline runs successfully on a known-bad CA (e.g., BSB
@@ -1016,7 +1016,7 @@ Cross-LLM test runs at major milestones; results in v06/CROSS_LLM_TEST_v06.md.
 - Locked-field tampering regression → add test case to
   `tests/test_derived_locked_enforcement.py`.
 
-## How to invoke this skill in a Claude / adversarial review / Kimi session
+## How to invoke this skill in an AI agent session
 
 User pastes a 0x address. Skill auto-starts preflight + Section A
 (free). Surfaces estimated cost (~$1.5-2.5 for full forensic).
