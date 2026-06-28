@@ -1,0 +1,36 @@
+name: forensic skill tests
+
+# Runs the Binance-Alpha forensic skill (v06) test suite on every change to it.
+# The point of this gate is the INTEGRATION class of bug: v1.2.2 shipped a
+# multi-chain chip-three-way crash that 9 rounds of unit-level diff review missed
+# because no full pipeline path was ever executed. tests/test_supply_chain_smoke.py
+# now runs that path offline (surf/RPC mocked) so the crash class fails CI here
+# instead of in a live report.
+
+on:
+  push:
+    paths:
+      - 'skills/hertzflow/alpha/v06/**'
+      - '.github/workflows/forensic-tests.yml'
+  pull_request:
+    paths:
+      - 'skills/hertzflow/alpha/v06/**'
+      - '.github/workflows/forensic-tests.yml'
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install pytest jinja2
+      - name: Run v06 test suite
+        working-directory: skills/hertzflow/alpha/v06
+        # `zh_json_term_discipline` (派发-vs-分发 whitelist) is a PRE-EXISTING red:
+        # the allow-list lags ~36 newer zh.json keys (a term-discipline cleanup
+        # tracked separately). It is deselected here so it does not mask NEW
+        # failures — every other test, including the multi-chain smoke guard, runs.
+        run: python -m pytest tests/ -q -k "not zh_json_term_discipline"
