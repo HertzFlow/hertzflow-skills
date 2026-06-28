@@ -417,6 +417,29 @@ def fetch_apparatus_to_cex(ca: str, wallets: list[str], from_date: str) -> dict[
     }
 
 
+def _sane_effective_price(dex_px: float | None,
+                          spot_px: float | None) -> float | None:
+    """v1.2.5 (SLX 2026-06-29): bound a DEX-derived per-token price by the
+    reliable spot price before using it to value the CEX disposal leg.
+
+    The DEX prices (twap / median) are computed from surf `dex_trades.amount`,
+    which surf decimal-adjusts assuming 18 decimals. For a non-18-decimal token
+    (SLX = 8) the token amount is mis-scaled by 10^(18-d), so the implied
+    USD/token EXPLODES (SLX: $243B/token → a $2.7e18 CEX estimate). Spot price
+    comes from a different source (Alpha API / LP), so it is trustworthy.
+
+    Rule: if there is a usable spot price, reject a DEX price that is >100x or
+    <0.01x spot (decimals-broken) and fall back to spot. The 100x band keeps
+    legitimate new-token volatility; a decimals break is ≥10^9x for common
+    6/8/9-decimal tokens, so it is always caught. With no spot price we cannot
+    sanity-check, so the DEX price is returned unchanged (legacy behaviour).
+    """
+    if spot_px and spot_px > 0:
+        if not dex_px or not (0.01 * spot_px <= dex_px <= 100 * spot_px):
+            return spot_px
+    return dex_px
+
+
 # ---- main entry ----
 
 
@@ -430,6 +453,7 @@ def run(
     circulating_supply: float | None,
     total_supply: float | None,
     extra_receivers: list[dict] | None = None,
+    spot_price_usd: float | None = None,
 ) -> dict[str, Any]:
     """Insider disposal ("派发") tracking — CONFIRMED-SOLD LOWER BOUND only.
 
@@ -702,7 +726,11 @@ def run(
     # Robust median DEX price (defeats amount_usd outliers) + wash signal.
     # `profile` was already filled in parallel above (v0.7.19); only the
     # median_px / wash-signal extraction happens here.
-    median_px = profile.get("median_price_usd")
+    # v1.2.5: bound median_px at the source — it is also decimals-broken for
+    # non-18-decimal tokens (same surf dex_trades amount), and it feeds BOTH
+    # confirmed_profit below AND the cex_effective_px fallback later. Bounding
+    # here makes every downstream use sane.
+    median_px = _sane_effective_price(profile.get("median_price_usd"), spot_price_usd)
     confirmed_profit = (confirmed_total * median_px) if (median_px and confirmed_total) else None
 
     # v0.7.21.10: NET SELL OUT (Net Sell Out / 确认净卖出)
@@ -740,7 +768,8 @@ def run(
     dex_twap_px = dexb.get("dex_twap_usd_per_token")
     # Effective price for the CEX leg: prefer the apparatus' own TWAP,
     # fall back to median_px (legacy estimator) when DEX leg is empty.
-    cex_effective_px = dex_twap_px if dex_twap_px else median_px
+    cex_effective_px = _sane_effective_price(
+        dex_twap_px if dex_twap_px else median_px, spot_price_usd)
     cex_value_usd = (cex_tokens * cex_effective_px) if (cex_effective_px and cex_tokens) else None
     if cex_value_usd is not None and dex_real_usd > 0:
         net_sellout_usd = cex_value_usd + dex_real_usd
@@ -869,7 +898,10 @@ def run(
         # re-deriving from the raw SQL.
         "confirmed_dex_real_usd": dex_real_usd if dex_real_usd > 0 else None,
         "confirmed_cex_estimated_usd": cex_value_usd,
-        "apparatus_dex_twap_usd_per_token": dex_twap_px,
+        # v1.2.5: report the EFFECTIVE per-token price actually used (spot-bounded),
+        # not the raw DEX twap — otherwise a decimals-broken $243B/token leaks into
+        # the rendered net-sellout line even though the USD value is now sane.
+        "apparatus_dex_twap_usd_per_token": cex_effective_px,
         # Diagnostic only — Net should be < Gross on wash tokens; > Gross
         # signals the apparatus traded into a price spike (rare but valid).
         "net_above_gross_pct": net_above_gross_pct,

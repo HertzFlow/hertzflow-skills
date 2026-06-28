@@ -845,6 +845,9 @@ def build_skeleton(
                 listing_date=scope.get("alpha_listing_date_utc"),
                 circulating_supply=scope.get("circulating_supply"),
                 total_supply=scope.get("total_supply"),
+                # v1.2.5: reliable spot price to sanity-bound the DEX-derived
+                # per-token price (guards non-18-decimal USD overflow, e.g. SLX).
+                spot_price_usd=liq.get("current_price_usd"),
             )
         except Exception as e:
             import sys as _sys
@@ -1811,6 +1814,9 @@ def build_skeleton(
                     circulating_supply=scope.get("circulating_supply"),
                     total_supply=scope.get("total_supply"),
                     extra_receivers=extra_receivers,
+                    # v1.2.5: same spot-price guard as the main call (adversarial review HIGH)
+                    # — without it non-18-decimal mining tokens still overflow.
+                    spot_price_usd=liq.get("current_price_usd"),
                 )
                 import sys as _sys
                 _dtm = dump_tracking_mining
