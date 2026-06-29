@@ -80,7 +80,9 @@
   },
   "unit": {
    "pct": "%"
-  }
+  },
+  "banner_off_coverage_title": "主链可能不在覆盖范围 (镜像切片警告)",
+  "banner_off_coverage_body": "本 token 在 {chains} 也有部署 — 该链不在本工具的转账级链上 forensic 覆盖范围内, 这部分的真实持仓/派发/出货本报告看不到。若 {chains} 才是该 token 的主战场 (Alpha 上市链 {alpha_chain} 仅为镜像端), 则本报告仅覆盖镜像切片、风险评估不完整 — 下方结论与 verdict 仅基于 {alpha_chain} 侧数据, 不代表 token 全局。"
  },
  "verdict": {
   "cn_label": {

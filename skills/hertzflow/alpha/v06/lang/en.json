@@ -80,7 +80,9 @@
   },
   "unit": {
    "pct": "%"
-  }
+  },
+  "banner_off_coverage_title": "Main chain likely out of coverage (mirror-slice warning)",
+  "banner_off_coverage_body": "This token is also deployed on {chains} — a chain this tool cannot do transfer-level on-chain forensic on, so holdings/distribution/sell-out there are invisible to this report. If {chains} is the token's real home (with the Alpha listing chain {alpha_chain} only a mirror), this report covers just the mirror slice and the risk read is incomplete — the conclusions and verdict below are based on the {alpha_chain} side only, not the token as a whole."
  },
  "verdict": {
   "cn_label": {
