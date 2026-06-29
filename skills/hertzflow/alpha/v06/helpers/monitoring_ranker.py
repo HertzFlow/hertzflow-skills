@@ -503,6 +503,37 @@ _TRIGGER_ZH = {
 }
 
 
+def _is_sold_out(w: dict) -> bool:
+    """v1.2.7 (product spec 2026-06-29, option B): an insider wallet that has NOTHING left
+    to dump going forward must NOT be a tracked monitoring target (neither 🔥 HIGH
+    in the report nor present in the import paste). Two cases:
+
+      1. 已分完 / 已派完 (dumped ~100%): sold out — drop unconditionally, regardless
+         of any dust / float-rounding sliver of balance left.
+      2. 潜伏 / 分发中 insider holding < 1 token: an emptied or DUMMY-DECOY address.
+         Operators spray 0-value address-poisoning transfers to look-alike-prefix
+         addresses (e.g. 0x219f3a7a mirroring the real 0x219f074e); rule_11 picks
+         them up as "receivers", and since they never dumped (dumped_pct==0) they
+         got labelled "潜伏钱包 (持 0 tokens)" and scored HIGH. They hold nothing —
+         not a forward holder. Real latent holders (balance ≥ 1) are kept.
+
+    This is a skill-level fix: the deterministic scorer kept such wallets HIGH via
+    the 365-day throughput bonus (a wallet that flowed 50%+ of supply historically
+    scored +5 even on a 0 balance), and the paste filter's `balance > 0` check let
+    float-dust (1e-10 tokens) sneak them back in. The real forward targets are
+    wallets that STILL HOLD a meaningful balance (e.g. genuine quiet insiders)."""
+    role = w.get("role") or ""
+    if ("已分完" in role) or ("已派完" in role):
+        return True
+    # decoy rule: only when the balance is a KNOWN current numeric — a None
+    # (failed balance enrichment) must NOT be assumed empty (adversarial review MED).
+    bal = w.get("balance_tokens")
+    if (("潜伏" in role or "分发中" in role or "派发中" in role)
+            and bal is not None and bal < 1.0):
+        return True
+    return False
+
+
 def annotate_monitoring_wallets(skel: dict) -> list[dict]:
     """Top-level entry. Reads skeleton.monitoring_wallets[] and the
     behavior linkage sets, returns the SAME list with each entry
@@ -534,6 +565,13 @@ def annotate_monitoring_wallets(skel: dict) -> list[dict]:
         # 4) Score → level
         score = _score(role_enum, balance_pct, flow_pct, a72, a7, a60, source_behaviors)
         level = _level_from_score(score)
+        # v1.2.7: a sold-out (已分完, dumped ~100%) wallet is post-mortem — force
+        # NOT_TRACKED so it is neither HIGH in the report nor in the import paste
+        # (to_paste_json skips NOT_TRACKED), regardless of its historical-flow
+        # score or any dust balance. product spec 2026-06-29 option B.
+        if _is_sold_out(w):
+            score = -1
+            level = "NOT_TRACKED"
         # 5) Reason + trigger summary
         reason = t(_REASON_ZH.get(role_enum, _REASON_ZH["other"]))
         # v0.8.2: heuristic-derived hidden operator roles get their own

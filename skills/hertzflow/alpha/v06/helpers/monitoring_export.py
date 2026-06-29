@@ -401,16 +401,32 @@ def _is_wallet_active_for_monitoring(w: dict) -> bool:
     balance = w.get("balance_tokens")
     recent = bool(w.get("recent_activity_72h"))
 
+    # v1.2.7: trust the monitoring_ranker first (adversarial review HIGH). The ranker already
+    # demoted sold-out (已分完) + dummy-decoy (潜伏 持0) wallets to NOT_TRACKED, and
+    # promoted real forward targets to HIGH/CRITICAL. A HIGH/CRITICAL wallet stays
+    # in the paste even at 0 balance — the DEPLOYER / mint authority / bridge can
+    # act (re-fund / mint) without holding, and dropping them would lose the single
+    # most important address to watch. NOT_TRACKED is dropped outright.
+    level = w.get("monitor_level")
+    if level in ("CRITICAL", "HIGH"):
+        return True
+    if level == "NOT_TRACKED":
+        return False
+
+    # Fallback for NORMAL / un-ranked (legacy) skeletons:
     # KEEP critical / high / cross-sym regardless of balance
     if emoji in ("🔴", "🟠", "🟣"):
         return True
     # KEEP recent-activity wallets regardless
     if recent:
         return True
-    # KEEP wallets with non-trivial balance (> 0)
-    if balance is not None and balance > 0:
+    # KEEP wallets with a non-trivial balance. v1.2.7: floor at 1 whole token —
+    # the old `> 0` let float-rounding dust (1e-10 tokens, even tiny negatives on
+    # the wrong side) count as "still holding", which leaked sold-out wallets into
+    # the paste at HIGH (product spec 2026-06-29). Sub-1-token is dust, not a holding.
+    if balance is not None and balance >= 1.0:
         return True
-    # DROP everything else (resolved / 0-balance with no recent activity)
+    # DROP everything else (resolved / 0-or-dust-balance with no recent activity)
     return False
 
 
