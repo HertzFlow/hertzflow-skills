@@ -302,9 +302,12 @@ def run(
     # v0.7.13 (issue #1 Bug 1): dumped_pct may be None ("unknown") for a
     # sub-dumper whose backfill failed — guard so it is excluded from each
     # bucket instead of crashing `0 < None < 95`.
+    # v1.2.8: shared genuine-quiet predicate (requires a real ≥1-token balance) so
+    # 0-value address-poisoning decoys are not labelled 潜伏 here while the alloc
+    # table / detector exclude them — adversarial review flagged the divergence.
+    from rule_11_backward_trace import is_genuine_quiet_holder
     quiet_set = {
-        _norm_addr(r["addr"]) for r in receivers
-        if r.get("dumped_pct") == 0 and not r.get("is_protocol_lockup")
+        _norm_addr(r["addr"]) for r in receivers if is_genuine_quiet_holder(r)
     }
     partial_set = {
         _norm_addr(r["addr"]) for r in receivers
@@ -427,16 +430,22 @@ def run(
         addr_to_node_ref[_norm_addr(dex_pool_addr)] = pool_node_ref
 
     # Receiver nodes (every Rule 11 pre-launch receiver gets a node)
+    from rule_11_backward_trace import is_genuine_quiet_holder, is_zero_balance_decoy
     receiver_node_refs: dict[str, str] = {}
     for r in receivers:
         addr = r["addr"]
+        # v1.2.8: skip 0-value address-poisoning decoys — they received nothing and
+        # hold nothing, so they are not real distribution nodes (look-alike-prefix
+        # noise that previously got typed 潜伏 here).
+        if is_zero_balance_decoy(r):
+            continue
         # `or 0`: a sub-dumper whose backfill never confirmed could be None;
         # treat unknown as 0 here so node typing / the `{dumped:.0f}%` label
         # below never crash (v0.7.13 issue #1 Bug 1 defense-in-depth).
         dumped = r.get("dumped_pct") or 0
         if dumped >= 95:
             ntype = "dumper"
-        elif dumped == 0:
+        elif is_genuine_quiet_holder(r):
             ntype = "quiet_wallet"
         else:
             ntype = "dumper"

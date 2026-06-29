@@ -85,6 +85,34 @@ from window_chunker import (  # v0.7.23
 )
 
 
+# v1.2.8 (product spec 2026-06-29): the SINGLE source of truth for "is this receiver a
+# genuine 潜伏 (quiet / undistributed) insider". Used by rule_11 (quiet_wallets),
+# section_alloc (n_quiet), and section_l_distribution (quiet_set + flowchart node
+# typing) so all three agree — adversarial review flagged that they had diverged.
+#
+# A genuine quiet holder: received from the deployer, has NOT dumped
+# (dumped_pct == 0 — None means "unknown", NOT quiet), is NOT a project lockup
+# (vesting / multisig / treasury / CEX / DEX infra), AND still actually HOLDS
+# (≥ 1 token). The balance gate is what excludes 0-value address-poisoning DECOYS
+# — look-alike-prefix addresses (e.g. 0x219f3a7a mirroring the real 0x219f074e)
+# that received 0 and hold 0 but show dumped_pct == 0; they were inflating the
+# 潜伏 count (VELVET: 13 reported, only 2 genuine = 1.53% supply).
+def is_genuine_quiet_holder(r: dict) -> bool:
+    return (r.get("dumped_pct") == 0
+            and not r.get("is_protocol_lockup")
+            and (r.get("current_balance") or 0) >= 1)
+
+
+def is_zero_balance_decoy(r: dict) -> bool:
+    """A dumped_pct==0, non-lockup receiver that received ~0 AND holds ~0 — a
+    dummy address-poisoning decoy, not a real quiet insider. Surfaced separately
+    so the operator-obfuscation tactic stays visible instead of silently dropped."""
+    return (r.get("dumped_pct") == 0
+            and not r.get("is_protocol_lockup")
+            and (r.get("current_balance") or 0) < 1
+            and (r.get("received_from_deployer") or 0) < 1)
+
+
 # Wide lookback for the 0x0 mint-detection query ONLY (not the heavier
 # Step 2-4 outflow/balance scans). `from = 0x0` AND `contract_address` is a
 # highly selective predicate, so scanning ~2y of partitions is cheap. Covers
@@ -1507,11 +1535,10 @@ def run_backward_trace(
         # summary_text narrative since v0.7.10.3, but the canonical
         # `quiet_wallets` returned to forensic_pipeline / detector_summary
         # / section_l_distribution was the unfiltered version. Unify.
-        quiet_wallets = [
-            r for r in receivers
-            if r.get("dumped_pct", 0) == 0
-            and not r.get("is_protocol_lockup")
-        ]
+        quiet_wallets = [r for r in receivers if is_genuine_quiet_holder(r)]
+        # v1.2.8: 0-value address-poisoning decoys (dumped_pct==0 but received 0 /
+        # hold 0) are tracked separately, NOT counted as quiet overhang.
+        decoy_wallets = [r for r in receivers if is_zero_balance_decoy(r)]
         quiet_wallets_classifier_ok = True
     except Exception as e:
         print(f"[rule_11] lockup classifier failed: {e}", file=sys.stderr)
@@ -1557,6 +1584,7 @@ def run_backward_trace(
         "distributed_amount": int(total_received),
         "n_quiet": len(genuine_quiet),
         "quiet_balance": int(genuine_quiet_balance),
+        "n_decoy": len(decoy_wallets),
     }
 
     return {
@@ -1566,6 +1594,10 @@ def run_backward_trace(
         "mint_event": {"ts": mint_ts, "amount": mint_amt},
         "pre_launch_receivers": receivers,
         "quiet_wallets": quiet_wallets,
+        # v1.2.8: 0-value address-poisoning decoys, surfaced separately so the
+        # operator-obfuscation tactic stays visible (not silently merged into quiet).
+        "decoy_wallets": decoy_wallets,
+        "n_decoy": len(decoy_wallets),
         # v0.7.19.3 adversarial review HIGH#1: if False, `quiet_wallets` was
         # fail-closed-emptied because the protocol_lockup classifier
         # raised; downstream renderers should mark detector counts

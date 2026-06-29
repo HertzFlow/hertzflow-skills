@@ -50,7 +50,13 @@ def run(
     # still counts in receivers_cumulative_balance below.
     quiet_all = [r for r in receivers if r.get("dumped_pct") == 0]
     lockup_quiet = [r for r in quiet_all if r.get("is_protocol_lockup")]
-    quiet = [r for r in quiet_all if not r.get("is_protocol_lockup")]
+    # v1.2.8 (product spec 2026-06-29): a genuine QUIET (潜伏/未释放) insider must actually
+    # HOLD something — the shared predicate excludes DUMMY address-poisoning decoys
+    # (0-value look-alike-prefix addresses: received 0, hold 0, dumped_pct==0) that
+    # were inflating n_quiet (VELVET: 13 reported, only 2 genuine = 1.53% supply).
+    # Single source of truth so alloc / rule_11 / section_l all agree.
+    from rule_11_backward_trace import is_genuine_quiet_holder
+    quiet = [r for r in receivers if is_genuine_quiet_holder(r)]
     partial = [r for r in receivers
                if r.get("dumped_pct") is not None and 0 < r["dumped_pct"] < 95]
     full = [r for r in receivers
