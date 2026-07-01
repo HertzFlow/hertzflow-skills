@@ -3028,7 +3028,7 @@ def render(skeleton_path: str, filled_path: str, out_path: str, mode: str = "def
     # rather than silently allowing the bypass.
     #
     # Motivation: cross-LLM acceptance testing on v0.7.1 revealed that
-    # agents (adversarial review, claude) default to invoking tests/smoke_fill.py as
+    # review agents default to invoking tests/smoke_fill.py as
     # a production fill step instead of authoring narrative directly,
     # producing reports full of placeholder stubs that look "filled" but
     # carry no analytical content. SKILL.md guidance alone proved
@@ -3249,7 +3249,7 @@ def render(skeleton_path: str, filled_path: str, out_path: str, mode: str = "def
 
     # v0.6.4: prepend UTF-8 BOM (U+FEFF) so downstream viewers / wrappers
     # that auto-detect encoding don't misread UTF-8 as cp1252 / Latin-1.
-    # Empirical: 3/3 cross-LLM testers (Claude / adversarial review / Kimi) produced
+    # Empirical: 3/3 cross-LLM testers produced
     # mojibake in their wrapper-rendered output when no BOM was present.
     # BOM is a no-op for any UTF-8-aware viewer (GitHub, VSCode, most
     # markdown renderers strip it silently) and a strong signal to
