@@ -1151,7 +1151,16 @@
   "psa_label_concentrated": "🔴 高度集中",
   "psa_label_semi": "🟡 半集中",
   "psa_label_dispersed": "🟢 较分散",
-  "psa_ev": "公售池占流通 {pct:.1f}%({tokens} token / {n} 钱包),前 10 接收方占 {top10:.1f}%,{n_kol} 个命名接收方(KOL/ENS/实体)"
+  "psa_ev": "公售池占流通 {pct:.1f}%({tokens} token / {n} 钱包),前 10 接收方占 {top10:.1f}%,{n_kol} 个命名接收方(KOL/ENS/实体)",
+  "dim_name_recent_flow": "近 72h 分发/归集",
+  "rf_label_operator_fanout": "🔴 操作方正在播种(疑似备货出货)",
+  "rf_label_cex_consolidation": "🔴 正在归集入交易所(疑似变现)",
+  "rf_label_both": "🔴 播种 + 归集 双向进行",
+  "rf_label_unknown_fanout": "🟠 未知 hub 近期批量扇出",
+  "rf_ev_operator_fanout": "近 {wd} 天: 操作方源头 `{hub}…` 扇出到 {n} 个 EOA(mint权限/集群→马甲, 典型出货前分发)",
+  "rf_ev_cex_consolidation": "近 {wd} 天: {n} 个 EOA 集中充值到交易所 `{hub}…`(疑似正在变现出货)",
+  "rf_ev_both": "近 {wd} 天: 操作方 `{fan_hub}…` 扇出 {fan_n} 个 EOA + {con_n} 个 EOA 归集入交易所 `{con_hub}…`(备货+变现同时)",
+  "rf_ev_unknown_fanout": "近 {wd} 天: 未知 hub `{hub}…` 扇出到 {n} 个 EOA(疑似隐藏操作方备货)"
  },
  "sec1": {
   "cross_sym": {

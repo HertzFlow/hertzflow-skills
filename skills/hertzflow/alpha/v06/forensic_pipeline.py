@@ -2643,6 +2643,48 @@ def build_skeleton(
             "_error": str(_e),
         }
 
+    # ---------- Round 10.4: recent (72h) flow actions (v1.2.9) ----------
+    # product spec 2026-06-29 (JCT/Janction): is the operator, RIGHT NOW, preparing the next
+    # dump — a mint-authority / cluster hub fanning out to fresh sockpuppets, or many
+    # EOAs consolidating into a CEX? cex_fanout only catches CEX-SOURCE fan-out and
+    # missed JCT's mint-authority → 50-EOA seed. Cheap (2 SQL, 3-day window) on the
+    # Alpha chain; surfaced at highest priority in 一屏结论 / 速读.
+    try:
+        from helpers.recent_flow_actions import detect_recent_flow_actions
+        # v1.2.9 (adversarial review MED): only clear operator-SOURCE roles — a fan-out FROM these
+        # is a real seeding signal. Excludes fanout_recipient (a recipient, not a
+        # source), treasury_vesting (a legit vesting distributor paying 10+ would
+        # false-positive), and direct_dumper (already-sold, not a seeder).
+        _op_roles = {"deployer", "mint_authority", "suspected_operator_reserve",
+                     "fake_mining_cluster_member", "cex_fanout_hub",
+                     "high_throughput_operator"}
+        _cex_roles = {"public_cex_hot_wallet", "cex_deposit_destination"}
+        _infra_roles = {"dex_pool", "router_aggregator"}
+        _mw = skeleton.get("monitoring_wallets") or []
+        _rf_op = {(_w.get("addr_full") or "").lower() for _w in _mw
+                  if _w.get("monitor_role_enum") in _op_roles}
+        _rf_cex = {(_w.get("addr_full") or "").lower() for _w in _mw
+                   if _w.get("monitor_role_enum") in _cex_roles}
+        _rf_infra = {(_w.get("addr_full") or "").lower() for _w in _mw
+                     if _w.get("monitor_role_enum") in _infra_roles}
+        # mint authorities from funding_attribution (may not all be in monitoring)
+        for _a in ((funding_attribution.get("mint_authorities") or {}).get("authorities") or []):
+            if _a.get("addr"):
+                _rf_op.add(_a["addr"].lower())
+        try:
+            from chain_router import set_active_chain as _sac
+            _sac(scope.get("chain_id"))
+        except Exception:
+            pass
+        skeleton["recent_flow_actions"] = detect_recent_flow_actions(
+            ca=ca, operator_addrs=_rf_op, cex_addrs=_rf_cex, infra_addrs=_rf_infra,
+            window_days=3, min_counterparties=10,
+        )
+    except Exception as _e:
+        import sys as _sys
+        print(f"[recent_flow_actions] failed (non-fatal): {_e}", file=_sys.stderr)
+        skeleton["recent_flow_actions"] = {"_error": str(_e)[:120]}
+
     # ---------- Round 10.5: screen_summary (v1.0.4 — moved here) ----------
     # v1.0.4 (O 2026-06-20): build_screen_summary MUST run AFTER
     # annotate_monitoring_wallets (Round 10) + hidden_operator_enricher

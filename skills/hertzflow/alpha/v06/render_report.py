@@ -121,6 +121,14 @@ TEMPLATE = """# {{ t("report.title", symbol=meta.symbol, name=meta.name) }}
 
 - **{{ t("render.tldr_label_listing") }}**: {{ t("render.tldr_binance_alpha") }} {{ tier_classification.tier }}{% if tier_classification.tier == "S2" %} {{ t("render.tldr_tier_s2_paren") }}{% elif tier_classification.tier == "S3" %} {{ t("render.tldr_tier_s3_paren") }}{% elif tier_classification.tier == "S1" %} {{ t("render.tldr_tier_s1_paren") }}{% endif %} · {{ t("render.tldr_primary_chain", chain=meta.chain) }}
 
+{# v1.2.9 (product spec): 近 72h 分发/归集动作 = 速读最高优先级, 复用 screen_summary dim 的 label+evidence. #}
+{% set _rf = recent_flow_actions | default({}) -%}
+{% if _rf and (_rf.get('has_operator_fanout') or _rf.get('has_cex_consolidation')) -%}
+{% for _d in (screen_summary.dimensions or []) -%}{% if _d.get('_state') in ('OPERATOR_FANOUT','CEX_CONSOLIDATION','FANOUT_AND_CONSOLIDATION') -%}
+- {{ _d.label }} — {{ _d.evidence }}
+{% endif %}{% endfor -%}
+{% endif %}
+
 {% if dump_tracking and (dump_tracking.confirmed_total_tokens or 0) > 0 -%}
 - {{ t("render.tldr_confirmed_realization", tokens="{:,.0f}".format(dump_tracking.confirmed_total_tokens), pct="%.2f"|format(dump_tracking.confirmed_total_pct or 0), usd="{:,.0f}".format(dump_tracking.confirmed_net_sellout_usd or 0)) }}
 {%- endif %}
@@ -3020,7 +3028,7 @@ def render(skeleton_path: str, filled_path: str, out_path: str, mode: str = "def
     # rather than silently allowing the bypass.
     #
     # Motivation: cross-LLM acceptance testing on v0.7.1 revealed that
-    # review agents default to invoking tests/smoke_fill.py as
+    # agents (adversarial review, claude) default to invoking tests/smoke_fill.py as
     # a production fill step instead of authoring narrative directly,
     # producing reports full of placeholder stubs that look "filled" but
     # carry no analytical content. SKILL.md guidance alone proved
@@ -3241,7 +3249,7 @@ def render(skeleton_path: str, filled_path: str, out_path: str, mode: str = "def
 
     # v0.6.4: prepend UTF-8 BOM (U+FEFF) so downstream viewers / wrappers
     # that auto-detect encoding don't misread UTF-8 as cp1252 / Latin-1.
-    # Empirical: 3/3 cross-LLM testers produced
+    # Empirical: 3/3 cross-LLM testers (Claude / adversarial review / Kimi) produced
     # mojibake in their wrapper-rendered output when no BOM was present.
     # BOM is a no-op for any UTF-8-aware viewer (GitHub, VSCode, most
     # markdown renderers strip it silently) and a strong signal to

@@ -460,6 +460,13 @@ def build_screen_summary(skel: dict[str, Any]) -> dict[str, Any]:
     if dim_primary_sale:
         dims.insert(2, dim_primary_sale)
 
+    # v1.2.9 (product spec 2026-06-29): 近 72h 分发/归集动作 — HIGHEST priority. A live operator
+    # fan-out (pre-dump seeding) / CEX consolidation (cashing out) goes to the very top
+    # of the 一屏结论, above everything else. Omitted when nothing recent.
+    dim_recent_flow = _dim_recent_flow(skel.get("recent_flow_actions"))
+    if dim_recent_flow:
+        dims.insert(0, dim_recent_flow)
+
     # ==================== One-sentence summary ====================
     one_sentence = _one_sentence(dim_phase, dim_chip_struct, dim_volume,
                                   dim_supply, dim_market)
@@ -549,6 +556,42 @@ def _dim_chip_struct(op_pct: float, cex_pct: float, retail_pct: float,
             locked_pct=float(overhang.get("locked_pct_of_total") or 0),
         )
     return {"name": t("screen.dim_name_chip"), "label": label,
+            "evidence": evidence, "_state": state}
+
+
+def _dim_recent_flow(rf: dict | None) -> dict | None:
+    """Dimension (v1.2.9, product spec 2026-06-29): 近 72h 分发/归集动作 — the HIGHEST-priority
+    headline row. Fires ONLY when the operator is doing something RIGHT NOW: a
+    mint-authority / cluster hub fanning out to many EOAs (pre-dump seeding), or many
+    EOAs consolidating into a CEX (active cashing out). Returns None when nothing
+    recent, so the row is omitted rather than shown empty."""
+    if not isinstance(rf, dict) or rf.get("_error"):
+        return None
+    op = rf.get("has_operator_fanout")
+    cx = rf.get("has_cex_consolidation")
+    # v1.2.9 (adversarial review HIGH): only the CONFIRMED-operator signals (a known operator
+    # source fanning out, or a CEX consolidating) get the top-priority headline row.
+    # `unknown_hub_fanout` alone is too speculative for the top of the report — it
+    # stays in recent_flow_actions data but does not fire a headline alert.
+    if not (op or cx):
+        return None
+    wd = rf.get("window_days") or 3
+    tf = rf.get("top_operator_fanout") or {}
+    tc = rf.get("top_cex_consolidation") or {}
+    if op and cx:
+        state, label = "FANOUT_AND_CONSOLIDATION", t("screen.rf_label_both")
+        evidence = t("screen.rf_ev_both", wd=wd, fan_n=tf.get("n_counterparties", 0),
+                     fan_hub=(tf.get("hub") or "")[:10],
+                     con_n=tc.get("n_counterparties", 0), con_hub=(tc.get("hub") or "")[:10])
+    elif op:
+        state, label = "OPERATOR_FANOUT", t("screen.rf_label_operator_fanout")
+        evidence = t("screen.rf_ev_operator_fanout", wd=wd,
+                     n=tf.get("n_counterparties", 0), hub=(tf.get("hub") or "")[:10])
+    else:  # cx
+        state, label = "CEX_CONSOLIDATION", t("screen.rf_label_cex_consolidation")
+        evidence = t("screen.rf_ev_cex_consolidation", wd=wd,
+                     n=tc.get("n_counterparties", 0), hub=(tc.get("hub") or "")[:10])
+    return {"name": t("screen.dim_name_recent_flow"), "label": label,
             "evidence": evidence, "_state": state}
 
 
