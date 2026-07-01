@@ -2087,8 +2087,6 @@ def build_skeleton(
                 else scope.get("primary_chain_derivation")
             ),
             "coingecko_platforms": scope.get("coingecko_platforms") or {},
-            # v1.2.6: off-coverage chains (Solana etc.) → render mirror-slice banner
-            "off_coverage_chains": scope.get("off_coverage_chains") or [],
             "chain_lp_realtime": scope.get("chain_lp_realtime") or {},
             "realtime_token_info": scope.get("realtime_token_info") or {},
             # v0.7.9: surf BSC data availability snapshot (drives banner) —

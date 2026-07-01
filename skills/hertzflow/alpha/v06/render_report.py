@@ -166,14 +166,13 @@ TEMPLATE = """# {{ t("report.title", symbol=meta.symbol, name=meta.name) }}
 {% if meta.primary_chain is defined and meta.primary_chain and meta.primary_chain != "binance-smart-chain" and not meta.get('_holder_snapshot_mode') %}
 > 📌 **{{ t("report.banner_non_bsc_primary_title") }}**: {{ t("report.banner_non_bsc_primary_body", primary_chain=meta.primary_chain, scope_chains=(meta.coingecko_platforms|default({})|list|reject('eq','binance-smart-chain')|list|join(", ")) ) }}
 {% endif %}
-{# v1.2.6 (SLX/Solstice): rule-#1 banner (methodology-chain-assumption-trap) —
-   fires when the token is ALSO deployed on a chain we can't transfer-forensic
-   (Solana etc.), INDEPENDENT of primary_chain (which v1.0.1 pins to the surf-
-   routable Alpha chain, so the non_bsc_primary banner above never fires for a
-   BSC-listed mirror of a Solana token). The verdict below is mirror-only. #}
-{% if meta.off_coverage_chains is defined and meta.off_coverage_chains %}
-> ⚠️ **{{ t("report.banner_off_coverage_title") }}**: {{ t("report.banner_off_coverage_body", chains=(meta.off_coverage_chains|join(", ")), alpha_chain=(meta.chain | default("BSC"))) }}
-{% endif %}
+{# v1.2.10 (TAC 2026-06-29): the v1.2.6 coingecko-based off_coverage "mirror slice"
+   banner was REMOVED. 主战场 (main chain) is decided by surf real-time LP via
+   derive_primary_chain + alpha_chain_authoritative — Alpha IS the BSC market — NOT
+   by CoinGecko asset_platform metadata. The banner fired "TON/Solana is the real
+   chain, BSC is just a mirror" purely because CoinGecko listed a non-EVM platform,
+   ignoring that BSC (Alpha) held e.g. 38× the DEX volume of the TON side. That
+   contradicted the skill's own primary-chain SOP and mislabelled the report. #}
 {% if meta.primary_chain_derivation is defined and meta.primary_chain_derivation and "unreliable_fetch_failed" in meta.primary_chain_derivation %}
 > {{ t("render.banner_primary_chain_unreliable", failed_chain=meta.primary_chain_derivation.split(":")[1]) }}
 {% endif %}

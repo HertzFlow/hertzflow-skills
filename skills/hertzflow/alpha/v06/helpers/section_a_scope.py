@@ -85,26 +85,13 @@ _SURF_HOLDER_CHAINS = {
     # removed). test_surf_holder_chains_subset_of_router enforces this.
 }
 
-# v1.2.6 (SLX / Solstice 2026-06-29): CoinGecko platforms that the skill can do
-# FULL transfer-level forensic on (have agent.<chain>_transfers SQL). This is the
-# EVM subset of _SURF_HOLDER_CHAINS — Solana is holder-snapshot ONLY (no
-# agent.solana_* tables), so a token whose canonical home is Solana can only be
-# seen here as a BSC Alpha MIRROR slice. Used to fire the rule-#1 banner
-# (methodology-chain-assumption-trap) when a token is also deployed on an
-# off-coverage chain, REGARDLESS of primary_chain (which v1.0.1 forces to the
-# surf-routable Alpha chain). Decoupled from primary_chain on purpose.
-_FULL_FORENSIC_CG_PLATFORMS = {k for k in _SURF_HOLDER_CHAINS if k != "solana"}
-
-
-def detect_off_coverage_chains(coingecko_platforms: dict[str, Any] | None) -> list[str]:
-    """Return the CoinGecko platform names this token is deployed on that the
-    skill CANNOT do transfer-level forensic on (Solana + any non-EVM-surf chain).
-    Non-empty → the report may only cover a mirror slice; render a top banner.
-    Empty `""` keys (native-coin placeholder) are ignored."""
-    return sorted(
-        p for p in (coingecko_platforms or {})
-        if p and p not in _FULL_FORENSIC_CG_PLATFORMS
-    )
+# v1.2.10 (TAC 2026-06-29): the v1.2.6 `detect_off_coverage_chains` + its mirror
+# banner were REMOVED. Deciding the 主战场 (main chain) from CoinGecko
+# asset_platform / platform list was wrong — that is issuance metadata, not the
+# traded market. The main chain is decided by surf real-time LP (derive_primary_chain
+# below) + alpha_chain_authoritative: an Alpha token IS the BSC market. TAC had 38×
+# the DEX volume on BSC vs its TON side, yet the coingecko banner mislabelled BSC as a
+# "mirror slice". Never re-introduce a coingecko-platform-existence chain signal.
 
 
 # v0.7.9 (kept for back-compat with any direct importers): EVM-only
@@ -1550,10 +1537,6 @@ def run(ca: str) -> dict[str, Any]:
         "coingecko_platforms": cg["platforms"],
         "coingecko_match_id": cg.get("match_id"),
         "coingecko_match_method": cg.get("match_method"),
-        # v1.2.6: chains this token is deployed on that we CANNOT forensic
-        # (Solana etc.). Non-empty → the BSC/Alpha view is likely a mirror
-        # slice; render fires the rule-#1 "main chain off coverage" banner.
-        "off_coverage_chains": detect_off_coverage_chains(cg["platforms"]),
         "chain_lp_realtime": chain_lp,
         "primary_chain": primary_chain,
         "primary_chain_derivation": derivation,
