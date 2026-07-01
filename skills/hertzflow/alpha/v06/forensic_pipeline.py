@@ -1814,7 +1814,7 @@ def build_skeleton(
                     circulating_supply=scope.get("circulating_supply"),
                     total_supply=scope.get("total_supply"),
                     extra_receivers=extra_receivers,
-                    # v1.2.5: same spot-price guard as the main call (adversarial review HIGH)
+                    # v1.2.5: same spot-price guard as the main call (codex HIGH)
                     # — without it non-18-decimal mining tokens still overflow.
                     spot_price_usd=liq.get("current_price_usd"),
                 )
@@ -1912,7 +1912,7 @@ def build_skeleton(
             if isinstance(_sco_ps, dict) and _sco_ps.get("pools"):
                 primary_sales = _sco_ps  # multi-chain: detected on the supply chain
             elif not _is_split:
-                # single-chain ONLY. adversarial review HIGH: never fall back to the Alpha listing
+                # single-chain ONLY. codex HIGH: never fall back to the Alpha listing
                 # chain for a split/mirror token — its public sale lives on the
                 # canonical supply chain (handled above); detecting on the mirror chain
                 # would catch bridge activity with the wrong seed/denominator.
@@ -1933,7 +1933,7 @@ def build_skeleton(
                     for _r in _r11_recv:
                         # parity with monitoring / counts / supply_chain: a CEX
                         # listing-channel or DEX pool receiver is not an operator and
-                        # must not seed the primary-sale funding set (adversarial review HIGH).
+                        # must not seed the primary-sale funding set (codex HIGH).
                         if _receiver_infra_kind(_r):
                             continue
                         _a = _norm_addr(_r.get("address") or _r.get("addr") or "")
@@ -1946,7 +1946,7 @@ def build_skeleton(
                                 _psa_seed.add(_ad)
                     # operator relay members are project-controlled distribution hubs
                     # (Safe/multisig-like) — add to BOTH the funding seed (so a
-                    # Safe-funded single-chain CCA is not missed, adversarial review HIGH) and the
+                    # Safe-funded single-chain CCA is not missed, codex HIGH) and the
                     # overlap set. Still far narrower than the full operator_set.
                     _relay = (distribution.get("operator_relay_members") or []) if isinstance(distribution, dict) else []
                     for _m in _relay:
@@ -2649,7 +2649,7 @@ def build_skeleton(
     # Alpha chain; surfaced at highest priority in 一屏结论 / 速读.
     try:
         from helpers.recent_flow_actions import detect_recent_flow_actions
-        # v1.2.9 (adversarial review MED): only clear operator-SOURCE roles — a fan-out FROM these
+        # v1.2.9 (codex MED): only clear operator-SOURCE roles — a fan-out FROM these
         # is a real seeding signal. Excludes fanout_recipient (a recipient, not a
         # source), treasury_vesting (a legit vesting distributor paying 10+ would
         # false-positive), and direct_dumper (already-sold, not a seeder).
@@ -2682,6 +2682,27 @@ def build_skeleton(
         import sys as _sys
         print(f"[recent_flow_actions] failed (non-fatal): {_e}", file=_sys.stderr)
         skeleton["recent_flow_actions"] = {"_error": str(_e)[:120]}
+
+    # ---------- Round 10.45: recent_mint_events (v1.2.14) ----------
+    # product spec 2026-07-01 (TAC): mint_authorities carries no timestamp, so a large RECENT
+    # mint from 0x0 (operator creating fresh ammo — often the pump source) was invisible
+    # in the 一屏结论 / 速读. Cheap (1 SQL, daily GROUP BY) on the Alpha chain; flags the
+    # largest significant mint (>= 1% circ) within the recent window with its date.
+    try:
+        from helpers.recent_mint_events import detect_recent_mint_events
+        try:
+            from chain_router import set_active_chain as _sac2
+            _sac2(scope.get("chain_id"))
+        except Exception:
+            pass
+        _circ = float((skeleton.get("meta") or {}).get("circulating_supply") or 0)
+        skeleton["recent_mint_events"] = detect_recent_mint_events(
+            ca=ca, circ_supply=_circ, recent_window_days=14, min_pct_circ=1.0,
+        )
+    except Exception as _e:
+        import sys as _sys
+        print(f"[recent_mint_events] failed (non-fatal): {_e}", file=_sys.stderr)
+        skeleton["recent_mint_events"] = {"_error": str(_e)[:120]}
 
     # ---------- Round 10.5: screen_summary (v1.0.4 — moved here) ----------
     # v1.0.4 (O 2026-06-20): build_screen_summary MUST run AFTER

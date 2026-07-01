@@ -132,6 +132,14 @@ TEMPLATE = """# {{ t("report.title", symbol=meta.symbol, name=meta.name) }}
 - {{ _d.label }} — {{ _d.evidence }}
 {% endif %}{% endfor -%}
 {% endif %}
+{# v1.2.14 (product spec 2026-07-01, TAC): 近期铸新 (fresh operator ammo) also surfaces in the
+   速读, mirroring the 一屏结论 recent-mint row. #}
+{% set _rme = recent_mint_events | default({}) -%}
+{% if _rme and _rme.get('has_recent_significant_mint') -%}
+{% for _d in (screen_summary.dimensions or []) -%}{% if _d.get('_state') == 'RECENT_MINT' -%}
+- {{ _d.label }} — {{ _d.evidence }}
+{% endif %}{% endfor -%}
+{% endif %}
 
 {% if dump_tracking and (dump_tracking.confirmed_total_tokens or 0) > 0 -%}
 - {{ t("render.tldr_confirmed_realization", tokens="{:,.0f}".format(dump_tracking.confirmed_total_tokens), pct="%.2f"|format(dump_tracking.confirmed_total_pct or 0), usd="{:,.0f}".format(dump_tracking.confirmed_net_sellout_usd or 0)) }}

@@ -530,6 +530,14 @@ def build_screen_summary(skel: dict[str, Any]) -> dict[str, Any]:
     if dim_recent_flow:
         dims.insert(0, dim_recent_flow)
 
+    # v1.2.14 (product spec 2026-07-01, TAC): 近期铸新事件 — a large fresh mint from 0x0 =
+    # operator creating new ammo (often the pump source). Time-sensitive, so it goes
+    # to the very top too. Inserted AFTER recent_flow so it lands at index 0 (above
+    # the fan-out row) — a fresh mint precedes the fan-out/dump chain.
+    dim_recent_mint = _dim_recent_mint(skel.get("recent_mint_events"))
+    if dim_recent_mint:
+        dims.insert(0, dim_recent_mint)
+
     # ==================== One-sentence summary ====================
     one_sentence = _one_sentence(dim_phase, dim_chip_struct, dim_volume,
                                   dim_supply, dim_market)
@@ -693,6 +701,41 @@ def _dim_recent_flow(rf: dict | None, circ_supply: float = 0.0) -> dict | None:
                      tokens="{:,.0f}".format(toks), pct_circ=pct)
     return {"name": t("screen.dim_name_recent_flow"), "label": label,
             "evidence": evidence, "_state": state}
+
+
+def _dim_recent_mint(rm: dict | None) -> dict | None:
+    """Dimension (v1.2.14, product spec 2026-07-01, TAC): 近期铸新 — a large fresh mint from the
+    0x0 black-hole within the recent window = operator creating new ammo (often the pump
+    source). Surfaces the DATE + amount + % of supply so the reader sees WHEN the ammo
+    was created, not just that mint authorities hold a balance. Returns None when no
+    significant recent mint (dimension omitted). Framed as fact + "corroborate with
+    price / perp OI", NOT a bare causal pump claim."""
+    if not isinstance(rm, dict) or rm.get("_error"):
+        return None
+    if not rm.get("has_recent_significant_mint"):
+        return None
+    top = rm.get("top_recent_mint") or {}
+    minted = float(top.get("minted") or 0)
+    if minted <= 0:
+        return None
+    n_more = max(0, len(rm.get("significant_mints") or []) - 1)
+    evidence = t(
+        "screen.rm_ev",
+        wd=int(rm.get("recent_window_days") or 14),
+        date=top.get("date") or "?",
+        days_ago=int(top.get("days_ago") or 0),
+        tokens="{:,.0f}".format(minted),
+        pct=float(top.get("pct_circ") or 0),
+        n_tx=int(top.get("n_tx") or 0),
+    )
+    if n_more > 0:
+        evidence += t("screen.rm_ev_more", n_more=n_more)
+    return {
+        "name": t("screen.dim_name_recent_mint"),
+        "label": t("screen.rm_label"),
+        "evidence": evidence,
+        "_state": "RECENT_MINT",
+    }
 
 
 def _dim_primary_sale(ps: dict | None) -> dict | None:
