@@ -685,7 +685,7 @@
   "chip_nonop_pressure": "非庄家方抛压",
   "chip_top100_verifiable": "前 100 大持币人内可验证 {pct}%",
   "chip_tail": "尾部 ~{pct}%",
-  "chip_tail_fanout_warn": "⚠️ 其中 {n} 个 CEX fan-out recipients 嫌疑庄家钱包",
+  "chip_tail_fanout_warn": "⚠️ 其中 {n} 个 CEX 批量转账接收方 嫌疑庄家钱包",
   "chip_op_ammo": "庄家弹药",
   "chip_op_ammo_unminted": "(⚠️ Alpha API 报流通 {alpha_circ}M, 链上可砸盘 {chain_circ}M = {ratio}x",
   "chip_op_ammo_overest": ", Alpha 高估 (含 mint authority / vesting 锁仓)",
@@ -921,7 +921,7 @@
   "cfh_field_cex_source": "CEX 来源",
   "cfh_field_cex_inflow": "CEX → 集散 入金",
   "cfh_n_tx": "{n} 笔",
-  "cfh_field_recipients": "Fan-out 接收钱包",
+  "cfh_field_recipients": "批量转账接收钱包",
   "cfh_field_recipients_val": "**{n} 个候选** (Phase 1 计数, 含 CEX 回流 + hub 互转 + 散户)",
   "cfh_field_net": "🎯 净控筹 (真散到独立钱包)",
   "cfh_net_recipients": "— {n} 个独立钱包 (排除 CEX 回流 + 跨 hub 互转后的真实控筹下界)",
@@ -1156,11 +1156,11 @@
   "rf_label_operator_fanout": "🔴 操作方正在播种(疑似备货出货)",
   "rf_label_cex_consolidation": "🔴 正在归集入交易所(疑似变现)",
   "rf_label_both": "🔴 播种 + 归集 双向进行",
-  "rf_label_unknown_fanout": "🟠 未知 hub 近期批量扇出",
-  "rf_ev_operator_fanout": "近 {wd} 天: 操作方源头 `{hub}…` 扇出到 {n} 个 EOA(mint权限/集群→马甲, 典型出货前分发)",
-  "rf_ev_cex_consolidation": "近 {wd} 天: {n} 个 EOA 集中充值到交易所 `{hub}…`(疑似正在变现出货)",
-  "rf_ev_both": "近 {wd} 天: 操作方 `{fan_hub}…` 扇出 {fan_n} 个 EOA + {con_n} 个 EOA 归集入交易所 `{con_hub}…`(备货+变现同时)",
-  "rf_ev_unknown_fanout": "近 {wd} 天: 未知 hub `{hub}…` 扇出到 {n} 个 EOA(疑似隐藏操作方备货)"
+  "rf_label_unknown_fanout": "🟠 未知 hub 近期批量转账分发",
+  "rf_ev_operator_fanout": "近 {wd} 天: 操作方源头 `{hub}…` 批量转账分发到 {n} 个钱包地址(mint权限/集群→马甲, 典型出货前分发)",
+  "rf_ev_cex_consolidation": "近 {wd} 天: {n} 个钱包地址集中充值到交易所 `{hub}…`(疑似正在变现出货)",
+  "rf_ev_both": "近 {wd} 天: 操作方 `{fan_hub}…` 批量转账分发到 {fan_n} 个钱包地址 + {con_n} 个钱包地址归集入交易所 `{con_hub}…`(备货+变现同时)",
+  "rf_ev_unknown_fanout": "近 {wd} 天: 未知 hub `{hub}…` 批量转账分发到 {n} 个钱包地址(疑似隐藏操作方备货)"
  },
  "sec1": {
   "cross_sym": {

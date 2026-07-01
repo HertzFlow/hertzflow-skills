@@ -1156,11 +1156,11 @@
   "rf_label_operator_fanout": "🔴 Operator seeding wallets now (pre-dump)",
   "rf_label_cex_consolidation": "🔴 Consolidating into CEX now (cashing out)",
   "rf_label_both": "🔴 Seeding + CEX consolidation both live",
-  "rf_label_unknown_fanout": "🟠 Unknown hub fanning out recently",
-  "rf_ev_operator_fanout": "last {wd}d: operator source `{hub}…` fanned out to {n} EOAs (mint-auth/cluster → sockpuppets — textbook pre-dump seeding)",
-  "rf_ev_cex_consolidation": "last {wd}d: {n} EOAs consolidated deposits into CEX `{hub}…` (likely cashing out now)",
-  "rf_ev_both": "last {wd}d: operator `{fan_hub}…` fanned out to {fan_n} EOAs + {con_n} EOAs consolidated into CEX `{con_hub}…` (seeding + cashing out at once)",
-  "rf_ev_unknown_fanout": "last {wd}d: unknown hub `{hub}…` fanned out to {n} EOAs (suspected hidden-operator seeding)"
+  "rf_label_unknown_fanout": "🟠 Unknown hub batch-transferring recently",
+  "rf_ev_operator_fanout": "last {wd}d: operator source `{hub}…` batch-transferred to {n} wallet addresses (mint-auth/cluster → sockpuppets — textbook pre-dump seeding)",
+  "rf_ev_cex_consolidation": "last {wd}d: {n} wallet addresses consolidated deposits into CEX `{hub}…` (likely cashing out now)",
+  "rf_ev_both": "last {wd}d: operator `{fan_hub}…` batch-transferred to {fan_n} wallet addresses + {con_n} wallet addresses consolidated into CEX `{con_hub}…` (seeding + cashing out at once)",
+  "rf_ev_unknown_fanout": "last {wd}d: unknown hub `{hub}…` batch-transferred to {n} wallet addresses (suspected hidden-operator seeding)"
  },
  "sec1": {
   "cross_sym": {
