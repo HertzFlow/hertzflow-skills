@@ -1082,6 +1082,9 @@
   "chip_label_missing": "⚪ Data gap",
   "chip_ev": "operator/project-controlled {op_pct:.1f}% / relay·liquidity pool (CEX+DEX) {cex_pct:.1f}% / verifiable non-operator sell-pressure {retail_pct:.1f}%",
   "chip_ev_supply_overhang": " (circulating buckets measured on canonical supply chain {supply_chain}; a further {locked_pct:.1f}% of total supply is locked in a treasury/reserve overhang, excluded from circulating)",
+  "chip_ev_concealed_wrap": " ← operator chips come from: {detail} (already minted into wallets = dumpable anytime, not locked)",
+  "chip_ev_concealed_mint": "{n} mint-authority self-held address(es)",
+  "chip_ev_concealed_whale": "{n} unverified large wallet(s) (single wallet ≥1% supply, operator-suspect)",
   "insider_label_heavy": "🔴 Heavily realized",
   "insider_label_partial": "🟠 Partially realized",
   "insider_label_light": "🟡 Lightly realized",
@@ -1154,11 +1157,11 @@
   "rf_label_operator_fanout": "🔴 Operator seeding wallets now (pre-dump)",
   "rf_label_cex_consolidation": "🔴 Consolidating into CEX now (cashing out)",
   "rf_label_both": "🔴 Seeding + CEX consolidation both live",
-  "rf_label_unknown_fanout": "🟠 Unknown hub batch-transferring recently",
+  "rf_label_unknown_fanout": "🟠 Suspected batch distribution (source unverified)",
   "rf_ev_operator_fanout": "last {wd}d: operator source `{hub}…` batch-transferred to {n} wallet addresses (mint-auth/cluster → sockpuppets — textbook pre-dump seeding)",
   "rf_ev_cex_consolidation": "last {wd}d: {n} wallet addresses consolidated deposits into CEX `{hub}…` (likely cashing out now)",
   "rf_ev_both": "last {wd}d: operator `{fan_hub}…` batch-transferred to {fan_n} wallet addresses + {con_n} wallet addresses consolidated into CEX `{con_hub}…` (seeding + cashing out at once)",
-  "rf_ev_unknown_fanout": "last {wd}d: unknown hub `{hub}…` batch-transferred to {n} wallet addresses (suspected hidden-operator seeding)"
+  "rf_ev_unknown_fanout": "last {wd}d: unknown hub `{hub}…` batch-transferred to {n} wallet addresses · {tokens} tokens total ({pct_circ:.3f}% of circulating) (source is NOT a known operator/CEX — suspected hidden-operator seeding, needs manual review of the address)"
  },
  "sec1": {
   "cross_sym": {

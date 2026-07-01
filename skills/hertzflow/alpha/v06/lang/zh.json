@@ -1082,6 +1082,9 @@
   "chip_label_missing": "⚪ 数据缺失",
   "chip_ev": "庄家/项目方可控筹码 {op_pct:.1f}% / 中转·流动性池(CEX+DEX) {cex_pct:.1f}% / 可验证非庄家方抛压 {retail_pct:.1f}%",
   "chip_ev_supply_overhang": " (流通三桶基于规范供应链 {supply_chain}; 另有 {locked_pct:.1f}% 总供应锁在金库/储备 overhang, 不计入流通)",
+  "chip_ev_concealed_wrap": " ← 操作方筹码来自: {detail}(已 mint 进钱包=可随时砸, 非锁仓)",
+  "chip_ev_concealed_mint": "{n} 个铸币权自持地址",
+  "chip_ev_concealed_whale": "{n} 个未验证大额钱包(单钱包≥1%供应, 疑似操作方)",
   "insider_label_heavy": "🔴 已大量套现",
   "insider_label_partial": "🟠 部分套现",
   "insider_label_light": "🟡 少量套现",
@@ -1154,11 +1157,11 @@
   "rf_label_operator_fanout": "🔴 操作方正在播种(疑似备货出货)",
   "rf_label_cex_consolidation": "🔴 正在归集入交易所(疑似变现)",
   "rf_label_both": "🔴 播种 + 归集 双向进行",
-  "rf_label_unknown_fanout": "🟠 未知 hub 近期批量转账分发",
+  "rf_label_unknown_fanout": "🟠 疑似批量分发(源头未验证)",
   "rf_ev_operator_fanout": "近 {wd} 天: 操作方源头 `{hub}…` 批量转账分发到 {n} 个钱包地址(mint权限/集群→马甲, 典型出货前分发)",
   "rf_ev_cex_consolidation": "近 {wd} 天: {n} 个钱包地址集中充值到交易所 `{hub}…`(疑似正在变现出货)",
   "rf_ev_both": "近 {wd} 天: 操作方 `{fan_hub}…` 批量转账分发到 {fan_n} 个钱包地址 + {con_n} 个钱包地址归集入交易所 `{con_hub}…`(备货+变现同时)",
-  "rf_ev_unknown_fanout": "近 {wd} 天: 未知 hub `{hub}…` 批量转账分发到 {n} 个钱包地址(疑似隐藏操作方备货)"
+  "rf_ev_unknown_fanout": "近 {wd} 天: 未知 hub `{hub}…` 批量转账分发到 {n} 个钱包地址 · 共 {tokens} tokens(占流通 {pct_circ:.3f}%)(源头非已知操作方/交易所, 疑似隐藏操作方备货, 需人工核查地址性质)"
  },
  "sec1": {
   "cross_sym": {

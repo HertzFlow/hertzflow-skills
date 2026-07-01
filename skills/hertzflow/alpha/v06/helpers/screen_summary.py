@@ -171,7 +171,9 @@ def compute_neutral_infra_addrs(skel: dict[str, Any]) -> list[str]:
     return sorted(out)
 
 
-def _compute_chip_3way(skel: dict[str, Any]) -> tuple[float, float, float, float]:
+def _compute_chip_3way(
+    skel: dict[str, Any], out: dict | None = None
+) -> tuple[float, float, float, float]:
     """Compute 庄家 / 交易所中转池 / 可验证非庄家方抛压 的 % 流通.
 
     v0.8.7.3: mirrors render_report.py top-100 classifier (jinja chunk
@@ -179,6 +181,19 @@ def _compute_chip_3way(skel: dict[str, Any]) -> tuple[float, float, float, float
     Simplified: skips fanout/wcg-vs-top100 overlap subtraction (≤0.5pp
     rounding vs render-side output). Validated against velvet_v0872 case:
     op=96.4 vs render 96.5, cex=2.4 vs 2.4, retail=1.1 vs 1.1.
+
+    v1.2.11 (TAC 2026-07-01): two operator-concealment fixes —
+      (1) mint-authority WALLET balances are already-minted operator ammo, not
+          "unminted reserve", so they go to the OPERATOR union (was: vest-skip,
+          which hid TAC's 8 mint authorities = 326.6M = 42% of BSC supply →
+          "100% 非庄家"). A wallet balance is by definition minted.
+      (2) an UNLABELLED top holder ≥ 1% of the on-chain holder-snapshot supply is
+          an operator-suspect whale, NOT verifiable dispersed retail — folded
+          into operator (TAC's residual 88M + 38M equal-chunk wallets).
+
+    `out` (optional): if given, populated with the concealment detail so the
+    caller can annotate the headline — {"n_suspect_whales", "suspect_tokens",
+    "mint_op_tokens", "n_mint_op"}.
 
     Returns: (operator_pct, cex_pct, retail_pct, implied_circ_tokens)
     """
@@ -196,15 +211,18 @@ def _compute_chip_3way(skel: dict[str, Any]) -> tuple[float, float, float, float
     if ((skel.get("monitoring_summary") or {}).get("_error")):
         return 0.0, 0.0, 0.0, 0.0
 
-    # Build vest_set (vesting + mint_authority — render line 811-834)
+    # Build vest_set (genuine time-locked vesting ONLY — render line 811-834).
+    # v1.2.11: mint authorities are NO LONGER put here. A mint-authority wallet
+    # BALANCE is already-minted, dumpable operator supply — not "unminted
+    # reserve" (which = mint-cap − minted, never a wallet balance). They now go
+    # to op_union below (see mint_op_addrs).
     vest_addrs = set()
     for h in (thc.get("vesting") or {}).get("top") or []:
         vest_addrs.add((h.get("addr") or "").lower())
     auths = (skel.get("funding_attribution") or {}).get("mint_authorities", {}).get(
         "authorities"
     ) or []
-    for auth in auths:
-        vest_addrs.add((auth.get("addr") or "").lower())
+    mint_op_addrs = {(auth.get("addr") or "").lower() for auth in auths}
 
     # Build op_union: deployer + detector-hits + clusters + section_a operator
     # categories (multisig / treasury / airdrop_platform / lp from
@@ -244,6 +262,7 @@ def _compute_chip_3way(skel: dict[str, Any]) -> tuple[float, float, float, float
     for cluster in (skel.get("wallet_cluster_graph") or {}).get("clusters") or []:
         for a in cluster.get("addrs") or []:
             op_union.add(a.lower())
+    op_union |= mint_op_addrs  # v1.2.11: mint-authority held balance = operator ammo
     op_union -= neutral_infra  # DEX/CEX infra is never 项目方可控筹码
 
     # v1.0.4 (O 2026-06-20): mirror the render-side tail EXACTLY so the
@@ -265,10 +284,31 @@ def _compute_chip_3way(skel: dict[str, Any]) -> tuple[float, float, float, float
         for a in (cluster.get("addrs") or []):
             cluster_addrs.add(a.lower())
 
+    # v1.2.11 whale floor: a top holder that reaches the retail fallthrough
+    # (i.e. NOT vesting, NOT a CEX category, NOT in the operator union, NOT
+    # neutral infra) yet holds ≥ 1% of the token's CIRCULATING supply is not
+    # verifiable dispersed retail — it is an operator-suspect whale (TAC:
+    # 0x6cd06aaf holding 88M). Such a holder may carry a surf/Arkham label; what
+    # matters is it was not classified as operator, so we treat it as unverified.
+    # Keyed on Alpha circulating_supply (true float), NOT the thin surf snapshot:
+    # in a thin snapshot even genuine retail is a large % of the few holders
+    # returned, so a snapshot-relative floor would misfire. When
+    # circulating_supply is unknown the floor is 0 → guard disabled (conservative
+    # — never guess a whale from a thin snapshot alone). NOTE (adversarial review
+    # nit, backlog): for a multi-chain mirror the circ is GLOBAL, so a chain-local
+    # operator shard < 1% global circ can be missed — acceptable here (the failure
+    # mode fixed was false-dispersed), split/mirror uses supply_chain_overhang for
+    # the headline.
+    WHALE_PCT = 0.01
+    circ_supply = float(meta.get("circulating_supply") or 0)
+    whale_floor = circ_supply * WHALE_PCT
+
     # Classify top-100 (vest first → cex by category → operator by union →
-    # retail fallthrough). Render line 857-879. Also accumulate fanout/cluster
-    # overlap with top-100 for strict tail subtraction below.
+    # whale-suspect → retail fallthrough). Render line 857-879. Also accumulate
+    # fanout/cluster overlap with top-100 for strict tail subtraction below.
     op_tok = cex_tok = retail_tok = 0.0
+    suspect_tok = mint_op_tok = 0.0
+    n_suspect = n_mint_op = 0
     fanout_overlap = cluster_overlap = 0.0
     for cat in ("vesting", "multisig", "treasury", "airdrop_platform",
                 "cex", "lp", "unclassified"):
@@ -280,11 +320,22 @@ def _compute_chip_3way(skel: dict[str, Any]) -> tuple[float, float, float, float
             if addr in cluster_addrs:
                 cluster_overlap += bal
             if addr in vest_addrs:
-                continue  # vest, skip
+                continue  # genuine time-locked vesting, skip
             if cat == "cex":
                 cex_tok += bal
             elif addr in op_union:
                 op_tok += bal
+                if addr in mint_op_addrs:
+                    mint_op_tok += bal
+                    n_mint_op += 1
+            elif (whale_floor > 0 and bal >= whale_floor
+                  and addr not in neutral_infra):
+                # unverified top holder ≥ 1% circulating → operator-suspect, not
+                # retail. neutral_infra (DEX/CEX vaults/routers) is NEVER a whale
+                # here — it was deliberately excluded from the operator union.
+                op_tok += bal
+                suspect_tok += bal
+                n_suspect += 1
             else:
                 retail_tok += bal
 
@@ -313,6 +364,13 @@ def _compute_chip_3way(skel: dict[str, Any]) -> tuple[float, float, float, float
 
     op_with_tail = op_tok + fanout_tail + cluster_tail
     implied_circ = op_with_tail + cex_tok + retail_tok
+    if out is not None:
+        out.update({
+            "n_suspect_whales": n_suspect,
+            "suspect_tokens": suspect_tok,
+            "mint_op_tokens": mint_op_tok,
+            "n_mint_op": n_mint_op,
+        })
     if implied_circ == 0:
         return 0.0, 0.0, 0.0, 0.0
     return (
@@ -423,14 +481,17 @@ def build_screen_summary(skel: dict[str, Any]) -> dict[str, Any]:
     _sco = skel.get("supply_chain_overhang") or {}
     _sco_ok = bool(_sco.get("split")) and not _sco.get("_error") and (
         _sco.get("operator_pct") is not None)
+    _chip_extra: dict[str, Any] = {}
     if _sco_ok:
         op_pct = float(_sco.get("operator_pct") or 0)
         cex_pct = float(_sco.get("relay_pct") or 0)
         retail_pct = float(_sco.get("non_operator_pct") or 0)
     else:
-        op_pct, cex_pct, retail_pct, _implied_circ = _compute_chip_3way(skel)
+        op_pct, cex_pct, retail_pct, _implied_circ = _compute_chip_3way(
+            skel, out=_chip_extra)
     dim_chip_struct = _dim_chip_struct(op_pct, cex_pct, retail_pct,
-                                       overhang=_sco if _sco_ok else None)
+                                       overhang=_sco if _sco_ok else None,
+                                       chip_extra=_chip_extra)
 
     # ==================== Dimension 3: 内幕/庄家现货套现情况 (was 筹码结构) ====
     dim_insider_dump = _dim_insider_dump(op_pct, sell_pct_circ, fanout_net, circ)
@@ -463,7 +524,9 @@ def build_screen_summary(skel: dict[str, Any]) -> dict[str, Any]:
     # v1.2.9 (product spec 2026-06-29): 近 72h 分发/归集动作 — HIGHEST priority. A live operator
     # fan-out (pre-dump seeding) / CEX consolidation (cashing out) goes to the very top
     # of the 一屏结论, above everything else. Omitted when nothing recent.
-    dim_recent_flow = _dim_recent_flow(skel.get("recent_flow_actions"))
+    dim_recent_flow = _dim_recent_flow(
+        skel.get("recent_flow_actions"),
+        circ_supply=float((skel.get("meta") or {}).get("circulating_supply") or 0))
     if dim_recent_flow:
         dims.insert(0, dim_recent_flow)
 
@@ -517,7 +580,8 @@ def _dim_phase(chain_state: str, risk: int, sell_pct: float, recent_72h: int,
 
 
 def _dim_chip_struct(op_pct: float, cex_pct: float, retail_pct: float,
-                     overhang: dict | None = None) -> dict:
+                     overhang: dict | None = None,
+                     chip_extra: dict | None = None) -> dict:
     """Dimension 2 (v0.8.7.3 new): 筹码结构 — 3 桶 % only.
 
     User feedback (velvet_v0872 review 2026-06-13): 每一项后面只要给 %,
@@ -549,6 +613,19 @@ def _dim_chip_struct(op_pct: float, cex_pct: float, retail_pct: float,
         state = "MISSING"
     evidence = t("screen.chip_ev", op_pct=op_pct, cex_pct=cex_pct,
                  retail_pct=retail_pct)
+    # v1.2.11: explain WHY operator is high when the chip folded mint-authority
+    # ammo and/or unlabelled whales into the operator bucket, so the 🔴 headline
+    # is transparent (not a black box).
+    if chip_extra:
+        n_mint = int(chip_extra.get("n_mint_op") or 0)
+        n_whale = int(chip_extra.get("n_suspect_whales") or 0)
+        parts = []
+        if n_mint:
+            parts.append(t("screen.chip_ev_concealed_mint", n=n_mint))
+        if n_whale:
+            parts.append(t("screen.chip_ev_concealed_whale", n=n_whale))
+        if parts:
+            evidence += t("screen.chip_ev_concealed_wrap", detail=" + ".join(parts))
     if overhang:
         evidence += t(
             "screen.chip_ev_supply_overhang",
@@ -559,22 +636,33 @@ def _dim_chip_struct(op_pct: float, cex_pct: float, retail_pct: float,
             "evidence": evidence, "_state": state}
 
 
-def _dim_recent_flow(rf: dict | None) -> dict | None:
-    """Dimension (v1.2.9, product spec 2026-06-29): 近 72h 分发/归集动作 — the HIGHEST-priority
-    headline row. Fires ONLY when the operator is doing something RIGHT NOW: a
-    mint-authority / cluster hub fanning out to many EOAs (pre-dump seeding), or many
-    EOAs consolidating into a CEX (active cashing out). Returns None when nothing
-    recent, so the row is omitted rather than shown empty."""
+# v1.2.12: an unknown-hub fan-out must reach this many recipients in-window
+# before it surfaces as a 🟡 疑似批量分发 medium row — keeps trivial churn out
+# while still catching TAC's 88-wallet hub. min_counterparties (SQL floor) is 10.
+_UNKNOWN_FANOUT_MEDIUM_MIN = 20
+
+
+def _dim_recent_flow(rf: dict | None, circ_supply: float = 0.0) -> dict | None:
+    """Dimension (v1.2.9, product spec 2026-06-29): 近 72h 分发/归集动作 — a top-priority
+    headline row. Two severities:
+      🔴 HIGH — a CONFIRMED operator is acting NOW: a mint-authority / cluster hub
+        fanning out to many EOAs (pre-dump seeding), or many EOAs consolidating
+        into a CEX (active cashing out).
+      🟠 MEDIUM (v1.2.12, product spec 2026-07-01, TAC) — a large UNKNOWN hub fanning out
+        to ≥ _UNKNOWN_FANOUT_MEDIUM_MIN wallets in-window ("疑似批量分发"). The
+        source is not a verified operator/CEX, so it is flagged as 疑似 (needs
+        manual review), NOT presented as confirmed operator. Previously this was
+        suppressed entirely (adversarial review v1.2.9 kept it out of the TOP row)
+        — the fix keeps confirmed-operator at 🔴 and gives the unknown hub its 🟠.
+
+    `circ_supply` (optional): circulating supply, used to show the distributed
+    amount as a % of float so a tiny batch (TAC: 807K = 0.017% of circ) is not
+    mistaken for a large one.
+    Returns None when nothing recent, so the row is omitted rather than empty."""
     if not isinstance(rf, dict) or rf.get("_error"):
         return None
     op = rf.get("has_operator_fanout")
     cx = rf.get("has_cex_consolidation")
-    # v1.2.9 (adversarial review HIGH): only the CONFIRMED-operator signals (a known operator
-    # source fanning out, or a CEX consolidating) get the top-priority headline row.
-    # `unknown_hub_fanout` alone is too speculative for the top of the report — it
-    # stays in recent_flow_actions data but does not fire a headline alert.
-    if not (op or cx):
-        return None
     wd = rf.get("window_days") or 3
     tf = rf.get("top_operator_fanout") or {}
     tc = rf.get("top_cex_consolidation") or {}
@@ -587,10 +675,22 @@ def _dim_recent_flow(rf: dict | None) -> dict | None:
         state, label = "OPERATOR_FANOUT", t("screen.rf_label_operator_fanout")
         evidence = t("screen.rf_ev_operator_fanout", wd=wd,
                      n=tf.get("n_counterparties", 0), hub=(tf.get("hub") or "")[:10])
-    else:  # cx
+    elif cx:
         state, label = "CEX_CONSOLIDATION", t("screen.rf_label_cex_consolidation")
         evidence = t("screen.rf_ev_cex_consolidation", wd=wd,
                      n=tc.get("n_counterparties", 0), hub=(tc.get("hub") or "")[:10])
+    else:
+        # 🟠 medium: a large unknown-hub batch distribution (源头未验证).
+        tu = rf.get("top_unknown_fanout") or {}
+        n = int(tu.get("n_counterparties") or 0)
+        if n < _UNKNOWN_FANOUT_MEDIUM_MIN:
+            return None
+        toks = float(tu.get("total_tokens") or 0)
+        pct = (toks / circ_supply * 100) if circ_supply > 0 else 0.0
+        state, label = "SUSPECTED_BATCH_DISTRIBUTION", t("screen.rf_label_unknown_fanout")
+        evidence = t("screen.rf_ev_unknown_fanout", wd=wd, n=n,
+                     hub=(tu.get("hub") or "")[:10],
+                     tokens="{:,.0f}".format(toks), pct_circ=pct)
     return {"name": t("screen.dim_name_recent_flow"), "label": label,
             "evidence": evidence, "_state": state}
 

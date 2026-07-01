@@ -121,10 +121,14 @@ TEMPLATE = """# {{ t("report.title", symbol=meta.symbol, name=meta.name) }}
 
 - **{{ t("render.tldr_label_listing") }}**: {{ t("render.tldr_binance_alpha") }} {{ tier_classification.tier }}{% if tier_classification.tier == "S2" %} {{ t("render.tldr_tier_s2_paren") }}{% elif tier_classification.tier == "S3" %} {{ t("render.tldr_tier_s3_paren") }}{% elif tier_classification.tier == "S1" %} {{ t("render.tldr_tier_s1_paren") }}{% endif %} · {{ t("render.tldr_primary_chain", chain=meta.chain) }}
 
-{# v1.2.9 (product spec): 近 72h 分发/归集动作 = 速读最高优先级, 复用 screen_summary dim 的 label+evidence. #}
+{# v1.2.9 (product spec): 近 72h 分发/归集动作 = 速读最高优先级, 复用 screen_summary dim 的 label+evidence.
+   v1.2.13 (product spec 2026-07-01, TAC): also surface the 🟠 SUSPECTED_BATCH_DISTRIBUTION
+   medium tier (unknown-hub fan-out) here — it was already in the 一屏结论 dim table
+   but the 速读摘要 bullet only fired for confirmed operator/CEX, so the 88-wallet
+   TAC finding was invisible to a reader who only scans the 速读摘要. #}
 {% set _rf = recent_flow_actions | default({}) -%}
-{% if _rf and (_rf.get('has_operator_fanout') or _rf.get('has_cex_consolidation')) -%}
-{% for _d in (screen_summary.dimensions or []) -%}{% if _d.get('_state') in ('OPERATOR_FANOUT','CEX_CONSOLIDATION','FANOUT_AND_CONSOLIDATION') -%}
+{% if _rf and (_rf.get('has_operator_fanout') or _rf.get('has_cex_consolidation') or _rf.get('has_unknown_fanout')) -%}
+{% for _d in (screen_summary.dimensions or []) -%}{% if _d.get('_state') in ('OPERATOR_FANOUT','CEX_CONSOLIDATION','FANOUT_AND_CONSOLIDATION','SUSPECTED_BATCH_DISTRIBUTION') -%}
 - {{ _d.label }} — {{ _d.evidence }}
 {% endif %}{% endfor -%}
 {% endif %}
@@ -788,6 +792,11 @@ _{{ t("report.meta_line_tier", tier=tier_classification.tier, s1_date=tier_class
 {%- set _op_in_circ_ns = namespace(tokens=0.0) -%}
 {%- set _vest_unminted_ns = namespace(tokens=0.0) -%}
 {%- set _cex_pool_ns = namespace(tokens=0.0, n=0) -%}
+{# v1.2.11: operator-suspect whales — unlabelled top holders ≥ 1% of the on-chain
+   holder-snapshot supply. Folded into operator (not retail). Parity with
+   screen_summary._compute_chip_3way whale floor. #}
+{%- set _suspect_ns = namespace(tokens=0.0, n=0) -%}
+{%- set _mint_op_hit_ns = namespace(tokens=0.0, n=0) -%}
 {# Build operator union: m6 deployer + section_a multisig / vesting / treasury
    / airdrop_platform / lp + 启发式 / 检测器命中 wallets. NO CEX. #}
 {% for _cn, _cd in (_clp_for_locked or {}).items() -%}
@@ -838,19 +847,21 @@ _{{ t("report.meta_line_tier", tier=tier_classification.tier, s1_date=tier_class
     {% endfor -%}
   {% endif -%}
 {% endfor -%}
-{# v0.8.6.1: mint_authority wallets 归 _vest_set_ns (= 流通外锁仓).
-
-   v0.8.6.4: 用户 review (2026-06-12 BEAT 案例) 移除 `is_excluded` filter.
-   之前 _exclude_for_auth = mining_fed_addrs | deployer 让 5 个 mint
-   authority (含 BEAT 0x75552f8f6785 持 342M = 60% Alpha circ) 被标
-   excluded. 但它们仍是 mint authority, 持仓概念上仍是"未释放" — is_excluded
-   只是 detector 标 "也是 mining_fed dumper", 不改变持仓本质. 全部 mint
-   authorities 加 vest_set 才符合 thesis. #}
+{# v1.2.11 (TAC 2026-07-01): mint-authority WALLET balances are already-minted,
+   dumpable operator ammo — NOT "unminted reserve". A wallet balance is by
+   definition minted; unminted reserve = mint-cap − minted and is never a wallet
+   balance. They now go to the OPERATOR union (was: _vest_set_ns / vest-skip,
+   which hid TAC's 8 mint authorities holding 326.6M = 42% of BSC supply in
+   ~38-45M equal chunks → chip reported "100% 非庄家"). This reverses the
+   v0.8.6.1/v0.8.6.4 model that treated held balance as "未释放锁仓". Parity with
+   screen_summary._compute_chip_3way (mint_op_addrs → op_union). #}
+{%- set _mint_op_ns = namespace(set=[]) -%}
 {% if funding_attribution is defined and funding_attribution
       and funding_attribution.mint_authorities is defined
       and funding_attribution.mint_authorities -%}
   {% for _auth in (funding_attribution.mint_authorities.authorities or []) -%}
-    {%- set _vest_set_ns.set = _vest_set_ns.set + [(_auth.addr or '')|lower] -%}
+    {%- set _mint_op_ns.set = _mint_op_ns.set + [(_auth.addr or '')|lower] -%}
+    {%- set _op_union_ns.set = _op_union_ns.set + [(_auth.addr or '')|lower] -%}
   {% endfor -%}
 {% endif -%}
 {# v0.8.6.5.0: wallet_cluster_graph cluster addrs 加进 _op_union_ns.
@@ -885,6 +896,13 @@ _{{ t("report.meta_line_tier", tier=tier_classification.tier, s1_date=tier_class
    持 13.1B JCT, 但 circulating_supply 只 BSC 数 (11.5B) — 混算导致 operator
    raw 撑爆 400%+. 严格分母 / 分子链一致. #}
 {%- set _primary_chain_for_classify = meta.get('primary_chain') if meta is defined and meta else None -%}
+{# v1.2.11: whale floor = 1% of Alpha circulating_supply (true float). A top
+   holder that reached the retail fallthrough yet holds above this is
+   operator-suspect (unverified), not retail. Keyed on circulating supply (NOT
+   the thin surf snapshot — genuine retail is a large % of a thin snapshot). circ
+   unknown → floor 0 → guard disabled. Parity with
+   screen_summary._compute_chip_3way. #}
+{%- set _whale_floor = (meta.get('circulating_supply') or 0) * 0.01 -%}
 {% for _cn, _cd in (_clp_for_locked or {}).items() -%}
   {%- set _thc = _cd.get('top_holders_classified', {}) if _cd is mapping else {} -%}
   {% if _thc and '_error' not in _thc and (not _primary_chain_for_classify or _cn == _primary_chain_for_classify) -%}
@@ -903,6 +921,17 @@ _{{ t("report.meta_line_tier", tier=tier_classification.tier, s1_date=tier_class
           {%- set _cex_pool_ns.n = _cex_pool_ns.n + 1 -%}
         {% elif _addr in _op_union_ns.set -%}
           {%- set _op_in_circ_ns.tokens = _op_in_circ_ns.tokens + _bal -%}
+          {% if _addr in _mint_op_ns.set -%}
+            {%- set _mint_op_hit_ns.tokens = _mint_op_hit_ns.tokens + _bal -%}
+            {%- set _mint_op_hit_ns.n = _mint_op_hit_ns.n + 1 -%}
+          {% endif -%}
+        {% elif _whale_floor > 0 and _bal >= _whale_floor and _addr not in _neutral_set -%}
+          {# v1.2.11: unverified top holder (reached retail fallthrough) ≥ 1%
+             circulating → operator-suspect, not retail. neutral_infra
+             (vaults/routers) never counts here. #}
+          {%- set _op_in_circ_ns.tokens = _op_in_circ_ns.tokens + _bal -%}
+          {%- set _suspect_ns.tokens = _suspect_ns.tokens + _bal -%}
+          {%- set _suspect_ns.n = _suspect_ns.n + 1 -%}
         {% else -%}
           {%- set _retail_ns.tokens = _retail_ns.tokens + _bal -%}
           {%- set _retail_ns.n = _retail_ns.n + 1 -%}
@@ -1049,31 +1078,12 @@ _{{ t("report.meta_line_tier", tier=tier_classification.tier, s1_date=tier_class
    _mint_authority_balance_in_top_holders 计算: 遍历 BSC top_holders,
    找 funding_attribution.mint_authorities.authorities 里 addrs, sum
    它们 balance. 这才是 "项目方控制已 mint 未分发" 的真实量. #}
-{%- set _ma_set_ns = namespace(set=[]) -%}
-{% if funding_attribution is defined and funding_attribution
-      and funding_attribution.mint_authorities is defined -%}
-  {% for _auth in (funding_attribution.mint_authorities.authorities or []) -%}
-    {% if not _auth.is_excluded -%}
-      {%- set _ma_set_ns.set = _ma_set_ns.set + [(_auth.addr or '')|lower] -%}
-    {% endif -%}
-  {% endfor -%}
-{% endif -%}
-{%- set _ma_held_ns = namespace(tokens=0.0) -%}
-{% for _cn, _cd in (_clp_for_locked or {}).items() -%}
-  {%- set _thc = _cd.get('top_holders_classified', {}) if _cd is mapping else {} -%}
-  {% if _thc and '_error' not in _thc and (not _primary_chain_for_classify or _cn == _primary_chain_for_classify) -%}
-    {% for _cat in ['vesting', 'multisig', 'treasury', 'airdrop_platform', 'cex', 'lp', 'unclassified'] -%}
-      {% for _h in ((_thc.get(_cat) or {}).get('top') or []) -%}
-        {% if (_h.addr or '')|lower in _ma_set_ns.set -%}
-          {%- set _ma_held_ns.tokens = _ma_held_ns.tokens + (_h.balance or 0) -%}
-        {% endif -%}
-      {% endfor -%}
-    {% endfor -%}
-  {% endif -%}
-{% endfor -%}
-{# v0.8.6: 删 _ma_held subtract + ceiling-clamp 凑数. mint authority 持仓
-   保留在 _operator_topdown (= 已 mint 进 wallet, 算庄家弹药 per 用户决定).
-   organic sum: op + cex + retail = 100% (因 effective_circ = implied_circ). #}
+{# v1.2.11: removed the dead _ma_set_ns / _ma_held_ns pre-pass (set-only, never
+   read since v0.8.6). Mint-authority held balance now flows into _op_in_circ_ns
+   directly via _op_union_ns (see the mint-authority → op_union block above), so
+   there is nothing left to compute separately. #}
+{# v0.8.6: mint authority 持仓保留在 _operator_topdown (= 已 mint 进 wallet, 算
+   庄家弹药 per 用户决定). organic sum: op + cex + retail = 100%. #}
 {%- set _operator_topdown_in_circ = _operator_topdown -%}
 {%- set _operator_topdown_in_circ_pct = (_operator_topdown_in_circ / _circ * 100) if _circ else 0 -%}
 {%- set _operator_topdown_has_unminted = _implied_vs_alpha_ratio > 1.1 or _implied_vs_alpha_ratio < 0.9 -%}
@@ -3027,7 +3037,7 @@ def render(skeleton_path: str, filled_path: str, out_path: str, mode: str = "def
     # rather than silently allowing the bypass.
     #
     # Motivation: cross-LLM acceptance testing on v0.7.1 revealed that
-    # review agents default to invoking tests/smoke_fill.py as
+    # agents (adversarial review, claude) default to invoking tests/smoke_fill.py as
     # a production fill step instead of authoring narrative directly,
     # producing reports full of placeholder stubs that look "filled" but
     # carry no analytical content. SKILL.md guidance alone proved

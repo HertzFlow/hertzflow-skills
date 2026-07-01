@@ -156,8 +156,13 @@ def detect_recent_flow_actions(
     fanout = [_mk(r, "fanout") for r in fan_rows]
     consolidation = [_mk(r, "consolidation") for r in con_rows]
 
-    # the signal actions retail must see first
-    op_fanout = [a for a in fanout if a["kind"] in ("operator_source_fanout", "unknown_hub_fanout")]
+    # the signal actions retail must see first. v1.2.12: keep the CONFIRMED-
+    # operator source fan-out separate from the UNKNOWN-hub fan-out — the former
+    # is the top-priority 🔴 headline, the latter a 🟡 疑似批量分发 medium row
+    # (product spec 2026-07-01, TAC: an 88-wallet unknown-hub 72h fan-out was suppressed
+    # entirely). top_operator_fanout must NOT be contaminated by unknown hubs.
+    op_fanout = [a for a in fanout if a["kind"] == "operator_source_fanout"]
+    unknown_fanout = [a for a in fanout if a["kind"] == "unknown_hub_fanout"]
     cex_con = [a for a in consolidation if a["kind"] == "cex_consolidation"]
 
     return {
@@ -165,12 +170,14 @@ def detect_recent_flow_actions(
         "min_counterparties": min_counterparties,
         "fanout": fanout,
         "consolidation": consolidation,
-        "has_operator_fanout": any(a["kind"] == "operator_source_fanout" for a in fanout),
-        "has_unknown_fanout": any(a["kind"] == "unknown_hub_fanout" for a in fanout),
+        "has_operator_fanout": bool(op_fanout),
+        "has_unknown_fanout": bool(unknown_fanout),
         "has_cex_consolidation": bool(cex_con),
-        "n_operator_fanout": len([a for a in fanout if a["kind"] == "operator_source_fanout"]),
+        "n_operator_fanout": len(op_fanout),
+        "n_unknown_fanout": len(unknown_fanout),
         "n_cex_consolidation": len(cex_con),
         "top_operator_fanout": max(op_fanout, key=lambda a: a["n_counterparties"], default=None),
+        "top_unknown_fanout": max(unknown_fanout, key=lambda a: a["n_counterparties"], default=None),
         "top_cex_consolidation": max(cex_con, key=lambda a: a["n_counterparties"], default=None),
         "_error": err,
     }
