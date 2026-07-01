@@ -1741,7 +1741,7 @@ _{{ t("report.meta_line_tier", tier=tier_classification.tier, s1_date=tier_class
 {%- for r in lineage.m6.rows -%}{%- if r.get('is_cex_custody') or r.get('is_dex_infra') -%}{%- set _li.infra = _li.infra + 1 -%}{%- endif -%}{%- endfor -%}
 {%- set _m6_insiders = (lineage.m6.rows | length) - _li.infra -%}
 <details{% if mode == 'deep' %} open{% endif %}>
-<summary>📂 <strong>{{ t("section.lineage.title") }}</strong> — {{ t("render.lineage_summary", n=_m6_insiders, full=lineage.m6.n_full_dumper or 0, partial=lineage.m6.n_partial_dumper or 0, quiet=lineage.m6.n_quiet or 0) }}{% if _li.infra > 0 %} (+{{ _li.infra }} CEX/DEX 中性 infra){% endif %}</summary>
+<summary>📂 <strong>{{ t("section.lineage.title") }}</strong> — {{ t("render.lineage_summary", n=_m6_insiders, full=lineage.m6.n_full_dumper or 0, partial=lineage.m6.n_partial_dumper or 0, quiet=lineage.m6.n_quiet or 0) }}{% if _li.infra > 0 %} {{ t("render.lineage_infra_suffix", n=_li.infra) }}{% endif %}</summary>
 
 {{ t("section.lineage.table_h3") }}:
 

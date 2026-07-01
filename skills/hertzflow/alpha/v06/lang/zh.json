@@ -857,6 +857,7 @@
   "holdings_takeaway_outflow": "insider 已链上确认流出 **{usd}M USD** = **{pct}%** 流通, 用内幕自卖 TWAP 计价 (非 wash 报价).",
   "holdings_takeaway_wash": "24h 链上撮合中单一对敲机器人占 **{pct}%** — 表面成交额不可信, 真实承接量看 5% 深度.",
   "lineage_summary": "{n} 个内幕钱包: {full} 已分完 / {partial} 分发中 / {quiet} 潜伏 (click 展开看完整谱系 + 钱包余额 + 派发率)",
+  "lineage_infra_suffix": "(+{n} CEX/DEX 中性 infra)",
   "lineage_stats": "统计 (m6 谱系全集 **{total}** 个): {quiet} 持仓接近 0 / 公开锁仓 custody · {partial} 分发中 · {full} 已分完",
   "lineage_stats_other": " · {n} 其他 (vesting / dust 未分类)",
   "step4_gap_intro": "**⚠️ Step4 数据缺口 (Data Gap)**: {n} 个 dumper 在 surf chunk 失败后被跳过 (任意 1 个 chunk 报错 → 该 dumper 整段不计, 防止 undercount 后误升). 受影响地址 + 错 chunk 比例:",

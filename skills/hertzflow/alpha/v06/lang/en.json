@@ -857,6 +857,7 @@
   "holdings_takeaway_outflow": "Insiders have on-chain-confirmed outflow of **{usd}M USD** = **{pct}%** of circulating, priced at the insider self-sell TWAP (not the wash quote).",
   "holdings_takeaway_wash": "A single wash bot accounts for **{pct}%** of 24h on-chain matches — surface volume is unreliable; judge real absorption by 5% depth.",
   "lineage_summary": "{n} insider wallets: {full} fully distributed / {partial} distributing / {quiet} quiet (click to expand the full lineage + wallet balances + distribution rate)",
+  "lineage_infra_suffix": "(+{n} CEX/DEX neutral infra)",
   "lineage_stats": "Stats (full m6 lineage, **{total}** wallets): {quiet} near-zero holdings / public-lockup custody · {partial} distributing · {full} fully distributed",
   "lineage_stats_other": " · {n} other (vesting / dust unclassified)",
   "step4_gap_intro": "**⚠️ Step4 data gap**: {n} dumpers were skipped after surf chunk failures (any single chunk error → the whole dumper is dropped to prevent undercount-driven false upgrades). Affected addresses + errored-chunk ratio:",
