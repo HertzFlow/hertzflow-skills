@@ -37,10 +37,16 @@ import os
 import re
 import sys
 import time
+import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Iterable
+
+# Allow-list for any address that will be used to build an outbound request
+# URL or be persisted to the on-disk label cache. EVM addresses only (this
+# probe is a BSC helper); Solana base58 is deliberately NOT accepted.
+_EVM_ADDR_RE = re.compile(r"^0x[0-9a-fA-F]{40}$")
 
 # 30-day cache; BscScan labels rarely change once assigned.
 CACHE_TTL_SECS = 30 * 86400
@@ -137,27 +143,72 @@ def _load_cache(path: str) -> dict:
     if not os.path.exists(path):
         return {}
     try:
-        return json.load(open(path))
+        with open(path, encoding="utf-8") as fp:
+            data = json.load(fp)
+        # A truncated or tampered cache must never crash the pipeline, but it
+        # must also never be trusted as a dict without checking the type.
+        return data if isinstance(data, dict) else {}
     except Exception:
         return {}
 
 
 def _save_cache(cache: dict, path: str) -> None:
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    # os.path.dirname("bscscan_labels.json") == "" and os.makedirs("") raises
+    # FileNotFoundError, so a bare relative cache path crashed the probe.
+    parent = os.path.dirname(os.path.abspath(path))
+    os.makedirs(parent, exist_ok=True)
     tmp = path + ".tmp"
-    with open(tmp, "w") as fp:
+    with open(tmp, "w", encoding="utf-8") as fp:
         json.dump(cache, fp, indent=2)
     os.replace(tmp, path)
 
 
 _TITLE_RE = re.compile(r"<title>([^<]+)</title>")
 
+# SECURITY: the label is attacker-influenceable text scraped from a third-party
+# web page. It is later surfaced in the forensic report that an LLM agent reads
+# and paraphrases, so it is a classic indirect-prompt-injection carrier.
+# Strip control characters and bound the length before it can reach any
+# downstream consumer (report rendering, cache file, LLM context window).
+_MAX_LABEL_LEN = 120
+_LABEL_UNSAFE_RE = re.compile(r"[\x00-\x1f\x7f]")
+
+
+def _sanitize_label(raw: str | None) -> str | None:
+    """Reduce untrusted scraped label text to an inert, bounded string.
+
+    Removes control characters (including CR/LF, which can forge extra report
+    lines or markdown structure) and truncates. Returns None if nothing
+    usable remains, so the caller classifies it as UNLABELED rather than
+    trusting an empty match.
+    """
+    if not isinstance(raw, str):
+        return None
+    cleaned = _LABEL_UNSAFE_RE.sub(" ", raw).strip()
+    cleaned = re.sub(r"\s{2,}", " ", cleaned)
+    if not cleaned:
+        return None
+    return cleaned[:_MAX_LABEL_LEN]
+
 
 def _fetch_one(addr: str) -> tuple[str, str | None, str]:
-    """Scrape BscScan for one address. Returns (addr, label, source)."""
+    """Scrape BscScan for one address. Returns (addr, label, source).
+
+    SECURITY: `addr` originates from on-chain holder rows (surf
+    token-holders) and is interpolated straight into a request URL. Without a
+    format allow-list, a maliciously-crafted "address" could inject URL
+    path/query separators and turn this into an SSRF / cache-poisoning
+    primitive. Reject anything that is not a syntactically valid EVM
+    address BEFORE building the URL.
+    """
+    if not isinstance(addr, str) or not _EVM_ADDR_RE.fullmatch(addr):
+        return (addr, None, "failed:invalid_address_format")
+    # Defence in depth: percent-encode so no reserved character can reach
+    # the URL even if the regex above is ever loosened.
+    quoted = urllib.parse.quote(addr, safe="")
     try:
         req = urllib.request.Request(
-            f"https://bscscan.com/address/{addr}",
+            f"https://bscscan.com/address/{quoted}",
             headers={
                 "User-Agent": (
                     "Mozilla/5.0 (Macintosh; Intel Mac OS X) "
@@ -176,14 +227,14 @@ def _fetch_one(addr: str) -> tuple[str, str | None, str]:
         r"Public Name Tag[^<]*<br\s*/?>\s*([^<']+?)'>", body
     )
     if pnt_match:
-        return (addr, pnt_match.group(1).strip(), "scrape:pnt")
+        return (addr, _sanitize_label(pnt_match.group(1)), "scrape:pnt")
     # Fallback to <title>X | Address: 0x... | BscScan</title>.
     title_match = _TITLE_RE.search(body)
     if title_match:
         title = title_match.group(1).strip()
         parts = title.split(" | ")
         if parts and not parts[0].startswith("Address:"):
-            return (addr, parts[0].strip(), "scrape:title")
+            return (addr, _sanitize_label(parts[0]), "scrape:title")
     return (addr, None, "scrape:no_label")
 
 
