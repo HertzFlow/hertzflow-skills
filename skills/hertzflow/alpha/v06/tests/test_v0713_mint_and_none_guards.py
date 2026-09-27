@@ -420,7 +420,7 @@ def test_v0716_token_info_renders_when_only_alpha_has_price(tmp_path):
     import subprocess
 
     fixture = V06_DIR / "tests" / "fixtures" / "zest_skeleton_fixture.json"
-    skel = json.loads(fixture.read_text())
+    skel = json.loads(fixture.read_text(encoding="utf-8"))
     # Knock out surf project-detail (simulate NOT_FOUND), then inject Alpha API
     # price/vol/marketCap/24h-change/holders into meta.
     skel["meta"]["realtime_token_info"] = {"fetch_ok": False, "_status": "NOT_FOUND"}
@@ -447,18 +447,18 @@ def test_v0716_token_info_renders_when_only_alpha_has_price(tmp_path):
     r1 = subprocess.run(
         [sys.executable, str(V06_DIR / "tests" / "smoke_fill.py"),
          str(skel_path), str(filled_path)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     assert r1.returncode == 0, f"smoke_fill failed: {r1.stderr}"
     r2 = subprocess.run(
         [sys.executable, str(V06_DIR / "render_report.py"),
          "--skeleton", str(skel_path), "--filled", str(filled_path),
          "--out", str(report_path)],
-        capture_output=True, text=True, env=env,
+        capture_output=True, text=True, encoding="utf-8", errors="replace", env=env,
     )
     assert "Traceback" not in r2.stderr, f"render crashed: {r2.stderr[-600:]}"
     assert r2.returncode in (0, 2), f"render exit {r2.returncode}: {r2.stderr[-400:]}"
-    report = report_path.read_text()
+    report = report_path.read_text(encoding="utf-8")
 
     # The token-info header must render with the Alpha-API price/vol, not skip.
     assert "💹 代币行情" in report, "token-info header section is missing"
@@ -482,7 +482,7 @@ def test_v0716_zero_volume_preserved_not_overridden_by_alpha(tmp_path):
     import subprocess
 
     fixture = V06_DIR / "tests" / "fixtures" / "zest_skeleton_fixture.json"
-    skel = json.loads(fixture.read_text())
+    skel = json.loads(fixture.read_text(encoding="utf-8"))
     # surf returns 0 volume + 0 LP (legit on illiquid token); alpha has nonzero.
     skel["meta"]["realtime_token_info"] = {
         "fetch_ok": True,
@@ -508,14 +508,14 @@ def test_v0716_zero_volume_preserved_not_overridden_by_alpha(tmp_path):
     env["BINANCE_ALPHA_NO_UPDATE_CHECK"] = "1"
 
     r1 = subprocess.run([sys.executable, str(V06_DIR / "tests" / "smoke_fill.py"),
-                         str(skel_path), str(filled_path)], capture_output=True, text=True)
+                         str(skel_path), str(filled_path)], capture_output=True, text=True, encoding="utf-8", errors="replace")
     assert r1.returncode == 0
     r2 = subprocess.run([sys.executable, str(V06_DIR / "render_report.py"),
                          "--skeleton", str(skel_path), "--filled", str(filled_path),
                          "--out", str(report_path)],
-                        capture_output=True, text=True, env=env)
+                        capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
     assert "Traceback" not in r2.stderr
-    report = report_path.read_text()
+    report = report_path.read_text(encoding="utf-8")
     # surf's 0.12 wins (price), and surf's 0 vol/LP MUST surface as "$0", not as
     # alpha's $1M/$500K. Otherwise the trader sees fabricated activity.
     assert "$0.12" in report, "surf price (0.12) was not used"
@@ -657,7 +657,7 @@ def test_render_no_bsc_price_stop_loss_no_crash(tmp_path):
     if not fixture.exists():
         import pytest
         pytest.skip("zest skeleton fixture missing")
-    skel = json.loads(fixture.read_text())
+    skel = json.loads(fixture.read_text(encoding="utf-8"))
     sl = skel["decision_action_block"]["stop_loss"]
     sl["trigger_price_usd"] = None
     sl["current_price_usd"] = None
@@ -678,19 +678,19 @@ def test_render_no_bsc_price_stop_loss_no_crash(tmp_path):
     r1 = subprocess.run(
         [sys.executable, str(V06_DIR / "tests" / "smoke_fill.py"),
          str(skel_path), str(filled_path)],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     assert r1.returncode == 0, f"smoke_fill failed: {r1.stderr}"
     r2 = subprocess.run(
         [sys.executable, str(V06_DIR / "render_report.py"),
          "--skeleton", str(skel_path), "--filled", str(filled_path),
          "--out", str(report_path)],
-        capture_output=True, text=True, env=env,
+        capture_output=True, text=True, encoding="utf-8", errors="replace", env=env,
     )
     # Exit 0 or 2 (narrative warnings) OK; a TypeError traceback is the crash.
     assert "Traceback" not in r2.stderr, f"render crashed: {r2.stderr[-800:]}"
     assert r2.returncode in (0, 2), f"render exit {r2.returncode}: {r2.stderr[-400:]}"
-    report = report_path.read_text()
+    report = report_path.read_text(encoding="utf-8")
     # v0.7.25: stop_loss "价格数据未就绪" fallback branch removed with advice block.
     # No-crash assertions above (Traceback + returncode) cover regression goal.
     # Sanity-check that the rendered report has the H1 + footer (= rendered, not aborted).

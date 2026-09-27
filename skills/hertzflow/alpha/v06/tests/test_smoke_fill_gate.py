@@ -42,7 +42,7 @@ def _run_smoke_fill(out_path: Path) -> int:
         str(FIXTURE),
         str(out_path),
     ]
-    proc = subprocess.run(cmd, capture_output=True, text=True)
+    proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     return proc.returncode
 
 
@@ -60,7 +60,7 @@ def _run_render(skeleton: Path, filled: Path, out: Path, env_extra: dict | None 
         env.update(env_extra)
     # Disable update_check noise.
     env["BINANCE_ALPHA_NO_UPDATE_CHECK"] = "1"
-    proc = subprocess.run(cmd, capture_output=True, text=True, env=env)
+    proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
     return proc.returncode, (proc.stderr or "") + (proc.stdout or "")
 
 
