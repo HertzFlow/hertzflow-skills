@@ -7,6 +7,13 @@ name: forensic skill tests
 # now runs that path offline (surf/RPC mocked) so the crash class fails CI here
 # instead of in a live report.
 
+# SECURITY: no workflow in this repo needs write access. The default
+# GITHUB_TOKEN is read/write for most repos, so a compromised action or a
+# script-injection in a `run:` block could push commits or modify releases.
+# Grant the narrowest scope that still lets the job check out code.
+permissions:
+  contents: read
+
 on:
   push:
     paths:
@@ -21,12 +28,20 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      # SECURITY: actions are pinned to a full commit SHA, not a mutable tag.
+      # A tag like @v4 can be repointed at new upstream code by anyone who
+      # compromises the action repo; a SHA cannot. The trailing comment
+      # records the human-readable version for auditability.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
       - name: Install deps
-        run: pip install pytest jinja2
+        # SECURITY: versions are pinned (==) so a malicious or broken
+        # upstream release cannot be pulled into CI unreviewed. Hash pinning
+        # with pip-tools/--require-hashes is the stronger option if the
+        # dependency set ever grows.
+        run: pip install "pytest==8.3.4" "jinja2==3.1.5"
       - name: Run v06 test suite
         working-directory: skills/hertzflow/alpha/v06
         # `zh_json_term_discipline` (派发-vs-分发 whitelist) is a PRE-EXISTING red:
